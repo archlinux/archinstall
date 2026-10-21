@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Aleksandr Melman <Alexmelman88@gmail.com>\n"
+"Last-Translator: Kiruumu <maxslevin2012@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgid "    Please submit this issue (and file) to https://github.com/archlinux/a
 msgstr "    Пожалуйста, отправьте эту проблему (и файл) по адресу https://github.com/archlinux/archinstall/issues"
 
 msgid "Do you really want to abort?"
-msgstr "Вы действительно хотите прекратить?"
+msgstr "Вы действительно хотите прервать операцию?"
 
 msgid "And one more time for verification: "
 msgstr "И еще раз для проверки: "
@@ -34,7 +34,7 @@ msgid "Username for required superuser with sudo privileges: "
 msgstr "Имя пользователя для требуемого суперпользователя с привилегиями sudo: "
 
 msgid "Any additional users to install (leave blank for no users): "
-msgstr "Любые дополнительные пользователи для установки (оставьте пустым, если пользователей нет): "
+msgstr "Введите имена дополнительных пользователей (оставьте пустым, если они не нужны): "
 
 msgid "Should this user be a superuser (sudoer)?"
 msgstr "Должен ли этот пользователь быть суперпользователем (sudoer)?"
@@ -61,7 +61,7 @@ msgid "If you desire a web browser, such as firefox or chromium, you may specify
 msgstr "Если вы хотите использовать веб-браузер, например, firefox или chromium, вы можете указать его в следующем запросе."
 
 msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Напишите дополнительные пакеты для установки (разделите пробелами, оставьте пустым, чтобы пропустить): "
+msgstr "Укажите дополнительные пакеты для установки (через пробел; оставьте пустым, чтобы пропустить): "
 
 msgid "Copy ISO network configuration to installation"
 msgstr "Копировать сетевую конфигурацию ISO в установку"
@@ -83,10 +83,10 @@ msgid "Enter your gateway (router) IP address or leave blank for none: "
 msgstr "Введите IP-адрес вашего шлюза (маршрутизатора) или оставьте пустым, если его нет: "
 
 msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Введите ваши DNS-серверы (через пробел, пустой - нет): "
+msgstr "Введите адреса DNS-серверов через пробел (оставьте пустым, если не нужны): "
 
 msgid "Select which filesystem your main partition should use"
-msgstr "Выберите, какую файловую систему должен использовать ваш основной раздел"
+msgstr "Выберите файловую систему для основного раздела"
 
 msgid "Current partition layout"
 msgstr "Текущая разметка разделов"
@@ -99,13 +99,13 @@ msgstr ""
 "{}"
 
 msgid "Enter a desired filesystem type for the partition"
-msgstr "Введите желаемый тип файловой системы для раздела"
+msgstr "Выберите файловую систему для раздела"
 
 msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr "Введите начальное значение (в раздельных блоках: с, ГБ, % и т.д.; по умолчанию: {}): "
+msgstr "Введите начальную позицию (единицы измерения parted: s, GB, % и т. д.; по умолчанию: {}): "
 
 msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr "Введите конечное значение (в раздельных блоках: с, Гб, % и т.д.; например: {}): "
+msgstr "Введите конечную позицию (единицы измерения parted: s, GB, % и т. д.; например: {}): "
 
 msgid "{} contains queued partitions, this will remove those, are you sure?"
 msgstr "{} содержит разделы в очереди, это удалит их, вы уверены?"
@@ -129,10 +129,10 @@ msgstr ""
 "Выберите по индексу, какой раздел куда монтировать"
 
 msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Точки монтирования разделов являются относительными внутри установки, например, загрузочный будет /boot."
+msgstr " * Точки монтирования задаются относительно корня устанавливаемой системы. Например, для загрузочного раздела это /boot."
 
 msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Выберите куда монтировать раздел (оставьте пустым, чтобы удалить точку монтирования): "
+msgstr "Выберите, куда монтировать раздел (оставьте пустым, чтобы удалить точку монтирования): "
 
 msgid ""
 "{}\n"
@@ -168,10 +168,10 @@ msgid ""
 msgstr ""
 "{}\n"
 "\n"
-"Выберите раздел, на котором будет установлена файловая система"
+"Выберите раздел, для которого нужно указать файловую систему"
 
 msgid "Enter a desired filesystem type for the partition: "
-msgstr "Введите желаемый тип файловой системы для раздела: "
+msgstr "Выберите файловую систему для раздела: "
 
 msgid "Archinstall language"
 msgstr "Язык Archinstall"
@@ -192,10 +192,10 @@ msgid "Select keyboard layout"
 msgstr "Выберите раскладку клавиатуры"
 
 msgid "Select one of the regions to download packages from"
-msgstr "Выберите один из регионов для загрузки пакетов"
+msgstr "Выберите регион, из которого будут загружаться пакеты"
 
 msgid "Select one or more hard drives to use and configure"
-msgstr "Выберите один или несколько жестких дисков для использования и настройте их"
+msgstr "Выберите один или несколько жёстких дисков для использования и настройки"
 
 msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
 msgstr "Для наилучшей совместимости с оборудованием AMD вы можете использовать либо все варианты с открытым исходным кодом, либо AMD / ATI."
@@ -222,10 +222,10 @@ msgid "Choose which kernels to use or leave blank for default \"{}\""
 msgstr "Выберите, какие ядра использовать, или оставьте пустым по умолчанию \"{}\"."
 
 msgid "Choose which locale language to use"
-msgstr "Выберите, какой язык локали использовать"
+msgstr "Выберите язык локали"
 
 msgid "Choose which locale encoding to use"
-msgstr "Выберите, какую кодировку локали использовать"
+msgstr "Выберите кодировку локали"
 
 msgid "Select one of the values shown below: "
 msgstr "Выберите одно из значений, показанных ниже: "
@@ -234,16 +234,16 @@ msgid "Select one or more of the options below: "
 msgstr "Выберите один или несколько из приведенных ниже вариантов: "
 
 msgid "Adding partition...."
-msgstr "Добавление раздела...."
+msgstr "Добавление раздела…"
 
 msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Чтобы продолжить, вам нужно ввести действительный fs-тип. Смотрите `man parted` для правильных fs-типов."
+msgstr "Чтобы продолжить, укажите допустимый тип файловой системы. Список поддерживаемых типов см. в `man parted`."
 
 msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Ошибка: Перечисление профилей по URL \"{}\" привело к:"
+msgstr "Ошибка: при получении списка профилей с URL \"{}\" возникла ошибка:"
 
 msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Ошибка: Не удалось декодировать результат \"{}\" как JSON:"
+msgstr "Ошибка: не удалось декодировать результат \"{}\" как JSON:"
 
 msgid "Keyboard layout"
 msgstr "Раскладка клавиатуры"
@@ -285,7 +285,7 @@ msgid "Profile"
 msgstr "Профиль"
 
 msgid "Audio"
-msgstr "Звуковой сервер"
+msgstr "Аудио"
 
 msgid "Kernels"
 msgstr "Ядра"
@@ -300,7 +300,7 @@ msgid "Automatic time sync (NTP)"
 msgstr "Автоматическая синхронизация времени (NTP)"
 
 msgid "Install ({} config(s) missing)"
-msgstr "Установить ({} конфигурация(и) отсутствует)"
+msgstr "Установить (не хватает конфигураций: {})"
 
 msgid ""
 "You decided to skip harddrive selection\n"
@@ -308,8 +308,8 @@ msgid ""
 "WARNING: Archinstall won't check the suitability of this setup\n"
 "Do you wish to continue?"
 msgstr ""
-"Вы решили пропустить выбор жесткого диска\n"
-"и будете использовать любой диск, смонтированный по адресу {} (экспериментально)\n"
+"Вы решили пропустить выбор жёсткого диска\n"
+"и будете использовать любую разметку, смонтированную по адресу {} (экспериментально)\n"
 "ПРЕДУПРЕЖДЕНИЕ: Archinstall не будет проверять пригодность этой установки.\n"
 "Вы хотите продолжить?"
 
@@ -332,13 +332,13 @@ msgid "Mark/Unmark a partition to be formatted (wipes data)"
 msgstr "Пометить/снять отметку с раздела, который будет отформатирован (стирание данных)"
 
 msgid "Mark/Unmark a partition as encrypted"
-msgstr "Пометить/снять отметку с раздела как зашифрованный"
+msgstr "Отметить раздел как зашифрованный или снять отметку"
 
 msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Пометить/снять отметку с раздела как загрузочный (автоматически для /boot)"
+msgstr "Отметить раздел как загрузочный или снять отметку (автоматически для /boot)"
 
 msgid "Set desired filesystem for a partition"
-msgstr "Установите желаемую файловую систему для раздела"
+msgstr "Выберите файловую систему для раздела"
 
 msgid "Abort"
 msgstr "Прервать"
@@ -347,7 +347,7 @@ msgid "Hostname"
 msgstr "Имя хоста"
 
 msgid "Not configured, unavailable unless setup manually"
-msgstr "Не настроен, недоступен, если не настроен вручную"
+msgstr "Не настроено; доступно только при ручной настройке"
 
 msgid "Timezone"
 msgstr "Часовой пояс"
@@ -396,7 +396,7 @@ msgid ""
 "Hardware time and other post-configuration steps might be required in order for NTP to work.\n"
 "For more information, please check the Arch wiki"
 msgstr ""
-"Для работы NTP может потребоваться аппаратное время и другие шаги после конфигурации.\n"
+"Для работы NTP может потребоваться настройка аппаратного времени и другие шаги после конфигурации.\n"
 "Для получения дополнительной информации, пожалуйста, ознакомьтесь с ArchWiki"
 
 msgid "Enter a username to create an additional user (leave blank to skip): "
@@ -410,7 +410,7 @@ msgid ""
 " Choose an object from the list, and select one of the available actions for it to execute"
 msgstr ""
 "\n"
-" Выберите объект из списка и выберите одно из доступных действий для его выполнения"
+" Выберите объект из списка и одно из доступных действий для его выполнения"
 
 msgid "Cancel"
 msgstr "Отменить"
@@ -450,7 +450,7 @@ msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate
 msgstr "Pacman уже запущен, ожидание его завершения составляет максимум 10 минут."
 
 msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Существовавшая ранее блокировка pacman не завершилась. Пожалуйста, очистите все существующие сессии pacman перед использованием archinstall."
+msgstr "Ранее созданная блокировка pacman не была снята. Пожалуйста, завершите все существующие сессии pacman перед использованием archinstall."
 
 msgid "Choose which optional additional repositories to enable"
 msgstr "Выберите, какие дополнительные репозитории следует включить"
@@ -520,13 +520,13 @@ msgid "Choose which configuration to save"
 msgstr "Выберите, какую конфигурацию сохранить"
 
 msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Введите каталог для сохранения конфигурации (-ций): "
+msgstr "Введите каталог для сохранения конфигурации: "
 
 msgid "Not a valid directory: {}"
 msgstr "Недействительный каталог: {}"
 
 msgid "The password you are using seems to be weak,"
-msgstr "Пароль, который вы используете, кажется слабым,"
+msgstr "Похоже, выбранный пароль слишком простой,"
 
 msgid "are you sure you want to use it?"
 msgstr "вы уверены, что хотите его использовать?"
@@ -603,7 +603,7 @@ msgid "Would you like to create a separate partition for /home?"
 msgstr "Хотите ли вы создать отдельный раздел для /home?"
 
 msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Выбранные диски не имеют минимальной емкости, необходимой для автоматического предложения\n"
+msgstr "На выбранных дисках недостаточно места для автоматической разметки\n"
 
 msgid "Minimum capacity for /home partition: {}GB\n"
 msgstr "Минимальный размер раздела /home: {}GB\n"
@@ -627,7 +627,7 @@ msgid "Manual configuration setting must be a list"
 msgstr "Ручная настройка конфигурации должна представлять собой список"
 
 msgid "No iface specified for manual configuration"
-msgstr "Не указан iface для ручной настройки"
+msgstr "Не указан сетевой интерфейс для ручной настройки"
 
 msgid "Manual nic configuration with no auto DHCP requires an IP address"
 msgstr "Ручная конфигурация сетевого адаптера без автоматического DHCP требует IP-адреса"
@@ -651,10 +651,10 @@ msgid "Mark/Unmark a partition as compressed (btrfs only)"
 msgstr "Пометить/снять отметку с раздела как сжатый (только для btrfs)"
 
 msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Пароль, который вы используете, кажется слабым, вы уверены, что хотите его использовать?"
+msgstr "Похоже, выбранный пароль слишком простой. Вы уверены, что хотите его использовать?"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, gnome, kde, sway"
+msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например gnome, kde, sway"
 
 msgid "Select your desired desktop environment"
 msgstr "Выберите желаемое окружение рабочего стола"
@@ -663,10 +663,10 @@ msgid "A very basic installation that allows you to customize Arch Linux as you 
 msgstr "Очень базовая установка, позволяющая настроить Arch Linux по своему усмотрению."
 
 msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Предоставляет выбор различных пакетов сервера для установки и включения, например, httpd, nginx, mariadb"
+msgstr "Предоставляет выбор различных серверных пакетов для установки и включения, например httpd, nginx, mariadb"
 
 msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Выберите серверы для установки, если их нет, то будет выполнена минимальная установка"
+msgstr "Выберите серверы для установки; если ни одного не выбрано, будет выполнена минимальная установка"
 
 msgid "Installs a minimal system as well as xorg and graphics drivers."
 msgstr "Устанавливает минимальную систему, а также xorg и графические драйверы."
@@ -675,19 +675,19 @@ msgid "Press Enter to continue."
 msgstr "Нажмите Enter, чтобы продолжить."
 
 msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Хотите ли вы использовать chroot в новой созданной установке и выполнить настройку после установки?"
+msgstr "Хотите войти в новую систему через chroot и выполнить настройку после установки?"
 
 msgid "Are you sure you want to reset this setting?"
 msgstr "Вы уверены, что хотите сбросить эту настройку?"
 
 msgid "Select one or more hard drives to use and configure\n"
-msgstr "Выберите один или несколько жестких дисков для использования и настройки\n"
+msgstr "Выберите один или несколько жёстких дисков для использования и настройки\n"
 
 msgid "Any modifications to the existing setting will reset the disk layout!"
 msgstr "Любые изменения существующей настройки приведут к сбросу разметки диска!"
 
 msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Если вы сбросите выбор жесткого диска, это также сбросит текущую разметку диска. Вы уверены?"
+msgstr "Если вы сбросите выбор жёсткого диска, это также сбросит текущую разметку диска. Вы уверены?"
 
 msgid "Save and exit"
 msgstr "Сохранить и выйти"
@@ -734,7 +734,7 @@ msgid "Value: "
 msgstr "Значение: "
 
 msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Вы можете не выбирать диск и разметку и использовать любой диск, смонтированный в /mnt (экспериментально)"
+msgstr "Вы можете не выбирать диск и разметку и использовать любую разметку, смонтированную в /mnt (экспериментально)"
 
 msgid "Select one of the disks or skip and use /mnt as default"
 msgstr "Выберите один из дисков или пропустите и используйте /mnt по умолчанию"
@@ -764,7 +764,7 @@ msgid "Enter username (leave blank to skip): "
 msgstr "Введите имя пользователя (оставьте пустым, чтобы пропустить): "
 
 msgid "The username you entered is invalid. Try again"
-msgstr "Введенное вами имя пользователя недействительно. Попробуйте еще раз"
+msgstr "Введённое имя пользователя недопустимо. Попробуйте ещё раз"
 
 msgid "Should \"{}\" be a superuser (sudo)?"
 msgstr "Должен ли \"{}\" быть суперпользователем (sudo)?"
@@ -797,7 +797,7 @@ msgid "Configured {} interfaces"
 msgstr "Настроено интерфейсов: {}"
 
 msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Этот параметр определяет количество параллельных загрузок, которые могут происходить во время установки"
+msgstr "Этот параметр определяет количество параллельных загрузок, которые могут выполняться во время установки"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
@@ -809,13 +809,13 @@ msgstr ""
 "Примечание:"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Минимальное значение: {} ( Позволяет {} параллельную загрузку, позволяет {} загрузки одновременно )"
+msgstr " - Максимальное значение: {} ( Позволяет {} параллельных загрузок, позволяет {} загрузок одновременно )"
 
 msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Минимальное значение: 1 ( Позволяет 1 параллельную загрузку, позволяет 2 загрузки одновременно )"
+msgstr " - Минимальное значение: 1 (Допускается 1 параллельная загрузка; одновременно выполняются 2 загрузки)"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Отключить/по умолчанию: 0 ( Отключает параллельную загрузку, позволяет только 1 загрузку за один раз )"
+msgstr " - Отключить/по умолчанию: 0 (Параллельная загрузка отключена; одновременно выполняется только 1 загрузка)"
 
 #, python-brace-format
 msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
@@ -850,7 +850,7 @@ msgstr "Выберите режим выполнения"
 
 #, python-brace-format
 msgid "Unable to fetch profile from specified url: {}"
-msgstr "Невозможно получить профиль из указанного url: {}"
+msgstr "Не удалось получить профиль по указанному URL: {}"
 
 #, python-brace-format
 msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
@@ -866,7 +866,7 @@ msgid "Existing Partitions"
 msgstr "Существующие разделы"
 
 msgid "Select a partitioning option"
-msgstr "Выберите вариант разбивки на разделы"
+msgstr "Выберите способ разметки диска"
 
 msgid "Enter the root directory of the mounted devices: "
 msgstr "Введите корневой каталог смонтированных устройств: "
@@ -916,7 +916,7 @@ msgid "This partition is currently encrypted, to format it a filesystem has to b
 msgstr "Этот раздел в настоящее время зашифрован, для его форматирования необходимо указать файловую систему"
 
 msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr "Точки монтирования разделов являются относительными внутри установки, например, загрузочный раздел будет /boot."
+msgstr "Точки монтирования разделов задаются относительно корня устанавливаемой системы. Например, для загрузочного раздела это /boot."
 
 msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
 msgstr "Если установлена точка монтирования /boot, то раздел также будет помечен как загрузочный."
@@ -937,7 +937,7 @@ msgid "Enter the end sector of the partition (percentage or block number, defaul
 msgstr "Введите конечный сектор раздела (процент или номер блока, по умолчанию: {}): "
 
 msgid "This will remove all newly added partitions, continue?"
-msgstr "Это приведет к удалению всех вновь добавленных разделов, продолжить?"
+msgstr "Это приведет к удалению всех вновь добавленных разделов. Продолжить?"
 
 #, python-brace-format
 msgid "Partition management: {}"
@@ -945,7 +945,7 @@ msgstr "Управление разделом: {}"
 
 #, python-brace-format
 msgid "Total length: {}"
-msgstr "Весь размер: {}"
+msgstr "Общая длина: {}"
 
 msgid "Encryption type"
 msgstr "Тип шифрования"
@@ -957,10 +957,10 @@ msgid "Enter iteration time for LUKS encryption (in milliseconds)"
 msgstr "Введите время итерации для шифрования LUKS (в миллисекундах)"
 
 msgid "Higher values increase security but slow down boot time"
-msgstr "Большие значения повышают безопасность, но замедляют время загрузки"
+msgstr "Большие значения повышают безопасность, но замедляют загрузку"
 
 msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr "По умолчанию: 10000 мс, рекомендуемый диапазон: 1000-60000"
+msgstr "По умолчанию: 10000 мс; рекомендуемый диапазон: 1000-60000"
 
 msgid "Iteration time cannot be empty"
 msgstr "Время итерации не может быть пустым"
@@ -984,7 +984,7 @@ msgid "Partitions to be encrypted"
 msgstr "Разделы, подлежащие шифрованию"
 
 msgid "Select disk encryption option"
-msgstr "Выбрать вариант шифрования диска"
+msgstr "Выберите вариант шифрования диска"
 
 msgid "Select a FIDO2 device to use for HSM"
 msgstr "Выберите устройство FIDO2 для использования в качестве HSM"
@@ -993,7 +993,7 @@ msgid "Use a best-effort default partition layout"
 msgstr "Использовать оптимальную схему разделов по умолчанию"
 
 msgid "Manual Partitioning"
-msgstr "Ручное разбиение на разделы"
+msgstr "Ручная разметка диска"
 
 msgid "Pre-mounted configuration"
 msgstr "Предварительно смонтированная конфигурация"
@@ -1021,7 +1021,7 @@ msgid "Password"
 msgstr "Пароль"
 
 msgid "All settings will be reset, are you sure?"
-msgstr "Все настройки будут сброшены, вы уверены?"
+msgstr "Все настройки будут сброшены. Вы уверены?"
 
 msgid "Back"
 msgstr "Назад"
@@ -1034,7 +1034,7 @@ msgid "Environment type: {}"
 msgstr "Тип окружения рабочего стола: {}"
 
 msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr "Проприетарный драйвер Nvidia не поддерживается Sway. Вполне вероятно, что вы столкнетесь с проблемами, вы согласны с этим?"
+msgstr "Проприетарный драйвер Nvidia не поддерживается Sway. Вполне вероятно, что вы столкнетесь с проблемами. Вы согласны с этим?"
 
 msgid "Installed packages"
 msgstr "Устанавливаемые пакеты"
@@ -1052,13 +1052,13 @@ msgid "Profile name: "
 msgstr "Имя профиля: "
 
 msgid "The profile name you entered is already in use. Try again"
-msgstr "Введенное вами имя профиля уже используется. Попробуйте еще раз"
+msgstr "Введённое имя профиля уже используется. Попробуйте ещё раз"
 
 msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Пакеты, которые будут установлены с этим профилем (разделенные пробелами, оставьте пустым, чтобы пропустить): "
+msgstr "Пакеты для установки вместе с этим профилем (через пробел; оставьте пустым, чтобы пропустить): "
 
 msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Службы, которые должны быть включены с помощью этого профиля (разделенные пробелами, оставьте пустым, чтобы пропустить): "
+msgstr "Службы для включения вместе с этим профилем (через пробел; оставьте пустым, чтобы пропустить): "
 
 msgid "Should this profile be enabled for installation?"
 msgstr "Должен ли этот профиль быть включен для установки?"
@@ -1074,7 +1074,7 @@ msgstr ""
 "Выберите графический драйвер или оставьте пустым, чтобы установить все драйверы с открытым исходным кодом"
 
 msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+msgstr "Для работы Sway требуется доступ к устройствам ввода, например клавиатуре и мыши."
 
 msgid ""
 "\n"
@@ -1083,7 +1083,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+"Выберите способ предоставить Sway доступ к устройствам ввода"
 
 msgid "Graphics driver"
 msgstr "Графический драйвер"
@@ -1095,7 +1095,7 @@ msgid "Please chose which greeter to install"
 msgstr "Пожалуйста, выберите, какой экран приветствия установить"
 
 msgid "This is a list of pre-programmed default_profiles"
-msgstr "Это список запрограммированных по умолчанию профилей"
+msgstr "Это список предварительно запрограммированных профилей по умолчанию"
 
 msgid "Disk configuration"
 msgstr "Конфигурация диска"
@@ -1104,7 +1104,7 @@ msgid "Profiles"
 msgstr "Профили"
 
 msgid "Finding possible directories to save configuration files ..."
-msgstr "Поиск возможных каталогов для сохранения файлов конфигурации ..."
+msgstr "Поиск возможных каталогов для сохранения файлов конфигурации…"
 
 msgid "Select directory (or directories) for saving configuration files"
 msgstr "Выберите каталог (или каталоги) для сохранения файлов конфигурации"
@@ -1125,10 +1125,10 @@ msgid "Enter url (leave blank to skip): "
 msgstr "Введите адрес (оставьте пустым, чтобы пропустить): "
 
 msgid "Select signature check option"
-msgstr "Выбрать вариант проверки подписи"
+msgstr "Выберите вариант проверки подписи"
 
 msgid "Select signature option"
-msgstr "Выбрать вариант подписи"
+msgstr "Выберите вариант подписи"
 
 msgid "Custom mirrors"
 msgstr "Пользовательские зеркала"
@@ -1143,7 +1143,7 @@ msgid ""
 "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
 "Save directory: "
 msgstr ""
-"Введите каталог для сохранения конфигурации (-ций) (включено заполнение вкладок)\n"
+"Введите каталог для сохранения конфигурации (включено заполнение вкладок)\n"
 "Каталог сохранения: "
 
 msgid ""
@@ -1151,7 +1151,7 @@ msgid ""
 "\n"
 "{}"
 msgstr ""
-"Хотите ли вы сохранить {} файл(-а) конфигурации в следующем месте?\n"
+"Хотите сохранить {} файл(-а) конфигурации в следующем месте?\n"
 "\n"
 "{}"
 
@@ -1162,7 +1162,7 @@ msgid "Mirrors"
 msgstr "Зеркала"
 
 msgid "Mirror regions"
-msgstr "Регионы зеркала"
+msgstr "Регионы зеркал"
 
 msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
 msgstr " - Максимальное значение: {} ( Позволяет {} параллельных загрузок, позволяет {max_downloads+1} загрузок одновременно )"
@@ -1177,19 +1177,19 @@ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME 
 msgstr "Использовать NetworkManager (необходим для графической настройки интернета в GNOME и KDE)"
 
 msgid "Total: {} / {}"
-msgstr "Весь размер: {} / {}"
+msgstr "Всего: {} / {}"
 
 msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr "Все вводимые значения могут иметь суффикс с единицей измерения: Б, Кб, КиБ, Мб, МиБ..."
+msgstr "Все вводимые значения могут иметь суффикс с единицей измерения: B, KB, KiB, MB, MiB..."
 
 msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr "Если единица измерения не указана, то значение интерпретируется как сектор"
+msgstr "Если единица измерения не указана, значение интерпретируется как количество секторов"
 
 msgid "Enter start (default: sector {}): "
 msgstr "Введите начало (по умолчанию: сектор {}): "
 
 msgid "Enter end (default: {}): "
-msgstr "Введите конец (по умолчанию: сектор {}): "
+msgstr "Введите конец (по умолчанию: {}): "
 
 msgid "Unable to determine fido2 devices. Is libfido2 installed?"
 msgstr "Невозможно определить устройства fido2. Установлена ли libfido2?"
@@ -1211,7 +1211,7 @@ msgid "Type"
 msgstr "Тип"
 
 msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Этот параметр определяет количество параллельных загрузок, которые могут происходить во время загрузки пакетов"
+msgstr "Этот параметр определяет количество параллельных загрузок, которые могут выполняться при загрузке пакетов"
 
 msgid ""
 "Enter the number of parallel downloads to be enabled.\n"
@@ -1227,13 +1227,13 @@ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a tim
 msgstr " - Максимальное рекомендуемое значение: {} ( Позволяет {} параллельных загрузок одновременно )"
 
 msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Отключить/по умолчанию: 0 ( Отключает параллельную загрузку, позволяет только 1 загрузку за один раз )\n"
+msgstr " - Отключить/по умолчанию: 0 ( Параллельная загрузка отключена; одновременно выполняется только 1 загрузка )\n"
 
 msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Неверный ввод! Повторите попытку с правильным вводом [ или 0, чтобы отключить ]"
+msgstr "Неверный ввод! Повторите попытку с правильным вводом [или 0, чтобы отключить]"
 
 msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Hyprland необходим доступ к вашему компьютеру ( набор аппаратных устройств, т.е. клавиатура, мышь и т.д. )"
+msgstr "Для работы Hyprland требуется доступ к устройствам ввода, например клавиатуре и мыши."
 
 msgid ""
 "\n"
@@ -1242,13 +1242,13 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Выберите опцию, чтобы предоставить Hyprland доступ к вашему оборудованию"
+"Выберите способ предоставить Hyprland доступ к устройствам ввода"
 
 msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr "Все вводимые значения могут иметь суффикс с единицей измерения: %, Б, Кб, КиБ, Мб, МиБ..."
+msgstr "Все вводимые значения могут иметь суффикс с единицей измерения: %, B, KB, KiB, MB, MiB..."
 
 msgid "Would you like to use unified kernel images?"
-msgstr "Хотите ли Вы использовать унифицированные образы ядра?"
+msgstr "Хотите использовать унифицированные образы ядра?"
 
 msgid "Unified kernel images"
 msgstr "Унифицированные образы ядра"
@@ -1257,10 +1257,10 @@ msgid "Waiting for time sync (timedatectl show) to complete."
 msgstr "Ожидание завершения синхронизации времени (timedatectl show)."
 
 msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Синхронизация времени не завершена, пока вы ждете - проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
+msgstr "Синхронизация времени не завершается. Пока вы ожидаете, проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
 
 msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Пропуск ожидания автоматической синхронизации времени (это может привести к проблемам, если время не синхронизируется во время установки)"
+msgstr "Ожидание автоматической синхронизации времени пропущено (это может привести к проблемам, если время не синхронизировано во время установки)"
 
 msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
 msgstr "Ожидание завершения синхронизации связки ключей Arch Linux (archlinux-keyring-wkd-sync)."
@@ -1269,13 +1269,13 @@ msgid "Selected profiles: "
 msgstr "Выбранные профили: "
 
 msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Синхронизация времени не завершена, пока вы ждете - проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
+msgstr "Синхронизация времени не завершается. Пока вы ожидаете, проверьте документацию на предмет обходных путей: https://archinstall.readthedocs.io/"
 
 msgid "Mark/Unmark as nodatacow"
 msgstr "Пометить/снять пометку как nodatacow"
 
 msgid "Would you like to use compression or disable CoW?"
-msgstr "Хотите ли вы использовать сжатие или отключить CoW?"
+msgstr "Хотите использовать сжатие или отключить CoW?"
 
 msgid "Use compression"
 msgstr "Использовать сжатие"
@@ -1284,7 +1284,7 @@ msgid "Disable Copy-on-Write"
 msgstr "Отключить копирование при записи (CoW)"
 
 msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например, GNOME, KDE Plasma, Sway"
+msgstr "Предоставляет выбор окружений рабочего стола и тайловых оконных менеджеров, например GNOME, KDE Plasma, Sway"
 
 #, python-brace-format
 msgid "Configuration type: {}"
@@ -1354,10 +1354,10 @@ msgid "Press Ctrl+h for help"
 msgstr "Нажмите Ctrl+h для справки"
 
 msgid "Choose an option to give Sway access to your hardware"
-msgstr "Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+msgstr "Выберите способ предоставить Sway доступ к устройствам ввода"
 
 msgid "Seat access"
-msgstr "Доступ к месту"
+msgstr "Доступ к устройствам ввода"
 
 msgid "Mountpoint"
 msgstr "Точка монтирования"
@@ -1384,7 +1384,7 @@ msgid "Start (default: sector {}): "
 msgstr "Начало (по умолчанию: сектор {}): "
 
 msgid "End (default: {}): "
-msgstr "Конец (по умолчанию: сектор {}): "
+msgstr "Конец (по умолчанию: {}): "
 
 msgid "Subvolume name"
 msgstr "Имя подтома"
@@ -1399,7 +1399,7 @@ msgid "Select language"
 msgstr "Выбрать язык"
 
 msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Напишите дополнительные пакеты для установки (разделите пробелами, оставьте пустым, чтобы пропустить)"
+msgstr "Укажите дополнительные пакеты для установки (через пробел; оставьте пустым, чтобы пропустить)"
 
 msgid "Invalid download number"
 msgstr "Недопустимое количество загрузок"
@@ -1408,7 +1408,7 @@ msgid "Number downloads"
 msgstr "Количество загрузок"
 
 msgid "The username you entered is invalid"
-msgstr "Введенное вами имя пользователя недействительно"
+msgstr "Введённое имя пользователя недопустимо"
 
 msgid "Username"
 msgstr "Имя пользователя"
@@ -1436,7 +1436,7 @@ msgid "Gateway address"
 msgstr "Адрес шлюза"
 
 msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Введите ваши DNS-серверы, разделяя их пробелами (оставьте пустым, если их нет)"
+msgstr "Введите адреса DNS-серверов через пробел (оставьте пустым, если не нужны)"
 
 msgid "DNS servers"
 msgstr "DNS-серверы"
@@ -1448,7 +1448,7 @@ msgid "Kernel"
 msgstr "Ядро"
 
 msgid "UEFI is not detected and some options are disabled"
-msgstr "UEFI не обнаружен и некоторые опции отключены"
+msgstr "UEFI не обнаружен, некоторые параметры отключены"
 
 msgid "Info"
 msgstr "Информация"
@@ -1457,7 +1457,7 @@ msgid "The proprietary Nvidia driver is not supported by Sway."
 msgstr "Проприетарный драйвер Nvidia не поддерживается Sway."
 
 msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr "Вполне вероятно, что вы столкнетесь с проблемами, вы согласны с этим?"
+msgstr "Вполне вероятно, что вы столкнетесь с проблемами. Вы согласны с этим?"
 
 msgid "Main profile"
 msgstr "Главный профиль"
@@ -1478,11 +1478,11 @@ msgid "Directory"
 msgstr "Каталог"
 
 msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Введите каталог для сохранения конфигурации (-ций) (включено заполнение вкладок)"
+msgstr "Введите каталог для сохранения конфигурации (включено заполнение вкладок)"
 
 #, python-brace-format
 msgid "Do you want to save the configuration file(s) to {}?"
-msgstr "Хотите ли вы сохранить файл(ы) конфигурации в {}?"
+msgstr "Хотите сохранить файл(ы) конфигурации в {}?"
 
 msgid "Enabled"
 msgstr "Включено"
@@ -1509,7 +1509,7 @@ msgid "Press ? for help"
 msgstr "Нажмите ? для справки"
 
 msgid "Choose an option to give Hyprland access to your hardware"
-msgstr "Выберите опцию, чтобы предоставить Hyprland доступ к вашему оборудованию"
+msgstr "Выберите способ предоставить Hyprland доступ к устройствам ввода"
 
 msgid "Additional repositories"
 msgstr "Дополнительные репозитории"
@@ -1553,79 +1553,62 @@ msgstr "Будет применена указанная конфигураци�
 msgid "Wipe"
 msgstr "Стереть"
 
-#, fuzzy
 msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Пометить/снять пометку как загрузочный"
+msgstr "Пометить/снять пометку как XBOOTLDR"
 
-#, fuzzy
 msgid "Loading packages..."
-msgstr "Дополнительные пакеты"
+msgstr "Загрузка пакетов…"
 
 msgid "Select any packages from the below list that should be installed additionally"
-msgstr "Выберите любые пакеты из приведенного ниже списка, которые следует установить дополнительно"
+msgstr "Выберите из списка ниже пакеты, которые нужно установить дополнительно"
 
-#, fuzzy
 msgid "Add a custom repository"
-msgstr "Добавить пользовательское зеркало"
+msgstr "Добавить пользовательский репозиторий"
 
-#, fuzzy
 msgid "Change custom repository"
-msgstr "Изменить пользовательское зеркало"
+msgstr "Изменить пользовательский репозиторий"
 
-#, fuzzy
 msgid "Delete custom repository"
-msgstr "Удалить пользовательское зеркало"
+msgstr "Удалить пользовательский репозиторий"
 
-#, fuzzy
 msgid "Repository name"
-msgstr "Название зеркала"
+msgstr "Название репозитория"
 
-#, fuzzy
 msgid "Add a custom server"
-msgstr "Добавить пользовательское зеркало"
+msgstr "Добавить пользовательский сервер"
 
-#, fuzzy
 msgid "Change custom server"
-msgstr "Изменить пользовательское зеркало"
+msgstr "Изменить пользовательский сервер"
 
-#, fuzzy
 msgid "Delete custom server"
-msgstr "Удалить пользовательское зеркало"
+msgstr "Удалить пользовательский сервер"
 
 msgid "Server url"
 msgstr "URL сервера"
 
-#, fuzzy
 msgid "Select regions"
-msgstr "Выбрать вариант подписи"
+msgstr "Выбрать регионы"
 
-#, fuzzy
 msgid "Add custom servers"
-msgstr "Добавить пользовательское зеркало"
+msgstr "Добавить пользовательские серверы"
 
-#, fuzzy
 msgid "Add custom repository"
-msgstr "Добавить пользовательское зеркало"
+msgstr "Добавить пользовательский репозиторий"
 
-#, fuzzy
 msgid "Loading mirror regions..."
-msgstr "Регионы зеркала"
+msgstr "Загрузка регионов зеркал…"
 
-#, fuzzy
 msgid "Mirrors and repositories"
-msgstr "Дополнительные репозитории"
+msgstr "Зеркала и репозитории"
 
-#, fuzzy
 msgid "Selected mirror regions"
-msgstr "Регионы зеркала"
+msgstr "Выбранные регионы зеркал"
 
-#, fuzzy
 msgid "Custom servers"
-msgstr "Пользовательские зеркала"
+msgstr "Пользовательские серверы"
 
-#, fuzzy
 msgid "Custom repositories"
-msgstr "Дополнительные репозитории"
+msgstr "Пользовательские репозитории"
 
 msgid "Only ASCII characters are supported"
 msgstr "Поддерживаются только символы ASCII"
@@ -1637,10 +1620,10 @@ msgid "Exit help"
 msgstr "Выйти из справки"
 
 msgid "Preview scroll up"
-msgstr "Просмотр вверх"
+msgstr "Прокрутить предварительный просмотр вверх"
 
 msgid "Preview scroll down"
-msgstr "Просмотр вниз"
+msgstr "Прокрутить предварительный просмотр вниз"
 
 msgid "Move up"
 msgstr "Переместить вверх"
@@ -1663,20 +1646,17 @@ msgstr "Пропустить выбор (если доступно)"
 msgid "Reset selection (if available)"
 msgstr "Сбросить выбор (если доступно)"
 
-#, fuzzy
 msgid "Select on single select"
-msgstr "Выберите проверку подписи"
+msgstr "Выбрать в режиме одиночного выбора"
 
-#, fuzzy
 msgid "Select on multi select"
-msgstr "Выберите часовой пояс"
+msgstr "Выбрать в режиме множественного выбора"
 
 msgid "Reset"
 msgstr "Сбросить"
 
-#, fuzzy
 msgid "Skip selection menu"
-msgstr "Выберите режим выполнения"
+msgstr "Пропустить меню выбора"
 
 msgid "Start search mode"
 msgstr "Запустить режим поиска"
@@ -1684,83 +1664,67 @@ msgstr "Запустить режим поиска"
 msgid "Exit search mode"
 msgstr "Выйти из режима поиска"
 
-#, fuzzy
 msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+msgstr "Для работы labwc требуется доступ к устройствам ввода, например клавиатуре и мыши."
 
-#, fuzzy
 msgid "Choose an option to give labwc access to your hardware"
-msgstr "Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+msgstr "Выберите способ предоставить labwc доступ к устройствам ввода"
 
-#, fuzzy
 msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr "Sway необходим доступ к вашему компьютеру (набор аппаратных устройств, т.е. клавиатура, мышь и т.д.)"
+msgstr "Для работы niri требуется доступ к устройствам ввода, например клавиатуре и мыши."
 
-#, fuzzy
 msgid "Choose an option to give niri access to your hardware"
-msgstr "Выберите опцию, чтобы предоставить Sway доступ к вашему оборудованию"
+msgstr "Выберите способ предоставить niri доступ к устройствам ввода"
 
-#, fuzzy
 msgid "Mark/Unmark as ESP"
-msgstr "Пометить/снять пометку как загрузочный"
+msgstr "Пометить/снять пометку ESP"
 
 msgid "Package group:"
-msgstr ""
+msgstr "Группа пакетов:"
 
-#, fuzzy
 msgid "Exit archinstall"
-msgstr "Справка Archinstall"
+msgstr "Выйти из Archinstall"
 
-#, fuzzy
 msgid "Reboot system"
-msgstr "Файловая система"
+msgstr "Перезагрузить систему"
 
-#, fuzzy
 msgid "chroot into installation for post-installation configurations"
-msgstr "Хотите ли вы использовать chroot в новой созданной установке и выполнить настройку после установки?"
+msgstr "Войти в установленную систему через chroot для настройки после установки"
 
 msgid "Installation completed"
-msgstr ""
+msgstr "Установка завершена"
 
-#, fuzzy
 msgid "What would you like to do next?"
-msgstr "Вы хотите продолжить?"
+msgstr "Что бы вы хотели сделать дальше?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Select which mode to configure for \"{}\""
-msgstr "Выберите режим для конфигурации \"{}\" или пропустите, чтобы использовать режим по умолчанию \"{}\"."
+msgstr "Выберите режим для настройки \"{}\""
 
-#, fuzzy
 msgid "Incorrect credentials file decryption password"
-msgstr "Пароль шифрования диска"
+msgstr "Неверный пароль для расшифровки файла учетных данных"
 
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Пароль root"
+msgstr "Неверный пароль"
 
-#, fuzzy
 msgid "Credentials file decryption password"
-msgstr "Пароль шифрования диска"
+msgstr "Пароль для расшифровки файла учетных данных"
 
-#, fuzzy
 msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Хотите ли вы сохранить файл(ы) конфигурации в {}?"
+msgstr "Хотите зашифровать файл user_credentials.json?"
 
-#, fuzzy
 msgid "Credentials file encryption password"
-msgstr "Пароль шифрования диска"
+msgstr "Пароль для шифрования файла учетных данных"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Repositories: {}"
-msgstr "Название зеркала"
+msgstr "Репозитории: {}"
 
-#, fuzzy
 msgid "New version available"
-msgstr "Нет доступных устройств HSM"
+msgstr "Доступна новая версия"
 
-#, fuzzy
 msgid "Passwordless login"
-msgstr "Пароль"
+msgstr "Вход без пароля"
 
 msgid "Second factor login"
 msgstr "Двухфакторная аутентификация"
@@ -1768,18 +1732,15 @@ msgstr "Двухфакторная аутентификация"
 msgid "Bluetooth"
 msgstr "Bluetooth"
 
-#, fuzzy
 msgid "Would you like to configure Bluetooth?"
-msgstr "Вы хотите продолжить?"
+msgstr "Хотите настроить Bluetooth?"
 
 msgid "Print service"
 msgstr "Служба печати"
 
-#, fuzzy
 msgid "Would you like to configure the print service?"
-msgstr "Вы хотите продолжить?"
+msgstr "Хотите настроить службу печати?"
 
-#, fuzzy
 msgid "Power management"
 msgstr "Управление питанием"
 
@@ -1800,7 +1761,7 @@ msgid "Btrfs snapshot type: {}"
 msgstr "Тип снимка Btrfs: {}"
 
 msgid "Syncing the system..."
-msgstr "Синхронизация системы..."
+msgstr "Синхронизация системы…"
 
 msgid "Value cannot be empty"
 msgstr "Значение не может быть пустым"
@@ -1808,7 +1769,7 @@ msgstr "Значение не может быть пустым"
 msgid "Snapshot type"
 msgstr "Тип снимка"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Snapshot type: {}"
 msgstr "Тип снимка: {}"
 
@@ -1821,13 +1782,12 @@ msgstr "Устройства U2F не найдены"
 msgid "U2F Login Method"
 msgstr "Метод входа U2F"
 
-#, fuzzy
 msgid "Enable passwordless sudo?"
-msgstr "Введите пароль: "
+msgstr "Включить sudo без пароля?"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Setting up U2F device for user: {}"
-msgstr "Выберите устройство FIDO2 для использования в качестве HSM"
+msgstr "Настройка устройства U2F для пользователя: {}"
 
 msgid "You may need to enter the PIN and then touch your U2F device to register it"
 msgstr "Вам может потребоваться ввести PIN и затем коснуться устройства U2F для регистрации"
@@ -1835,35 +1795,29 @@ msgstr "Вам может потребоваться ввести PIN и зат�
 msgid "Starting device modifications in "
 msgstr "Начало изменения устройства через "
 
-#, fuzzy
 msgid "No network connection found"
-msgstr "Нет сетевой конфигурации"
+msgstr "Сетевое подключение не найдено"
 
-#, fuzzy
 msgid "Would you like to connect to a Wifi?"
-msgstr "Вы хотите продолжить?"
+msgstr "Хотите подключиться к Wi-Fi?"
 
-#, fuzzy
 msgid "No wifi interface found"
-msgstr "Настройка интерфейсов"
+msgstr "Wi-Fi интерфейс не найден"
 
-#, fuzzy
 msgid "Select wifi network to connect to"
-msgstr "Выберите один сетевой интерфейс для настройки"
+msgstr "Выберите Wi-Fi сеть для подключения"
 
 msgid "Scanning wifi networks..."
-msgstr "Сканирование Wi-Fi сетей..."
+msgstr "Сканирование Wi-Fi сетей…"
 
-#, fuzzy
 msgid "No wifi networks found"
-msgstr "Нет сетевой конфигурации"
+msgstr "Wi-Fi сети не найдены"
 
 msgid "Failed setting up wifi"
 msgstr "Не удалось настроить Wi-Fi"
 
-#, fuzzy
 msgid "Enter wifi password"
-msgstr "Введите пароль: "
+msgstr "Введите пароль Wi-Fi"
 
 msgid "Ok"
 msgstr "Ок"
@@ -1881,7 +1835,7 @@ msgid "Will install to standard location with NVRAM entry"
 msgstr "Будет установлено в стандартное расположение с записью NVRAM"
 
 msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr "Вы хотите установить загрузчик в стандартное место поиска съемных носителей?"
+msgstr "Хотите установить загрузчик в стандартное место поиска съемных носителей?"
 
 msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
 msgstr "Это устанавливает загрузчик в /EFI/BOOT/BOOTX64.EFI (или подобное), что полезно для:"
@@ -1890,10 +1844,10 @@ msgid "USB drives or other portable external media."
 msgstr "USB-накопители или другие портативные внешние носители."
 
 msgid "Systems where you want the disk to be bootable on any computer."
-msgstr "Системы, где вы хотите, чтобы диск был загрузочным на любом компьютере."
+msgstr "Системы, где диск должен быть загрузочным на любом компьютере."
 
 msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr "Прошивка, которая некорректно поддерживает загрузочные записи NVRAM."
+msgstr "Прошивки, которые некорректно поддерживают загрузочные записи NVRAM."
 
 msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
 msgstr "Будет установлено в /EFI/BOOT/ (съемное расположение, безопасный вариант)"
@@ -1902,23 +1856,20 @@ msgid "Will install to custom location with NVRAM entry"
 msgstr "Будет установлено в пользовательское место с записью NVRAM"
 
 msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr "Прошивка, которая, как у большинства материнских плат MSI, не поддерживает корректно загрузочные записи NVRAM,"
+msgstr "Прошивки, которые, как у большинства материнских плат MSI, некорректно поддерживают загрузочные записи NVRAM,"
 
 msgid "most Apple Macs, many laptops..."
-msgstr "большинство Apple Mac и многих ноутбуков..."
+msgstr "большинство Apple Mac и многих ноутбуков…"
 
-#, fuzzy
 msgid "Language"
-msgstr "Язык локали"
+msgstr "Язык"
 
 msgid "Compression algorithm"
 msgstr "Алгоритм сжатия"
 
-#, fuzzy
 msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Устанавливаются только такие пакеты, как base, base-devel, linux, linux-firmware, efibootmgr и дополнительные пакеты профиля."
+msgstr "Устанавливаются только такие пакеты, как base, sudo, linux, linux-firmware, efibootmgr и дополнительные пакеты профиля."
 
-#, fuzzy
 msgid "Select zram compression algorithm:"
 msgstr "Выберите алгоритм сжатия zram:"
 
