@@ -23,7 +23,7 @@ dependencies = [
     "cryptography>=50.0.1",
     "textual>=8.2.8",
     "markdown-it-py>=4.2.0",
-    "linkify-it-py>=2.1.0",
+    "linkify-it-py>=2.2.0",
 ]
 
 [project.urls]
