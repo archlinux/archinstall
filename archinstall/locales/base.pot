@@ -89,75 +89,6 @@ msgstr ""
 msgid "Select font packages to install"
 msgstr ""
 
-msgid "ArchInstall Language"
-msgstr ""
-
-msgid "Version"
-msgstr ""
-
-msgid "Installation Script"
-msgstr ""
-
-msgid "Locales"
-msgstr ""
-
-msgid "Disk configuration"
-msgstr ""
-
-msgid "Profile"
-msgstr ""
-
-msgid "Mirrors and repositories"
-msgstr ""
-
-msgid "Network"
-msgstr ""
-
-msgid "Bootloader"
-msgstr ""
-
-msgid "Application"
-msgstr ""
-
-msgid "Authentication"
-msgstr ""
-
-msgid "Swap"
-msgstr ""
-
-msgid "Hostname"
-msgstr ""
-
-msgid "Kernels"
-msgstr ""
-
-msgid "Automatic time sync (NTP)"
-msgstr ""
-
-msgid "Timezone"
-msgstr ""
-
-msgid "Services"
-msgstr ""
-
-msgid "Additional packages"
-msgstr ""
-
-msgid "Pacman"
-msgstr ""
-
-msgid "Custom commands"
-msgstr ""
-
-msgid "Users"
-msgstr ""
-
-msgid "Root encrypted password"
-msgstr ""
-
-msgid "Disk encryption password"
-msgstr ""
-
 msgid "Incorrect credentials file decryption password"
 msgstr ""
 
@@ -201,6 +132,9 @@ msgid "Enter root password"
 msgstr ""
 
 msgid "Enable passwordless sudo?"
+msgstr ""
+
+msgid "Bootloader"
 msgstr ""
 
 msgid "Unified kernel images"
@@ -302,6 +236,37 @@ msgstr ""
 msgid "Credentials file encryption password"
 msgstr ""
 
+msgid "Select main filesystem"
+msgstr ""
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr ""
+
+msgid "Use compression"
+msgstr ""
+
+msgid "Disable Copy-on-Write"
+msgstr ""
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr ""
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr ""
+
+msgid ""
+"The selected drives do not have the minimum capacity required for an "
+"automatic suggestion\n"
+msgstr ""
+
+#, python-brace-format
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr ""
+
+#, python-brace-format
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr ""
+
 msgid "Partitioning"
 msgstr ""
 
@@ -364,37 +329,6 @@ msgid "You will use whatever drive-setup is mounted at the specified directory"
 msgstr ""
 
 msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
-
-msgid "Select main filesystem"
-msgstr ""
-
-msgid "Would you like to use compression or disable CoW?"
-msgstr ""
-
-msgid "Use compression"
-msgstr ""
-
-msgid "Disable Copy-on-Write"
-msgstr ""
-
-msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr ""
-
-msgid "Would you like to create a separate partition for /home?"
-msgstr ""
-
-msgid ""
-"The selected drives do not have the minimum capacity required for an "
-"automatic suggestion\n"
-msgstr ""
-
-#, python-brace-format
-msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr ""
-
-#, python-brace-format
-msgid "Minimum capacity for Arch Linux partition: {}GiB"
 msgstr ""
 
 msgid "Encryption password"
@@ -585,6 +519,10 @@ msgid "Select which kernel(s) to install"
 msgstr ""
 
 msgid ""
+"Select optional firmware to install (none are pulled in by linux-firmware)"
+msgstr ""
+
+msgid ""
 "For the best compatibility with your AMD hardware, you may want to use "
 "either the all open-source or AMD / ATI options."
 msgstr ""
@@ -608,10 +546,49 @@ msgstr ""
 msgid "Archinstall language"
 msgstr ""
 
+msgid "Locales"
+msgstr ""
+
+msgid "Mirrors and repositories"
+msgstr ""
+
+msgid "Disk configuration"
+msgstr ""
+
+msgid "Swap"
+msgstr ""
+
+msgid "Kernels"
+msgstr ""
+
+msgid "Additional firmware"
+msgstr ""
+
+msgid "Hostname"
+msgstr ""
+
+msgid "Authentication"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
 msgid "Applications"
 msgstr ""
 
 msgid "Network configuration"
+msgstr ""
+
+msgid "Pacman"
+msgstr ""
+
+msgid "Additional packages"
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
+msgid "Automatic time sync (NTP)"
 msgstr ""
 
 msgid "Save configuration"
@@ -851,39 +828,42 @@ msgstr ""
 msgid "wide Unicode coverage, good fallback font"
 msgstr ""
 
-msgid "Zram enabled"
+msgid "enabled"
+msgstr ""
+
+msgid "Fonts"
+msgstr ""
+
+msgid "Zram"
 msgstr ""
 
 #, python-brace-format
-msgid "Zram algorithm {}"
+msgid "Algorithm \"{}\""
 msgstr ""
 
-msgid "Bluetooth enabled"
+msgid "Zram disabled"
 msgstr ""
 
-#, python-brace-format
-msgid "Audio server \"{}\""
-msgstr ""
-
-#, python-brace-format
-msgid "Power management \"{}\""
-msgstr ""
-
-msgid "Print service enabled"
-msgstr ""
-
-#, python-brace-format
-msgid "Firewall \"{}\""
-msgstr ""
-
-#, python-brace-format
-msgid "Extra fonts \"{}\""
+msgid "Application"
 msgstr ""
 
 msgid "Passwordless login"
 msgstr ""
 
 msgid "Second factor login"
+msgstr ""
+
+msgid "U2F login"
+msgstr ""
+
+#, python-brace-format
+msgid "U2F login method \"{}\""
+msgstr ""
+
+msgid "U2F passwordless sudo enabled"
+msgstr ""
+
+msgid "U2F passwordless sudo disabled"
 msgstr ""
 
 msgid "Root password set"
@@ -893,14 +873,10 @@ msgstr ""
 msgid "Configured {} user(s)"
 msgstr ""
 
-msgid "U2F set up"
+msgid "U2F configured"
 msgstr ""
 
-#, python-brace-format
-msgid "Bootloader \"{}\""
-msgstr ""
-
-msgid "UKI enabled"
+msgid "UKI \"enabled\""
 msgstr ""
 
 msgid "Removable"
@@ -928,29 +904,107 @@ msgstr ""
 msgid "Pre-mount"
 msgstr ""
 
+msgid "Disk layout"
+msgstr ""
+
 #, python-brace-format
 msgid "{} layout"
 msgstr ""
 
 #, python-brace-format
-msgid "Devices {}"
+msgid "Device(s) \"{}\""
 msgstr ""
 
 msgid "LVM set up"
 msgstr ""
 
 #, python-brace-format
-msgid "{} encryption"
+msgid "\"{}\" encryption"
 msgstr ""
 
 #, python-brace-format
 msgid "Btrfs snapshot \"{}\""
 msgstr ""
 
+#, python-brace-format
+msgid "Mountpoint \"{}\""
+msgstr ""
+
 msgid "Unknown"
 msgstr ""
 
+msgid "Partition modification"
+msgstr ""
+
+#, python-brace-format
+msgid "Filesystem {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Size {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Status {}"
+msgstr ""
+
+#, python-brace-format
+msgid "Mountpoint {}"
+msgstr ""
+
+#, python-brace-format
+msgid "{} subvolume(s)"
+msgstr ""
+
 msgid "Default layout"
+msgstr ""
+
+msgid "LVM volume group"
+msgstr ""
+
+#, python-brace-format
+msgid "Volume group \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Volume group \"{}\" on {}"
+msgstr ""
+
+msgid "LVM volume"
+msgstr ""
+
+#, python-brace-format
+msgid "Volume \"{}\""
+msgstr ""
+
+msgid "LVM"
+msgstr ""
+
+#, python-brace-format
+msgid "LVM \"{}\""
+msgstr ""
+
+msgid "Btrfs snapshot"
+msgstr ""
+
+msgid "Btrfs options"
+msgstr ""
+
+msgid "Device modification"
+msgstr ""
+
+#, python-brace-format
+msgid "Device {}"
+msgstr ""
+
+msgid "wipe"
+msgstr ""
+
+msgid "keep existing data"
+msgstr ""
+
+#, python-brace-format
+msgid "Device \"{}\" ({})"
 msgstr ""
 
 msgid "No Encryption"
@@ -966,33 +1020,84 @@ msgid "LUKS on LVM"
 msgstr ""
 
 #, python-brace-format
+msgid "{} encryption"
+msgstr ""
+
+#, python-brace-format
+msgid "{} encrypted partition(s)"
+msgstr ""
+
+#, python-brace-format
+msgid "{} encrypted volume(s)"
+msgstr ""
+
+#, python-brace-format
+msgid "FIDO2 device \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Iteration time {} ms"
+msgstr ""
+
+msgid "Locale"
+msgstr ""
+
+#, python-brace-format
 msgid "Keyboard layout \"{}\""
 msgstr ""
 
 #, python-brace-format
-msgid "Locale language \"{}\""
+msgid "Language \"{}\""
 msgstr ""
 
 #, python-brace-format
-msgid "Locale encoding \"{}\""
+msgid "Encoding \"{}\""
 msgstr ""
 
 #, python-brace-format
 msgid "Console font \"{}\""
 msgstr ""
 
+msgid "Mirror region"
+msgstr ""
+
 #, python-brace-format
-msgid "Mirror regions \"{}\""
+msgid "Region \"{}\""
+msgstr ""
+
+msgid "Custom repository"
+msgstr ""
+
+#, python-brace-format
+msgid "Repository \"{}\""
+msgstr ""
+
+msgid "Sign check"
+msgstr ""
+
+msgid "Sign options"
+msgstr ""
+
+msgid "Custom server"
+msgstr ""
+
+msgid "Mirrors"
+msgstr ""
+
+#, python-brace-format
+msgid "{} Mirror region(s)"
 msgstr ""
 
 #, python-brace-format
 msgid "Optional repositories \"{}\""
 msgstr ""
 
-msgid "Custom servers set up"
+#, python-brace-format
+msgid "{} Custom server(s)"
 msgstr ""
 
-msgid "Custom repositories set up"
+#, python-brace-format
+msgid "{} Custom repository(s)"
 msgstr ""
 
 msgid "Copy ISO network configuration to installation"
@@ -1010,18 +1115,66 @@ msgstr ""
 msgid "Manual configuration"
 msgstr ""
 
+#, python-brace-format
+msgid "Interface \"{}\""
+msgstr ""
+
+msgid "DHCP enabled"
+msgstr ""
+
+#, python-brace-format
+msgid "IP address \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "Gateway \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "DNS servers \"{}\""
+msgstr ""
+
+msgid "Network"
+msgstr ""
+
 msgid "Package group:"
 msgstr ""
 
-msgid "Color enabled"
+msgid "Cavium LiquidIO server adapters"
+msgstr ""
+
+msgid "Marvell devices"
+msgstr ""
+
+msgid "Mellanox Spectrum switches"
+msgstr ""
+
+msgid "Netronome Flow Processors"
+msgstr ""
+
+msgid "Qualcomm SoCs"
+msgstr ""
+
+msgid "QLogic devices"
 msgstr ""
 
 #, python-brace-format
-msgid "{} graphics driver"
+msgid "Parallel downloads \"{}\""
+msgstr ""
+
+msgid "Color \"enabled\""
 msgstr ""
 
 #, python-brace-format
-msgid "{} greeter"
+msgid "Selected profiles \"{}\""
+msgstr ""
+
+#, python-brace-format
+msgid "\"{}\" graphics driver"
+msgstr ""
+
+#, python-brace-format
+msgid "\"{}\" greeter"
 msgstr ""
 
 msgid "very weak"
@@ -1034,6 +1187,20 @@ msgid "moderate"
 msgstr ""
 
 msgid "strong"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+#, python-brace-format
+msgid "User \"{}\""
+msgstr ""
+
+msgid "sudo user"
+msgstr ""
+
+#, python-brace-format
+msgid "groups {}"
 msgstr ""
 
 msgid "Add interface"
@@ -1122,15 +1289,6 @@ msgid ""
 "Select any packages from the below list that should be installed additionally"
 msgstr ""
 
-msgid ""
-"Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr ""
-
-msgid ""
-"Pre-existing pacman lock never exited. Please clean up any existing pacman "
-"sessions before using archinstall."
-msgstr ""
-
 #, python-brace-format
 msgid "Enter the number of parallel downloads (1-{})"
 msgstr ""
@@ -1140,6 +1298,15 @@ msgid "Value must be between 1 and {}"
 msgstr ""
 
 msgid "Enable colored output for pacman"
+msgstr ""
+
+msgid ""
+"Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr ""
+
+msgid ""
+"Pre-existing pacman lock never exited. Please clean up any existing pacman "
+"sessions before using archinstall."
 msgstr ""
 
 msgid "The proprietary Nvidia driver is not supported by Sway."
@@ -1177,9 +1344,6 @@ msgid "Promote/Demote user"
 msgstr ""
 
 msgid "Delete User"
-msgstr ""
-
-msgid "User"
 msgstr ""
 
 msgid "Enter new password"
