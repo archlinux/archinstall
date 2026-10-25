@@ -293,14 +293,12 @@ class FilesystemHandler:
 		for mod in self._disk_config.device_modifications:
 			partitions = mod.partitions
 
-			# don't touch existing partitions
-			filtered_part = [p for p in partitions if not p.exists()]
+			# don't touch existing or deleted partitions
+			create_or_modify_parts = [p for p in partitions if p.is_create_or_modify()]
 
-			self._validate_partitions(filtered_part)
+			self._validate_partitions(create_or_modify_parts)
 
-			enc_mods = {}
-
-			for part_mod in filtered_part:
+			for part_mod in create_or_modify_parts:
 				if part_mod in enc_config.partitions:
 					luks_handler = device_handler.encrypt(
 						part_mod.safe_dev_path,

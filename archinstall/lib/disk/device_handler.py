@@ -561,7 +561,7 @@ class DeviceHandler:
 		# Wipe filesystem/LVM signatures from newly created partitions
 		# to prevent "signature detected" errors
 		for part_mod in filtered_part:
-			if part_mod.dev_path:
+			if part_mod.is_create_or_modify() and part_mod.dev_path:
 				debug(f'Wiping signatures from: {part_mod.dev_path}')
 				SysCommand(f'wipefs --all {part_mod.dev_path}')
 

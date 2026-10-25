@@ -315,8 +315,8 @@ async def select_partitions_to_encrypt(
 	for mod in modification:
 		partitions += [p for p in mod.partitions if p.mountpoint != Path('/boot') and not p.is_swap()]
 
-	# do not allow encrypting existing partitions that are not marked as wipe
-	avail_partitions = [p for p in partitions if not p.exists()]
+	# do not allow encrypting existing or deleted partitions
+	avail_partitions = [p for p in partitions if p.is_create_or_modify()]
 
 	if avail_partitions:
 		group = MenuItemGroup.from_objects(avail_partitions)
