@@ -176,17 +176,18 @@ def mount(
 def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 	lsblk_info = get_lsblk_info(mountpoint)
 
-	if not lsblk_info.mountpoints:
+	mountpoints = [p for p in lsblk_info.mountpoints if p != Path('[SWAP]')]
+	if not mountpoints:
 		return
 
-	debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in lsblk_info.mountpoints]}')
+	debug(f'Partition {mountpoint} is currently mounted at: {[str(m) for m in mountpoints]}')
 
 	cmd = ['umount']
 
 	if recursive:
 		cmd.append('-R')
 
-	for path in lsblk_info.mountpoints:
+	for path in mountpoints:
 		debug(f'Unmounting mountpoint: {path}')
 		SysCommand([*cmd, str(path)])
 
@@ -196,6 +197,18 @@ def swapon(path: Path) -> None:
 		SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+
+def swapoff(path: Path) -> None:
+	lsblk_info = get_lsblk_info(path)
+	if Path('[SWAP]') not in lsblk_info.mountpoints:
+		return
+
+	debug(f'Disabling swap on: {path}')
+	try:
+		SysCommand(['swapoff', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not disable swap {path}:\n{err.message}')
 
 
 def linux_root_guid(arch: str | None) -> PartitionGUID:
