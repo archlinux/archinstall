@@ -262,6 +262,14 @@ class DiskLayoutConfiguration(SubConfig):
 				if any(subvol.is_default_root() for subvol in part.btrfs_subvols):
 					return True
 
+		if self.lvm_config:
+			for vol in self.lvm_config.get_all_volumes():
+				if not (vol.status in [ModificationStatus.CREATE, ModificationStatus.MODIFY] and vol.fs_type == FilesystemType.BTRFS):
+					continue
+
+				if any(subvol.is_default_root() for subvol in vol.btrfs_subvols):
+					return True
+
 		return False
 
 
