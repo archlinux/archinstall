@@ -116,9 +116,9 @@ def get_parent_device_path(dev_path: Path) -> Path:
 
 
 def get_unique_path_for_device(dev_path: Path) -> Path | None:
-	paths = Path('/dev/disk/by-id').glob('*')
+	paths = list(Path('/dev/disk/by-id').glob('*'))
 	linked_targets = {p.resolve(): p for p in paths}
-	linked_wwn_targets = {p: linked_targets[p] for p in linked_targets if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
+	linked_wwn_targets = {p.resolve(): p for p in paths if p.name.startswith('wwn-') or p.name.startswith('nvme-eui.')}
 
 	if dev_path in linked_wwn_targets:
 		return linked_wwn_targets[dev_path]
