@@ -265,6 +265,7 @@ class ProfileHandler:
 
 			profiles = self._process_profile_file(filepath)
 			self.remove_custom_profiles(profiles)
+			self.add_custom_profiles(profiles)
 
 	def _load_profile_class(self, module: ModuleType) -> list[Profile]:
 		"""
