@@ -397,8 +397,13 @@ async def suggest_lvm_layout(
 		(p.length for p in other_part),
 		Size(0, Unit.B, SectorSize.default()),
 	)
-	root_vol_size = process_root_partition_size(total_vol_available, SectorSize.default())
-	home_vol_size = total_vol_available - root_vol_size
+
+	if home_volume:
+		root_vol_size = process_root_partition_size(total_vol_available, SectorSize.default())
+		home_vol_size = total_vol_available - root_vol_size
+	else:
+		root_vol_size = total_vol_available
+		home_vol_size = Size(0, Unit.B, SectorSize.default())
 
 	lvm_vol_group = LvmVolumeGroup(vg_grp_name, pvs=other_part)
 
@@ -407,7 +412,7 @@ async def suggest_lvm_layout(
 		name='root',
 		fs_type=filesystem_type,
 		length=root_vol_size,
-		mountpoint=Path('/'),
+		mountpoint=Path('/') if not using_subvolumes else None,
 		btrfs_subvols=btrfs_subvols,
 		mount_options=mount_options,
 	)
