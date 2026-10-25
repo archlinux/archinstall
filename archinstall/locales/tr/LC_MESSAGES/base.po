@@ -1882,60 +1882,48 @@ msgstr "Ağ Yöneticisi'ni kullanın (iwd backend)"
 msgid "Firewall"
 msgstr "Güvenlik Duvarı"
 
-#, fuzzy
 msgid "Select audio configuration"
-msgstr "Kullanıcı yapılandırmasını kaydet"
+msgstr "Ses yapılandırmasını seçin"
 
-#, fuzzy
 msgid "Enter credentials file decryption password"
-msgstr "Kimlik bilgileri dosyası şifre çözme parolası"
+msgstr "Kimlik bilgileri dosyası şifre çözme parolasını girin"
 
-#, fuzzy
 msgid "Enter root password"
-msgstr "Bir parola gir: "
+msgstr "Root parolasını girin"
 
 msgid "Select bootloader to install"
 msgstr "Yüklemek istediğiniz önyükleyiciyi seçiniz"
 
-#, fuzzy
 msgid "Configuration preview"
-msgstr "Yapılandırma"
+msgstr "Yapılandırma önizlemesi"
 
-#, fuzzy
 msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Yapılandırmaların kaydedilmesi için bir dizin girin: "
+msgstr "Yapılandırmaların kaydedileceği bir dizin girin"
 
-#, fuzzy
 msgid "Select encryption type"
-msgstr "Şifreleme türü"
+msgstr "Şifreleme türünü seçin"
 
-#, fuzzy
 msgid "Select disks for the installation"
-msgstr "Kurulum için istenilen ana bilgisayar adı: "
+msgstr "Kurulum için diskleri seçin"
 
-#, fuzzy
 msgid "Enter a mountpoint"
-msgstr "Bir bağlantı noktası seçin :"
+msgstr "Bir bağlantı noktası girin"
 
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Enter a size (default: {}): "
-msgstr "Bitiş girin (varsayılan: {}): "
+msgstr "Bir boyut girin (varsayılan: {}): "
 
-#, fuzzy
 msgid "Enter subvolume name"
-msgstr "Alt disk bölümü ismi"
+msgstr "Alt disk bölümü adını girin"
 
-#, fuzzy
 msgid "Enter subvolume mountpoint"
-msgstr "Alt disk bölümü bağlantı noktası"
+msgstr "Alt disk bölümü bağlantı noktasını girin"
 
-#, fuzzy
 msgid "Select a disk configuration"
-msgstr "Disk yapılandırması"
+msgstr "Bir disk yapılandırması seçin"
 
-#, fuzzy
 msgid "Enter root mount directory"
-msgstr "Kök (/) bağlama dizini"
+msgstr "Kök bağlama dizinini girin"
 
 msgid "You will use whatever drive-setup is mounted at the specified directory"
 msgstr "Belirtilen dizine bağlanmış olan sürücü yapılandırmasını kullanacaksınız"
@@ -1943,16 +1931,14 @@ msgstr "Belirtilen dizine bağlanmış olan sürücü yapılandırmasını kulla
 msgid "WARNING: Archinstall won't check the suitability of this setup"
 msgstr "DİKKAT: Archinstall betiği bu kurulumun uygunluğunu kontrol etmeyecektir"
 
-#, fuzzy
 msgid "Select main filesystem"
-msgstr "Dosya sistemini değiştir"
+msgstr "Ana dosya sistemini seçin"
 
 msgid "Enter a hostname"
 msgstr "Bir ana bilgisayar adı girin"
 
-#, fuzzy
 msgid "Select timezone"
-msgstr "Bir zaman dilimi seç"
+msgstr "Bir zaman dilimi seçin"
 
 #, fuzzy
 msgid "Enter the number of parallel downloads to be enabled"
@@ -1965,64 +1951,51 @@ msgstr ""
 msgid "Value must be between 1 and {}"
 msgstr "Değer 1 ile {} arasında olmalı"
 
-#, fuzzy
 msgid "Select which kernel(s) to install"
-msgstr "Lütfen hangi karşılayıcının (greeter) kurulacağını seçin"
+msgstr "Kurulacak çekirdekleri seçin"
 
 #, fuzzy
 msgid "Enter a respository name"
 msgstr "Depo adı"
 
-#, fuzzy
 msgid "Enter the repository url"
-msgstr "Özel depoyu değiştir"
+msgstr "Depo URL'sini girin"
 
-#, fuzzy
 msgid "Enter server url"
-msgstr "Sunucu adresi"
+msgstr "Sunucu URL'sini girin"
 
-#, fuzzy
 msgid "Select mirror regions to be enabled"
-msgstr "Seçilmiş ayna bölgeleri"
+msgstr "Etkinleştirilecek ayna bölgelerini seçin"
 
-#, fuzzy
 msgid "Select optional repositories to be enabled"
-msgstr "Hangi tercihi ek depoların (repositorylerin) aktifleştirileceğini seçin"
+msgstr "Etkinleştirilecek isteğe bağlı depoları seçin"
 
-#, fuzzy
 msgid "Select an interface"
-msgstr "Arayüzü sil"
+msgstr "Bir arayüz seçin"
 
-#, fuzzy
 msgid "Choose network configuration"
-msgstr "Ağ yapılandırması yok"
+msgstr "Ağ yapılandırmasını seçin"
 
-#, fuzzy
 msgid "No packages found"
-msgstr "U2F cihazı bulunamadı"
+msgstr "Paket bulunamadı"
 
-#, fuzzy
 msgid "Select which greeter to install"
-msgstr "Lütfen hangi karşılayıcının (greeter) kurulacağını seçin"
+msgstr "Kurulacak karşılayıcıyı (greeter) seçin"
 
-#, fuzzy
 msgid "Select a profile type"
-msgstr "Seçilmiş profiller: "
+msgstr "Bir profil türü seçin"
 
-#, fuzzy
 msgid "Enter new password"
-msgstr "Wifi şifresini girin"
+msgstr "Yeni parolayı girin"
 
 msgid "Enter a username"
 msgstr "Bir kullanıcı adı gir"
 
-#, fuzzy
 msgid "Enter a password"
-msgstr "Bir parola gir: "
+msgstr "Bir parola girin"
 
-#, fuzzy
 msgid "The password did not match, please try again"
-msgstr "Onay parolası eşleşmedi, lütfen tekrar deneyin"
+msgstr "Parolalar eşleşmedi, lütfen tekrar deneyin"
 
 msgid "Password strength: Weak"
 msgstr "Şifre gücü: Zayıf"
@@ -2032,6 +2005,641 @@ msgstr "Şifre gücü: Ortalama"
 
 msgid "Password strength: Strong"
 msgstr "Şifre gücü: Güçlü"
+
+msgid "Recommended"
+msgstr "Önerilen"
+
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Özenle seçilmiş KDE Plasma paketleri"
+
+msgid "Dependencies"
+msgstr "Bağımlılıklar"
+
+msgid "Extensive KDE Plasma installation"
+msgstr "Kapsamlı KDE Plasma kurulumu"
+
+msgid "Minimal KDE Plasma installation"
+msgstr "Minimal KDE Plasma kurulumu"
+
+#, python-brace-format
+msgid "{} needs access to your seat"
+msgstr "{} için seat erişimi gerekir"
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr "Plymouth görsel bir açılış ekranı ekler ancak bazı yapılandırmalarda önyükleme sorunlarına yol açabilir:"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "NVIDIA sürücüsüyle siyah ekran"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "disk şifrelemesinde (LUKS) gizli kalan parola istemi"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "Hiç disk algılanmadı. Arch Linux'u kurabilmek için bir disk gereklidir"
+
+msgid "Select optional firmware to install (none are pulled in by linux-firmware)"
+msgstr "Kurulacak isteğe bağlı donanım yazılımlarını seçin (hiçbiri linux-firmware paketiyle birlikte kurulmaz)"
+
+msgid "Pacman"
+msgstr "Pacman"
+
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Seçilen masaüstü profili, karşılayıcı (greeter) üzerinden oturum açmak için normal bir kullanıcı gerektirir"
+
+msgid "Color"
+msgstr "Renk"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Ağ yapılandırması seçilmedi. Ağın, kurulan sistemde elle ayarlanması gerekecek."
+
+msgid "Warnings:"
+msgstr "Uyarılar:"
+
+msgid "Console font"
+msgstr "Konsol yazı tipi"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Çoğu dil için Unicode yazı tipi desteği"
+
+msgid "color emoji for browsers and apps"
+msgstr "tarayıcılar ve uygulamalar için renkli emoji"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "Çince, Japonca, Korece karakterler"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "Arial/Times/Courier yerine kullanılabilir, Steam/oyunlar için Kiril desteği"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "geniş Unicode desteği, iyi bir yedek yazı tipi"
+
+msgid "Fonts"
+msgstr "Yazı tipleri"
+
+msgid "Zram"
+msgstr "Zram"
+
+#, python-brace-format
+msgid "Algorithm \"{}\""
+msgstr "Algoritma \"{}\""
+
+#, python-brace-format
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
+
+msgid "Manual"
+msgstr "Manuel"
+
+msgid "Pre-mount"
+msgstr "Önceden bağlama"
+
+msgid "LVM set up"
+msgstr "LVM yapılandırması"
+
+#, python-brace-format
+msgid "Status {}"
+msgstr "Durum {}"
+
+#, python-brace-format
+msgid "Volume group \"{}\""
+msgstr "Birim grubu \"{}\""
+
+#, python-brace-format
+msgid "Volume group \"{}\" on {}"
+msgstr "Birim grubu \"{}\", {} üzerinde"
+
+msgid "LVM"
+msgstr "LVM"
+
+#, python-brace-format
+msgid "LVM \"{}\""
+msgstr "LVM \"{}\""
+
+msgid "Btrfs options"
+msgstr "Btrfs seçenekleri"
+
+msgid "wipe"
+msgstr "temizle"
+
+msgid "keep existing data"
+msgstr "mevcut verileri koru"
+
+#, python-brace-format
+msgid "Device \"{}\" ({})"
+msgstr "Cihaz \"{}\" ({})"
+
+#, python-brace-format
+msgid "{} encrypted volume(s)"
+msgstr "{} şifreli birim"
+
+#, python-brace-format
+msgid "FIDO2 device \"{}\""
+msgstr "FIDO2 cihazı \"{}\""
+
+#, python-brace-format
+msgid "Encoding \"{}\""
+msgstr "Kodlama \"{}\""
+
+#, python-brace-format
+msgid "Console font \"{}\""
+msgstr "Konsol yazı tipi \"{}\""
+
+#, python-brace-format
+msgid "Region \"{}\""
+msgstr "Bölge \"{}\""
+
+msgid "Use standalone iwd"
+msgstr "Bağımsız iwd kullan"
+
+#, python-brace-format
+msgid "Gateway \"{}\""
+msgstr "Ağ geçidi \"{}\""
+
+msgid "Network"
+msgstr "Ağ"
+
+msgid "Cavium LiquidIO server adapters"
+msgstr "Cavium LiquidIO sunucu adaptörleri"
+
+msgid "Mellanox Spectrum switches"
+msgstr "Mellanox Spectrum anahtarları"
+
+msgid "Netronome Flow Processors"
+msgstr "Netronome Flow İşlemcileri"
+
+msgid "Qualcomm SoCs"
+msgstr "Qualcomm SoC'ler"
+
+msgid "QLogic devices"
+msgstr "QLogic cihazları"
+
+msgid "Color \"enabled\""
+msgstr "Renk \"etkin\""
+
+#, python-brace-format
+msgid "groups {}"
+msgstr "gruplar {}"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Önerilen: masaüstü için Network Manager, sunucu için Manuel"
+
+msgid "Enable colored output for pacman"
+msgstr "Pacman için renkli çıktıyı etkinleştir"
+
+#, python-brace-format
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "\"{}\" dosyası herkese açık erişimli {} konumuna yüklenmek üzere"
+
+#, python-brace-format
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Günlük başarıyla yüklendi. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Günlük yüklenemedi."
+
+msgid "Bottom"
+msgstr "En alt"
+
+msgid "Copy selected text"
+msgstr "Seçili metni kopyala"
+
+msgid "Cursor up"
+msgstr "İmleç yukarı"
+
+msgid "Cut selected text"
+msgstr "Seçili metni kes"
+
+msgid "Delete all to the left"
+msgstr "Soldakilerin tümünü sil"
+
+msgid "Delete all to the right"
+msgstr "Sağdakilerin tümünü sil"
+
+msgid "Delete character left"
+msgstr "Soldaki karakteri sil"
+
+msgid "Delete left to start of word"
+msgstr "Sola doğru sözcük başına kadar sil"
+
+msgid "Delete right to start of word"
+msgstr "Sağa doğru sözcük başına kadar sil"
+
+msgid "Down"
+msgstr "Aşağı"
+
+msgid "First"
+msgstr "İlk"
+
+msgid "Focus Next"
+msgstr "Sonrakine odaklan"
+
+msgid "Focus Previous"
+msgstr "Öncekine odaklan"
+
+msgid "Go to end"
+msgstr "Sona git"
+
+msgid "Go to start"
+msgstr "Başa git"
+
+msgid "Home"
+msgstr "Başlangıç"
+
+msgid "Last"
+msgstr "Son"
+
+msgid "Move cursor left a word"
+msgstr "İmleci bir sözcük sola taşı"
+
+msgid "Move cursor left a word and select"
+msgstr "İmleci bir sözcük sola taşı ve seç"
+
+msgid "Move cursor left and select"
+msgstr "İmleci sola taşı ve seç"
+
+msgid "Move cursor right a word"
+msgstr "İmleci bir sözcük sağa taşı"
+
+msgid "Move cursor right a word and select"
+msgstr "İmleci bir sözcük sağa taşı ve seç"
+
+msgid "Move cursor right and select"
+msgstr "İmleci sağa taşı ve seç"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "İmleci sağa taşı veya tamamlama önerisini kabul et"
+
+msgid "Page Down"
+msgstr "Sayfa aşağı"
+
+msgid "Page Left"
+msgstr "Sayfa sola"
+
+msgid "Page Up"
+msgstr "Sayfa yukarı"
+
+msgid "Paste text from the clipboard"
+msgstr "Panodaki metni yapıştır"
+
+msgid "Press button"
+msgstr "Düğmeye bas"
+
+msgid "Quit"
+msgstr "Çık"
+
+msgid "Scroll End"
+msgstr "Sona kaydır"
+
+msgid "Scroll Home"
+msgstr "Başa kaydır"
+
+msgid "Scroll Left"
+msgstr "Sola kaydır"
+
+msgid "Scroll Right"
+msgstr "Sağa kaydır"
+
+msgid "Scroll Up"
+msgstr "Yukarı kaydır"
+
+msgid "Submit"
+msgstr "Gönder"
+
+msgid "Top"
+msgstr "En üst"
+
+msgid "Up"
+msgstr "Yukarı"
+
+msgid "Search"
+msgstr "Ara"
+
+msgid "Toggle"
+msgstr "Aç/kapat"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "Package group"
+msgstr "Paket grubu"
+
+msgid "Packages in group"
+msgstr "Gruptaki paketler"
+
+msgid "Description"
+msgstr "Açıklama"
+
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Kurulacak KDE Plasma çeşidini seçin"
+
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "donanım cihazları topluluğu (ör. klavye, fare)"
+
+#, python-brace-format
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "{} için donanımınıza erişim yöntemini seçin"
+
+#, python-brace-format
+msgid "Environment type: {} {}"
+msgstr "Ortam türü: {} {}"
+
+msgid "Additional fonts"
+msgstr "Ek yazı tipleri"
+
+msgid "Select font packages to install"
+msgstr "Kurulacak yazı tipi paketlerini seçin"
+
+#, python-brace-format
+msgid "Setting up U2F login: {}"
+msgstr "U2F oturum açma kuruluyor: {}"
+
+msgid "Would you like to enable it?"
+msgstr "Etkinleştirmek ister misiniz?"
+
+msgid "Select Plymouth theme"
+msgstr "Plymouth temasını seçin"
+
+#, python-brace-format
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Varsayılan: {} ms, Önerilen aralık: 1000-60000"
+
+msgid "Additional firmware"
+msgstr "Ek donanım yazılımları"
+
+msgid "Missing configurations:"
+msgstr "Eksik yapılandırmalar:"
+
+msgid "Invalid configuration:"
+msgstr "Geçersiz yapılandırma:"
+
+msgid "Ready to install"
+msgstr "Kuruluma hazır"
+
+msgid "Enter a repository name"
+msgstr "Bir depo adı girin"
+
+msgid "enabled"
+msgstr "etkin"
+
+msgid "Zram disabled"
+msgstr "Zram devre dışı"
+
+msgid "Application"
+msgstr "Uygulama"
+
+msgid "U2F login"
+msgstr "U2F oturum açma"
+
+#, python-brace-format
+msgid "U2F login method \"{}\""
+msgstr "U2F oturum açma yöntemi \"{}\""
+
+msgid "U2F passwordless sudo enabled"
+msgstr "U2F ile parolasız sudo etkin"
+
+msgid "U2F passwordless sudo disabled"
+msgstr "U2F ile parolasız sudo devre dışı"
+
+msgid "Root password set"
+msgstr "Root parolası ayarlandı"
+
+#, python-brace-format
+msgid "Configured {} user(s)"
+msgstr "{} kullanıcı yapılandırıldı"
+
+msgid "U2F configured"
+msgstr "U2F yapılandırıldı"
+
+msgid "UKI \"enabled\""
+msgstr "UKI \"etkin\""
+
+msgid "Default"
+msgstr "Varsayılan"
+
+#, python-brace-format
+msgid "{} layout"
+msgstr "{} düzeni"
+
+#, python-brace-format
+msgid "Device(s) \"{}\""
+msgstr "Cihaz(lar) \"{}\""
+
+#, python-brace-format
+msgid "\"{}\" encryption"
+msgstr "\"{}\" şifrelemesi"
+
+#, python-brace-format
+msgid "Btrfs snapshot \"{}\""
+msgstr "Btrfs anlık görüntüsü \"{}\""
+
+#, python-brace-format
+msgid "Mountpoint \"{}\""
+msgstr "Bağlantı noktası \"{}\""
+
+msgid "Partition modification"
+msgstr "Disk bölümü değişikliği"
+
+#, python-brace-format
+msgid "Filesystem {}"
+msgstr "Dosya sistemi {}"
+
+#, python-brace-format
+msgid "Size {}"
+msgstr "Boyut {}"
+
+#, python-brace-format
+msgid "Mountpoint {}"
+msgstr "Bağlantı noktası {}"
+
+#, python-brace-format
+msgid "{} subvolume(s)"
+msgstr "{} alt disk bölümü"
+
+msgid "LVM volume group"
+msgstr "LVM birim grubu"
+
+msgid "LVM volume"
+msgstr "LVM birimi"
+
+#, python-brace-format
+msgid "Volume \"{}\""
+msgstr "Birim \"{}\""
+
+msgid "Btrfs snapshot"
+msgstr "Btrfs anlık görüntüsü"
+
+msgid "Device modification"
+msgstr "Cihaz değişikliği"
+
+#, python-brace-format
+msgid "Device {}"
+msgstr "Cihaz {}"
+
+#, python-brace-format
+msgid "{} encryption"
+msgstr "{} şifrelemesi"
+
+#, python-brace-format
+msgid "{} encrypted partition(s)"
+msgstr "{} şifreli disk bölümü"
+
+#, python-brace-format
+msgid "Iteration time {} ms"
+msgstr "Yineleme süresi {} ms"
+
+msgid "Locale"
+msgstr "Yerel ayarlar"
+
+#, python-brace-format
+msgid "Keyboard layout \"{}\""
+msgstr "Klavye düzeni \"{}\""
+
+#, python-brace-format
+msgid "Language \"{}\""
+msgstr "Dil \"{}\""
+
+msgid "Custom repository"
+msgstr "Özel depo"
+
+#, python-brace-format
+msgid "Repository \"{}\""
+msgstr "Depo \"{}\""
+
+msgid "Sign check"
+msgstr "İmza kontrolü"
+
+msgid "Sign options"
+msgstr "İmza seçenekleri"
+
+msgid "Custom server"
+msgstr "Özel sunucu"
+
+#, python-brace-format
+msgid "{} Mirror region(s)"
+msgstr "{} ayna bölgesi"
+
+#, python-brace-format
+msgid "Optional repositories \"{}\""
+msgstr "İsteğe bağlı depolar \"{}\""
+
+#, python-brace-format
+msgid "{} Custom server(s)"
+msgstr "{} özel sunucu"
+
+#, python-brace-format
+msgid "{} Custom repository(s)"
+msgstr "{} özel depo"
+
+#, python-brace-format
+msgid "Interface \"{}\""
+msgstr "Arayüz \"{}\""
+
+msgid "DHCP enabled"
+msgstr "DHCP etkin"
+
+#, python-brace-format
+msgid "IP address \"{}\""
+msgstr "IP adresi \"{}\""
+
+#, python-brace-format
+msgid "DNS servers \"{}\""
+msgstr "DNS sunucuları \"{}\""
+
+msgid "Marvell devices"
+msgstr "Marvell cihazları"
+
+#, python-brace-format
+msgid "Parallel downloads \"{}\""
+msgstr "Paralel indirmeler \"{}\""
+
+#, python-brace-format
+msgid "Selected profiles \"{}\""
+msgstr "Seçilen profiller \"{}\""
+
+#, python-brace-format
+msgid "\"{}\" graphics driver"
+msgstr "\"{}\" grafik sürücüsü"
+
+#, python-brace-format
+msgid "\"{}\" greeter"
+msgstr "\"{}\" karşılayıcısı (greeter)"
+
+#, python-brace-format
+msgid "User \"{}\""
+msgstr "Kullanıcı \"{}\""
+
+msgid "sudo user"
+msgstr "sudo kullanıcısı"
+
+#, python-brace-format
+msgid "Enter the number of parallel downloads (1-{})"
+msgstr "Paralel indirme sayısını girin (1-{})"
+
+msgid "Do you want to continue?"
+msgstr "Devam etmek istiyor musunuz?"
+
+msgid "Cursor down"
+msgstr "İmleç aşağı"
+
+msgid "Cursor left"
+msgstr "İmleç sola"
+
+msgid "Cursor right"
+msgstr "İmleç sağa"
+
+msgid "Delete character right"
+msgstr "Sağdaki karakteri sil"
+
+msgid "End"
+msgstr "Bitiş"
+
+msgid "Move cursor left"
+msgstr "İmleci sola taşı"
+
+msgid "Page Right"
+msgstr "Sayfa sağa"
+
+msgid "Page down"
+msgstr "Sayfa aşağı"
+
+msgid "Page up"
+msgstr "Sayfa yukarı"
+
+msgid "Scroll Down"
+msgstr "Aşağı kaydır"
+
+msgid "Select"
+msgstr "Seç"
+
+msgid "Select all"
+msgstr "Tümünü seç"
+
+msgid "Select line end"
+msgstr "Satır sonunu seç"
+
+msgid "Select line start"
+msgstr "Satır başını seç"
+
+msgid "Toggle option"
+msgstr "Seçeneği aç/kapat"
+
+msgid "Confirm"
+msgstr "Onayla"
+
+msgid "Focus right"
+msgstr "Sağa odaklan"
+
+msgid "Focus left"
+msgstr "Sola odaklan"
+
+msgid "Input cannot be empty"
+msgstr "Girdi boş olamaz"
+
+msgid "Show/Hide help"
+msgstr "Yardımı göster/gizle"
 
 #~ msgid "Desktop"
 #~ msgstr "Masaüstü"
