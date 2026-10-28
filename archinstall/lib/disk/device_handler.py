@@ -514,6 +514,9 @@ class DeviceHandler:
 			if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 				Luks2(partition.path).lock()
 			else:
+				# a swapfile can live on this filesystem; pass its mountpoints so it is
+				# deactivated before the unmount instead of failing afterwards
+				swapoff(partition.path, get_lsblk_info(partition.path).mountpoints)
 				umount(partition.path, recursive=True)
 
 	def partition(
