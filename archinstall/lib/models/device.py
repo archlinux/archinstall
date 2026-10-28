@@ -930,6 +930,15 @@ class PartitionModification(SubConfig):
 		if self.fs_type is None and self.status == ModificationStatus.MODIFY:
 			raise ValueError('FS type must not be empty on modifications with status type modify')
 
+		# A partition that is being created needs a real length. The interactive
+		# prompt has always enforced this, but a configuration file or a script
+		# could put a zero-length partition into the layout, where it survived until
+		# libparted refused it while writing - long after the layout had been
+		# summarised and confirmed. EXIST and MODIFY describe what is already on the
+		# disk, so their length is reported rather than chosen and is left alone.
+		if self.status == ModificationStatus.CREATE and self.length <= Size(0, Unit.B, self.start.sector_size):
+			raise ValueError(f'A created partition needs a length, got {self.length.format_size(Unit.B)}')
+
 	@override
 	def __hash__(self) -> int:
 		return hash(self._obj_id)
