@@ -8,9 +8,19 @@ from archinstall.lib.command import SysCommand, SysCommandWorker, run
 from archinstall.lib.disk.utils import get_lsblk_info, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
-from archinstall.lib.models.device import DEFAULT_ITER_TIME
+from archinstall.lib.models.device import DEFAULT_ITER_TIME, LsblkInfo
 from archinstall.lib.models.users import Password
 from archinstall.lib.utils.util import generate_password
+
+
+def _lsblk_subtree(info: LsblkInfo) -> list[LsblkInfo]:
+	"""The device and everything stacked below it, parents before children."""
+	nodes = [info]
+
+	for child in info.children:
+		nodes.extend(_lsblk_subtree(child))
+
+	return nodes
 
 
 @dataclass
@@ -169,10 +179,13 @@ class Luks2:
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:
-			# Unmount the child location
-			for mountpoint in child.mountpoints:
-				debug(f'Unmounting {mountpoint}')
-				umount(mountpoint, recursive=True)
+			# Everything mounted below the child has to go before the child itself: on
+			# LUKS-on-LVM the mountpoints live on the logical volumes, which are
+			# grandchildren of the mapper, so looking one level down left them mounted
+			# and `cryptsetup close` then found the device busy.
+			for node in reversed(_lsblk_subtree(child)):
+				debug(f'Unmounting {node.name}')
+				umount(node.path, recursive=True)
 
 			# And close it if possible.
 			debug(f'Closing crypt device {child.name}')
