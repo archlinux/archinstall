@@ -994,7 +994,10 @@ class PartitionModification(SubConfig):
 					SubvolumeModification.from_existing_subvol_info(i),
 				)
 		else:
-			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
+			# lsblk reports '[SWAP]' as the mountpoint of an active swap area. That is a
+			# display marker, not a path: a swap area has no mountpoint, and treating the
+			# marker as one leads to mounting the device on <target>/[SWAP].
+			mountpoint = next((p for p in partition_info.mountpoints if p.is_absolute()), None)
 			subvol_mods = []
 
 		return cls(
@@ -1848,3 +1851,71 @@ class LsblkInfo(BaseModel):
 	@classmethod
 	def fields(cls) -> list[str]:
 		return [field.alias or name for name, field in cls.model_fields.items() if name != 'children']
+
+
+# The serialisation of the disk configuration is a tree of TypedDicts. Reading it
+# looks keys up by name, so a key that is misspelled - or one belonging to an older
+# release - does not fail anywhere: the value it was meant to set keeps its default.
+# Walking the same TypedDicts lets the loader point at the key instead of guessing.
+_SERIALIZATION_CHILDREN: dict[str, tuple[str, ...]] = {
+	'_DiskLayoutConfigurationSerialization': ('device_modifications', 'lvm_config', 'disk_encryption', 'btrfs_options'),
+	'_DeviceModificationSerialization': ('partitions',),
+	'_PartitionModificationSerialization': ('start', 'size', 'btrfs'),
+	'_SizeSerialization': ('sector_size',),
+	'_LvmConfigurationSerialization': ('vol_groups',),
+	'_LvmVolumeGroupSerialization': ('volumes',),
+	'_LvmVolumeSerialization': ('length', 'btrfs'),
+	'_DiskEncryptionSerialization': ('hsm_device',),
+}
+
+
+def serialization_keys() -> dict[str, frozenset[str]]:
+	"""The keys each node of the disk configuration serialisation accepts.
+
+	Built from the type annotations rather than from a second hand written list, so
+	it cannot drift away from what is actually read. Every type that is reached
+	through a nested key is included, not only the ones that themselves have
+	children.
+	"""
+	kinds = set(_SERIALIZATION_CHILDREN) | set(_SERIALIZATION_CHILD_KINDS.values())
+
+	keys: dict[str, frozenset[str]] = {}
+
+	for name in sorted(kinds):
+		serialization = globals().get(name)
+
+		if serialization is None or not hasattr(serialization, '__annotations__'):
+			continue
+
+		keys[name] = frozenset(serialization.__annotations__)
+
+	return keys
+
+
+def serialization_child_kind(key: str) -> str:
+	"""The serialisation type stored under a nested key, if it is a known one."""
+	return _SERIALIZATION_CHILD_KINDS.get(key, '')
+
+
+def serialization_children() -> dict[str, tuple[str, ...]]:
+	"""For each node, which of its keys hold a nested serialisation."""
+	return dict(_SERIALIZATION_CHILDREN)
+
+
+# which serialisation type sits under each nested key; the key names do not follow
+# the type names, so the mapping has to be explicit
+_SERIALIZATION_CHILD_KINDS: dict[str, str] = {
+	'device_modifications': '_DeviceModificationSerialization',
+	'partitions': '_PartitionModificationSerialization',
+	'lvm_config': '_LvmConfigurationSerialization',
+	'vol_groups': '_LvmVolumeGroupSerialization',
+	'volumes': '_LvmVolumeSerialization',
+	'disk_encryption': '_DiskEncryptionSerialization',
+	'hsm_device': '_Fido2DeviceSerialization',
+	'start': '_SizeSerialization',
+	'size': '_SizeSerialization',
+	'length': '_SizeSerialization',
+	'sector_size': '_SectorSizeSerialization',
+	'btrfs': '_SubvolumeModificationSerialization',
+	'btrfs_options': '_BtrfsOptionsSerialization',
+}

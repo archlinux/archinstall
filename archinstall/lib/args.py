@@ -23,7 +23,13 @@ from archinstall.lib.models.application import ApplicationConfiguration, ZramCon
 from archinstall.lib.models.authentication import AuthenticationConfiguration
 from archinstall.lib.models.bootloader import Bootloader, BootloaderConfiguration
 from archinstall.lib.models.config import SubConfig, SummaryLevel
-from archinstall.lib.models.device import DiskEncryption, DiskLayoutConfiguration
+from archinstall.lib.models.device import (
+	DiskEncryption,
+	DiskLayoutConfiguration,
+	serialization_child_kind,
+	serialization_children,
+	serialization_keys,
+)
 from archinstall.lib.models.locale import LocaleConfiguration
 from archinstall.lib.models.mirrors import MirrorConfiguration
 from archinstall.lib.models.network import NetworkConfiguration
@@ -441,6 +447,16 @@ class ArchConfig:
 		return as_key_value_pair(cfg, ignore_empty=True)
 
 
+_CONFIG_KEYS_DOCUMENTED_ONLY: frozenset[str] = frozenset(
+	{
+		'debug',
+		'no_pkg_lookups',
+		'offline',
+		'silent',
+	},
+)
+
+
 class ArchConfigHandler:
 	def __init__(self) -> None:
 		self._parser: ArgumentParser = self._define_arguments()
@@ -790,5 +806,50 @@ class ArchConfigHandler:
 		"""
 		known = {key.value for key in ArchConfigType} | _CONFIG_KEYS_READ_BY_HAND
 
-		if unknown := sorted(set(config) - known):
+		# these are documented configuration keys that `from_config()` never reads; they
+		# only exist as command line flags. Reporting them as a misspelling would point
+		# at the user's file, while the option is simply not wired up to the file.
+		documented_not_read = sorted(set(config) & _CONFIG_KEYS_DOCUMENTED_ONLY)
+		if documented_not_read:
+			warn(
+				f'These configuration keys are documented but not applied by this version, set them on the command line instead: {documented_not_read}',
+			)
+
+		if unknown := sorted(set(config) - known - _CONFIG_KEYS_DOCUMENTED_ONLY):
 			warn(f'Ignoring unknown configuration keys: {unknown}')
+
+		if disk_config := config.get('disk_config', None):
+			if disk_config_unknown := self._unknown_keys_in_disk_config(disk_config):
+				warn(f'Ignoring unknown keys in the disk configuration: {disk_config_unknown}')
+
+	def _unknown_keys_in_disk_config(self, disk_config: Any) -> list[str]:
+		"""Misspelled keys anywhere in the disk configuration, as dotted paths.
+
+		The disk configuration is the largest and most nested part of the file, and
+		the one where a misspelled key costs the most: the layout it describes is
+		applied to the disk, and the option keeps its default without a word.
+		"""
+		keys = serialization_keys()
+		children = serialization_children()
+		root = '_DiskLayoutConfigurationSerialization'
+		unknown: list[str] = []
+
+		def walk(node: Any, kind: str, path: str) -> None:
+			if isinstance(node, list):
+				for index, item in enumerate(node):
+					walk(item, kind, f'{path}[{index}]')
+				return
+
+			if not isinstance(node, dict):
+				return
+
+			if allowed := keys.get(kind):
+				unknown.extend(f'{path}.{key}' if path else key for key in sorted(set(node) - allowed))
+
+			for child_key in children.get(kind, ()):
+				if (child := node.get(child_key)) is not None:
+					walk(child, serialization_child_kind(child_key), f'{path}.{child_key}' if path else child_key)
+
+		walk(disk_config, root, '')
+
+		return unknown
