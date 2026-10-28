@@ -45,6 +45,7 @@ from archinstall.lib.models.device import (
 	EncryptionType,
 	FilesystemType,
 	LvmVolume,
+	ModificationStatus,
 	PartitionModification,
 	SectorSize,
 	Size,
@@ -291,13 +292,15 @@ class Installer:
 
 		# move the device with the root partition to the beginning of the list
 		for mod in self._disk_config.device_modifications:
-			if any(partition.is_root() for partition in mod.partitions):
+			if any(partition.is_root() and partition.status != ModificationStatus.DELETE for partition in mod.partitions):
 				sorted_device_mods.remove(mod)
 				sorted_device_mods.insert(0, mod)
 				break
 
 		for mod in sorted_device_mods:
-			not_pv_part_mods = [p for p in mod.partitions if p not in pvs]
+			# deleted partitions must not be mounted, they can still carry a
+			# mountpoint or swap flag from before the deletion
+			not_pv_part_mods = [p for p in mod.partitions if p not in pvs and p.status != ModificationStatus.DELETE]
 
 			# partitions have to mounted in the right order on btrfs the mountpoint will
 			# be empty as the actual subvolumes are getting mounted instead so we'll use
