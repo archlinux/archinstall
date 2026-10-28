@@ -165,12 +165,18 @@ class DiskLayoutConfiguration(SubConfig):
 			device_path = Path(entry['device']) if entry.get('device', None) else None
 
 			if not device_path:
-				continue
+				raise ValueError(f'A device modification entry does not name a device: {entry}')
 
 			device = device_handler.get_device(device_path)
 
 			if not device:
-				continue
+				# dropping the entry silently left a layout that describes no disk at
+				# all while still being truthy, so every later "is a layout set?" guard
+				# passed and the installation went on to do nothing
+				raise ValueError(
+					f'Device "{device_path}" from the configuration could not be found, '
+					f'known devices are {[str(d.device_info.path) for d in device_handler.devices]}',
+				)
 
 			device_modification = DeviceModification(
 				wipe=entry.get('wipe', False),
@@ -201,6 +207,17 @@ class DiskLayoutConfiguration(SubConfig):
 				)
 				# special 'invisible' attr to internally identify the part mod
 				device_partition._obj_id = partition['obj_id']
+
+				# an EXIST or MODIFY entry describes a partition that has to be on the
+				# device it is listed under; a path from another disk used to be taken
+				# as-is and the blueprint then pointed at a partition nothing had probed
+				if device_partition.dev_path is not None and device_partition.is_exists_or_modify():
+					known = {str(part.path) for part in device.partition_infos}
+					if str(device_partition.dev_path) not in known:
+						raise ValueError(
+							f'Partition "{device_partition.dev_path}" is not a partition of "{device_path}", which has {sorted(known)}',
+						)
+
 				device_partitions.append(device_partition)
 
 			device_modification.partitions = device_partitions
@@ -246,6 +263,17 @@ class DiskLayoutConfiguration(SubConfig):
 
 		if (enc_config := disk_config.get('disk_encryption', None)) is not None:
 			config.disk_encryption = DiskEncryption.parse_arg(config, enc_config, enc_password)
+
+		# LVM on top of an encrypted setup only has two meaningful combinations; any
+		# other encryption type leaves the volume group unbuilt (see
+		# FilesystemHandler._setup_lvm_encrypted), so reject the layout here, before
+		# anything has been written to disk
+		if config.lvm_config and config.disk_encryption:
+			supported = (EncryptionType.LVM_ON_LUKS, EncryptionType.LUKS_ON_LVM)
+			if config.disk_encryption.encryption_type not in supported:
+				raise ValueError(
+					f'Encryption type "{config.disk_encryption.encryption_type.value}" cannot be combined with LVM, use one of {[e.value for e in supported]}',
+				)
 
 		if config.has_default_btrfs_vols():
 			if (btrfs_arg := disk_config.get('btrfs_options', None)) is not None:
@@ -1352,6 +1380,9 @@ class LvmVolume(SubConfig):
 
 		return False
 
+	def is_swap(self) -> bool:
+		return self.fs_type == FilesystemType.LINUX_SWAP
+
 
 @dataclass
 class LvmGroupInfo:
@@ -1627,6 +1658,13 @@ class DiskEncryption(SubConfig):
 
 		if self.encryption_type == EncryptionType.LUKS_ON_LVM and not self.lvm_volumes:
 			raise ValueError('LuksOnLvm encryption require LMV volumes to be defined')
+
+		# an encrypted swap area is never activated: the mount code has no swap branch
+		# for a mapper device, so the installation would finish without any swap and
+		# without the fstab entry for it. The menu does not offer swap, a hand written
+		# configuration can still ask for it, so say so instead of dropping it.
+		for swap_mod in [p for p in self.partitions if p.is_swap()] + [v for v in self.lvm_volumes if v.is_swap()]:
+			raise ValueError(f'Encrypted swap is not supported, "{swap_mod.dev_path}" cannot be encrypted')
 
 	def should_generate_encryption_file(self, dev: PartitionModification | LvmVolume) -> bool:
 		if isinstance(dev, PartitionModification):

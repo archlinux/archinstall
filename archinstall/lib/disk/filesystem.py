@@ -157,6 +157,14 @@ class FilesystemHandler:
 			# LVM volumes must remain active for later re-unlock during installation
 			for luks in enc_vols.values():
 				luks.lock()
+		else:
+			# No encryption type describes how to put LVM on top of it. Falling through
+			# used to create no volume group and no volume at all, while the layout kept
+			# describing the volumes it expects, so the installation continued into a
+			# mount phase that had nothing to mount.
+			raise ValueError(
+				f'Encryption type "{enc_config.encryption_type.value}" cannot be combined with LVM: neither a volume group nor its volumes would be created',
+			)
 
 	def _setup_lvm(
 		self,

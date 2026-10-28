@@ -9,8 +9,11 @@ from archinstall.lib.args import USER_CONFIG_FILE, USER_CREDS_FILE, ArchConfigHa
 def test_user_config_roundtrip(
 	monkeypatch: MonkeyPatch,
 	config_fixture: Path,
+	probed_devices: list[Path],
 ) -> None:
 	monkeypatch.setattr('sys.argv', ['archinstall', '--config', str(config_fixture)])
+
+	assert probed_devices, 'the fixture registers the probed devices'
 
 	handler = ArchConfigHandler()
 	arch_config = handler.config

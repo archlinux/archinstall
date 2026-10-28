@@ -61,6 +61,7 @@ def test_correct_parsing_args(
 	monkeypatch: MonkeyPatch,
 	config_fixture: Path,
 	creds_fixture: Path,
+	probed_devices: list[Path],
 ) -> None:
 	monkeypatch.setattr(
 		'sys.argv',
@@ -91,6 +92,8 @@ def test_correct_parsing_args(
 		],
 	)
 
+	assert probed_devices, 'the fixture registers the probed devices'
+
 	handler = ArchConfigHandler()
 	args = handler.args
 
@@ -119,6 +122,7 @@ def test_config_file_parsing(
 	monkeypatch: MonkeyPatch,
 	config_fixture: Path,
 	creds_fixture: Path,
+	probed_devices: list[Path],
 ) -> None:
 	monkeypatch.setattr(
 		'sys.argv',
@@ -130,6 +134,8 @@ def test_config_file_parsing(
 			str(creds_fixture),
 		],
 	)
+
+	assert probed_devices, 'the fixture registers the probed devices'
 
 	handler = ArchConfigHandler()
 	arch_config = handler.config
@@ -396,6 +402,7 @@ def test_example_config_parsing(
 	monkeypatch: MonkeyPatch,
 	example_config_fixture: Path,
 	example_creds_fixture: Path,
+	probed_devices: list[Path],
 ) -> None:
 	monkeypatch.setattr(
 		'sys.argv',
@@ -407,6 +414,8 @@ def test_example_config_parsing(
 			str(example_creds_fixture),
 		],
 	)
+
+	assert probed_devices, 'the fixture registers the probed devices'
 
 	handler = ArchConfigHandler()
 	arch_config = handler.config
