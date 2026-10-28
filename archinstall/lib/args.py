@@ -101,6 +101,29 @@ USER_CONFIG_FILE: Path = Path('user_configuration.json')
 USER_CREDS_FILE: Path = Path('user_credentials.json')
 DEFAULT_SAVE_PATH = logger.directory
 
+# keys `from_config()` reads that are not an `ArchConfigType` member: deprecated
+# spellings kept for backwards compatibility, and the locale fields that may sit
+# at the top level of the file
+_CONFIG_KEYS_READ_BY_HAND: frozenset[str] = frozenset(
+	{
+		'!root-password',
+		'!users',
+		'additional-repositories',
+		'archinstall-language',
+		'audio_config',
+		'bootloader',
+		'console_font',
+		'disk_encryption',
+		'encryption_password',
+		'kb_layout',
+		'parallel_downloads',
+		'root_enc_password',
+		'sys_enc',
+		'sys_lang',
+		'uki',
+	},
+)
+
 
 @dataclass
 class ArchConfig:
@@ -428,6 +451,13 @@ class ArchConfigHandler:
 
 		try:
 			self._config = ArchConfig.from_config(config, self._args)
+
+			# the file may record the release that wrote it; it is not the version that
+			# is running, and nothing used to look at it, so a file written by an
+			# incompatible release was applied as if it were current
+			if (written_by := config.get('version', None)) and str(written_by) != get_version():
+				warn(f'The configuration was written by archinstall {written_by}, this is {get_version()}')
+
 			self._config.version = get_version()
 		except ValueError as err:
 			warn(str(err))
@@ -642,6 +672,7 @@ class ArchConfigHandler:
 
 		if config_data is not None:
 			config.update(json.loads(config_data))
+			self._warn_about_unknown_keys(config)
 
 		if self._args.creds is not None:
 			creds_data = self._read_file(self._args.creds)
@@ -748,3 +779,16 @@ class ArchConfigHandler:
 				clean_args[key] = val
 
 		return clean_args
+
+	def _warn_about_unknown_keys(self, config: dict[str, Any]) -> None:
+		"""Say which keys were not understood instead of dropping them silently.
+
+		The configuration is read key by key, so a key name that is not spelled
+		exactly right - or one that belongs to an older release - is not an error
+		anywhere: the option it was meant to set simply keeps its default and the
+		installation runs with something other than what the file asks for.
+		"""
+		known = {key.value for key in ArchConfigType} | _CONFIG_KEYS_READ_BY_HAND
+
+		if unknown := sorted(set(config) - known):
+			warn(f'Ignoring unknown configuration keys: {unknown}')
