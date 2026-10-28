@@ -13,6 +13,7 @@ from archinstall.lib.disk.utils import (
 	get_lsblk_info,
 	linux_root_guid,
 	mount,
+	swapoff,
 	udev_sync,
 	umount,
 )
@@ -513,6 +514,10 @@ class DeviceHandler:
 			# un-mount for existing encrypted partitions
 			if partition.fs_type == FilesystemType.CRYPTO_LUKS:
 				Luks2(partition.path).lock()
+			elif partition.fs_type == FilesystemType.LINUX_SWAP:
+				# an active swap area reports '[SWAP]' as its mountpoint; it has to be
+				# deactivated, unmounting the display marker cannot work
+				swapoff(partition.path)
 			else:
 				# a swapfile can live on this filesystem; pass its mountpoints so it is
 				# deactivated before the unmount instead of failing afterwards
