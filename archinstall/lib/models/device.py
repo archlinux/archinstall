@@ -966,7 +966,10 @@ class PartitionModification(SubConfig):
 					SubvolumeModification.from_existing_subvol_info(i),
 				)
 		else:
-			mountpoint = partition_info.mountpoints[0] if partition_info.mountpoints else None
+			# lsblk reports '[SWAP]' as the mountpoint of an active swap area. That is a
+			# display marker, not a path: a swap area has no mountpoint, and treating the
+			# marker as one leads to mounting the device on <target>/[SWAP].
+			mountpoint = next((p for p in partition_info.mountpoints if p.is_absolute()), None)
 			subvol_mods = []
 
 		return cls(

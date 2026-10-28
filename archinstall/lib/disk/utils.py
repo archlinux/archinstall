@@ -173,6 +173,49 @@ def mount(
 		raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 
 
+def active_swaps() -> list[Path]:
+	"""
+	Currently active swap areas, as reported by the kernel.
+
+	The first column of /proc/swaps is the area itself, either a block device
+	(e.g. /dev/dm-0) or a regular file (e.g. /mnt/swapfile). lsblk's '[SWAP]'
+	marker is a display convention, not state, and must not be used to decide
+	whether swap is active.
+	"""
+	entries: list[Path] = []
+	for line in Path('/proc/swaps').read_text().splitlines()[1:]:
+		if not (fields := line.split()):
+			continue
+		entries.append(Path(fields[0]))
+
+	return entries
+
+
+def _swap_areas_of(target: Path, mountpoints: list[Path] | None = None) -> list[Path]:
+	areas: list[Path] = []
+
+	for area in active_swaps():
+		# /proc/swaps reports resolved names (e.g. /dev/dm-0) while callers hold
+		# symlinks (e.g. /dev/mapper/root), so compare resolved paths
+		if area.exists() and target.exists():
+			if area.resolve() == target.resolve():
+				areas.append(area)
+				continue
+		elif area == target:
+			areas.append(area)
+			continue
+
+		if area.is_absolute():
+			for mountpoint in mountpoints or []:
+				# lsblk reports '[SWAP]' for an active swap area; that is a display
+				# marker, not a path, and nothing can live below it
+				if mountpoint.is_absolute() and area.is_relative_to(mountpoint):
+					areas.append(area)
+					break
+
+	return areas
+
+
 def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 	lsblk_info = get_lsblk_info(mountpoint)
 
@@ -192,10 +235,49 @@ def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 
 
 def swapon(path: Path) -> None:
+	"""
+	Activate the swap area at ``path``, unless the kernel already reports it.
+
+	The layout is mounted into a fresh target, but swap is machine-wide state:
+	a previous run of the installer (or the running live system) may have left
+	this very area active, in which case ``swapon`` fails with "Device or
+	resource busy" and the installation aborts for no reason.
+	"""
+	if _swap_areas_of(path):
+		debug(f'Swap is already active on {path}')
+		return
+
 	try:
 		SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+	if not _swap_areas_of(path):
+		raise DiskError(f'Swap was not activated on {path}, the kernel reports no swap area for it')
+
+
+def swapoff(path: Path, mountpoints: list[Path] | None = None) -> None:
+	"""
+	Deactivate every swap area belonging to ``path``.
+
+	``mountpoints`` lets the caller pass the mountpoints of ``path`` so that a
+	swapfile living on it is found as well. A no-op is only correct when the
+	kernel reports no swap area for ``path``; if anything is still active
+	afterwards this raises instead of leaving the caller to fail later.
+	"""
+	areas = _swap_areas_of(path, mountpoints)
+	if not areas:
+		return
+
+	for area in areas:
+		debug(f'Disabling swap on: {area}')
+		try:
+			SysCommand(['swapoff', str(area)])
+		except SysCallError as err:
+			raise DiskError(f'Could not disable swap {area}:\n{err.message}')
+
+	if remaining := _swap_areas_of(path, mountpoints):
+		raise DiskError(f'Swap is still active on {path}: {[str(a) for a in remaining]}')
 
 
 def linux_root_guid(arch: str | None) -> PartitionGUID:

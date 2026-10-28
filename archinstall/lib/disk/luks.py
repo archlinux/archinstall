@@ -5,7 +5,7 @@ from subprocess import CalledProcessError
 from types import TracebackType
 
 from archinstall.lib.command import SysCommand, SysCommandWorker, run
-from archinstall.lib.disk.utils import get_lsblk_info, umount
+from archinstall.lib.disk.utils import get_lsblk_info, swapoff, umount
 from archinstall.lib.exceptions import DiskError, SysCallError
 from archinstall.lib.log import debug, info
 from archinstall.lib.models.device import DEFAULT_ITER_TIME
@@ -169,14 +169,17 @@ class Luks2:
 
 		# For each child (sub-partition/sub-device)
 		for child in lsblk_info.children:
-			# Unmount the child location
-			for mountpoint in child.mountpoints:
-				debug(f'Unmounting {mountpoint}')
-				umount(mountpoint, recursive=True)
+			# Deactivate swap first, then unmount by device path. Both helpers take a
+			# device, so a mountpoint (or lsblk's '[SWAP]' marker) never reaches lsblk.
+			swapoff(child.path, child.mountpoints)
+			umount(child.path, recursive=True)
 
 			# And close it if possible.
 			debug(f'Closing crypt device {child.name}')
 			SysCommand(f'cryptsetup close {child.name}')
+
+		if remaining := get_lsblk_info(self.luks_dev_path).children:
+			raise DiskError(f'Could not close {self.luks_dev_path}: {[c.name for c in remaining]} still active')
 
 	def create_keyfile(self, target_path: Path, override: bool = False) -> None:
 		"""
