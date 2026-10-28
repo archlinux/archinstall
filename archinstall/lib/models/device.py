@@ -1541,15 +1541,15 @@ class DeviceModification(SubConfig):
 		self.partitions.append(partition)
 
 	def get_efi_partition(self) -> PartitionModification | None:
-		filtered = filter(lambda x: x.is_efi() and x.mountpoint, self.partitions)
+		filtered = filter(lambda x: x.is_efi() and x.mountpoint and not x.is_delete(), self.partitions)
 		return next(filtered, None)
 
 	def get_boot_partition(self) -> PartitionModification | None:
-		filtered = filter(lambda x: x.is_boot() and x.mountpoint, self.partitions)
+		filtered = filter(lambda x: x.is_boot() and x.mountpoint and not x.is_delete(), self.partitions)
 		return next(filtered, None)
 
 	def get_root_partition(self) -> PartitionModification | None:
-		filtered = filter(lambda x: x.is_root(), self.partitions)
+		filtered = filter(lambda x: x.is_root() and not x.is_delete(), self.partitions)
 		return next(filtered, None)
 
 	@override
