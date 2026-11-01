@@ -1,5 +1,4 @@
-import datetime
-import http.client
+import datetime as dt
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -30,7 +29,7 @@ class MirrorStatusEntryV3(BaseModel):
 	ipv6: bool
 	details: str
 	delay: int | None = None
-	last_sync: datetime.datetime | None = None
+	last_sync: dt.datetime | None = None
 	duration_avg: float | None = None
 	duration_stddev: float | None = None
 	completion_pct: float | None = None
@@ -48,38 +47,19 @@ class MirrorStatusEntryV3(BaseModel):
 	@property
 	def speed(self) -> float:
 		if self._speed is None:
-			if not self._speedtest_retries:
-				self._speedtest_retries = 3
-			elif self._speedtest_retries < 1:
-				self._speedtest_retries = 1
+			debug(f'Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db')
+			req = urllib.request.Request(url=f'{self.url}core/os/x86_64/core.db')
 
-			retry = 0
-			while retry < self._speedtest_retries and self._speed is None:
-				debug(f'Checking download speed of {self._hostname}[{self.score}] by fetching: {self.url}core/os/x86_64/core.db')
-				req = urllib.request.Request(url=f'{self.url}core/os/x86_64/core.db')
-
-				try:
-					with urllib.request.urlopen(req, None, 5) as handle, DownloadTimer(timeout=5) as timer:
+			try:
+				with DownloadTimer(timeout=3) as timer:
+					with urllib.request.urlopen(req, None, 3) as handle:
 						size = len(handle.read())
 
-					assert timer.time is not None
-					self._speed = size / timer.time
-					debug(f'	speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
-				# Do not retry error
-				except urllib.error.URLError as error:
-					debug(f'	speed: <undetermined> ({error}), skip')
-					self._speed = 0
-				# Do retry error
-				except (http.client.IncompleteRead, ConnectionResetError) as error:
-					debug(f'	speed: <undetermined> ({error}), retry')
-				# Catch all
-				except Exception as error:
-					debug(f'	speed: <undetermined> ({error}), skip')
-					self._speed = 0
-
-				retry += 1
-
-			if self._speed is None:
+				assert timer.time is not None
+				self._speed = size / timer.time if timer.time > 0 else 0
+				debug(f'	speed: {self._speed} ({int(self._speed / 1024 / 1024 * 100) / 100}MiB/s)')
+			except Exception as error:
+				debug(f'	speed: <undetermined> ({error}), skip')
 				self._speed = 0
 
 		return self._speed
@@ -120,7 +100,7 @@ class MirrorStatusEntryV3(BaseModel):
 
 class MirrorStatusListV3(BaseModel):
 	cutoff: int
-	last_check: datetime.datetime
+	last_check: dt.datetime
 	num_checks: int
 	urls: list[MirrorStatusEntryV3]
 	version: int

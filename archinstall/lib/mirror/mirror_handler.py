@@ -78,7 +78,7 @@ class MirrorListHandler:
 		# Only sort if we have remote mirror data with score/speed info
 		# Local mirrors lack this data and can be modified manually before-hand
 		# Or reflector potentially ran already
-		if self._fetched_remote and speed_sort:
+		if self._fetched_remote and speed_sort and region_list:
 			info('Sorting your selected mirror list based on the speed between you and the individual mirrors (this might take a while)')
 			# Sort by speed descending (higher is better in bitrate form core.db download)
 			return sorted(region_list, key=lambda mirror: -mirror.speed)
