@@ -21,16 +21,13 @@ from dataclasses import dataclass
 
 from archinstall.lib.log import Font, debug, info, stylize, warn
 
+# Seconds to wait for an answer before falling back to the safe choice.
 DEFAULT_TIMEOUT = 60.0
-"""Seconds to wait for an answer before falling back to the safe choice."""
 
+# Returned when the user fixed the problem by hand and asked to resume.
+# Callers must handle this key in addition to their own: it means "run the failed
+# operation again, unchanged".
 RETRY = 'retry'
-"""
-Returned when the user fixed the problem by hand and asked to resume.
-
-Callers must handle this key in addition to their own: it means "run the failed
-operation again, unchanged".
-"""
 
 _MANUAL = '__manual__'
 _EXIT = '__exit__'
