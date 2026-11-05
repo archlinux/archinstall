@@ -8,8 +8,9 @@ import time
 import traceback
 from pathlib import Path
 
-from archinstall.lib.args import ArchConfigHandler, SubCommand
+from archinstall.lib.args import DEFAULT_SAVE_PATH, ArchConfig, ArchConfigHandler, SubCommand
 from archinstall.lib.disk.utils import disk_layouts
+from archinstall.lib.error_recovery import InstallationAbortedError
 from archinstall.lib.hardware import MemInfo, SysInfo, read_meminfo
 from archinstall.lib.log import debug, error, info, logger, share_install_log, warn
 from archinstall.lib.menu.helpers import Confirmation
@@ -168,9 +169,24 @@ def run() -> int:
 	mod_name = f'archinstall.scripts.{script}'
 	# by loading the module we'll automatically run the script
 	module = importlib.import_module(mod_name)
-	module.main(arch_config_handler)
+
+	try:
+		module.main(arch_config_handler)
+	except InstallationAbortedError as aborted:
+		return _abort(aborted, arch_config_handler.config)
 
 	return 0
+
+
+def _abort(aborted: InstallationAbortedError, config: ArchConfig) -> int:
+	"""Stop after the user asked to leave a recovery prompt, keeping their configuration if wanted."""
+	warn(f'Installation stopped: {aborted.reason}')
+
+	if aborted.save_config:
+		config.save()
+		info(f'Configuration saved to {DEFAULT_SAVE_PATH}')
+
+	return 1
 
 
 def _error_message(exc: Exception) -> None:

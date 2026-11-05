@@ -146,6 +146,24 @@ def _stylize_output(
 	return f'\033[{ansi}m{text}\033[0m'
 
 
+def stylize(
+	text: str,
+	fg: str,
+	bg: str | None = None,
+	font: list[Font] | None = None,
+) -> str:
+	"""
+	Colorize a string for printing outside of the logging helpers.
+
+	Returns the text unchanged when the terminal does not support colors, so the
+	result is always safe to embed in a message or to write to a pipe.
+	"""
+	if not _supports_color():
+		return text
+
+	return _stylize_output(text, fg, bg, reset=False, font=font)
+
+
 def journal_log(message: str, level: int = logging.DEBUG) -> None:
 	try:
 		import systemd.journal  # type: ignore[import-not-found]
