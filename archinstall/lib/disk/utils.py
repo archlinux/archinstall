@@ -210,7 +210,8 @@ def _is_active_swap(path: Path) -> bool:
 
 def swapon(path: Path) -> None:
 	try:
-		SysCommand(['swapon', str(path)])
+		if not _is_active_swap(path):
+			SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
 

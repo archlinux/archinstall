@@ -67,6 +67,20 @@ def test_swapoff_only_disables_active_swap(monkeypatch: pytest.MonkeyPatch, acti
 	assert command.call_args_list == expected
 
 
+@pytest.mark.parametrize('active', [False, True])
+def test_swapon_skips_active_swap(monkeypatch: pytest.MonkeyPatch, active: bool) -> None:
+	command = Mock()
+	command.return_value.output.return_value = b'/dev/sda2\n' if active else b'/dev/sdb1\n'
+	monkeypatch.setattr(utils, 'SysCommand', command)
+
+	utils.swapon(Path('/dev/sda2'))
+
+	expected = [call(SWAPON_QUERY)]
+	if not active:
+		expected.append(call(['swapon', '/dev/sda2']))
+	assert command.call_args_list == expected
+
+
 @pytest.mark.parametrize(
 	('name', 'encoded'),
 	[
