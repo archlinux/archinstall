@@ -45,8 +45,11 @@ class DownloadTimer:
 
 	def __enter__(self) -> Self:
 		if self.timeout > 0:
-			self.previous_handler = signal.signal(signal.SIGALRM, self.raise_timeout)  # type: ignore[assignment]
-			self.previous_timer = signal.alarm(self.timeout)
+			try:
+				self.previous_handler = signal.signal(signal.SIGALRM, self.raise_timeout)  # type: ignore[assignment]
+				self.previous_timer = signal.alarm(self.timeout)
+			except ValueError, AttributeError:
+				pass
 
 		self.start_time = time.monotonic()
 		return self
@@ -54,19 +57,25 @@ class DownloadTimer:
 	def __exit__(self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
 		if self.start_time:
 			time_delta = time.monotonic() - self.start_time
-			signal.alarm(0)
+			try:
+				signal.alarm(0)
+			except AttributeError, ValueError:
+				pass
 			self.time = time_delta
-			if self.timeout > 0:
-				signal.signal(signal.SIGALRM, self.previous_handler)
+			if self.timeout > 0 and self.previous_handler is not None:
+				try:
+					signal.signal(signal.SIGALRM, self.previous_handler)
 
-				previous_timer = self.previous_timer
-				if previous_timer and previous_timer > 0:
-					remaining_time = int(previous_timer - time_delta)
-					# The alarm should have been raised during the download.
-					if remaining_time <= 0:
-						signal.raise_signal(signal.SIGALRM)
-					else:
-						signal.alarm(remaining_time)
+					previous_timer = self.previous_timer
+					if previous_timer and previous_timer > 0:
+						remaining_time = int(previous_timer - time_delta)
+						# The alarm should have been raised during the download.
+						if remaining_time <= 0:
+							signal.raise_signal(signal.SIGALRM)
+						else:
+							signal.alarm(remaining_time)
+				except AttributeError, ValueError:
+					pass
 		self.start_time = None
 
 
