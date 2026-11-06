@@ -132,3 +132,24 @@ def test_existing_partitions_disable_swap_and_unmount_filesystems(monkeypatch: p
 
 	unmount.assert_called_once_with(Path('/dev/sda1'), recursive=True)
 	assert command.call_args_list == [call(SWAPON_QUERY), call(['swapoff', '/dev/sda2'])]
+
+
+def test_umount_disables_swap_files_below_mountpoint(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+	mountpoint = tmp_path / 'mnt'
+	inside = mountpoint / 'swap' / 'swapfile'
+	outside = tmp_path / 'mnt-other' / 'swapfile'
+	for swapfile in (inside, outside):
+		swapfile.parent.mkdir(parents=True)
+		swapfile.touch()
+	monkeypatch.setattr(utils, 'get_lsblk_info', Mock(return_value=Mock(mountpoints=[mountpoint])))
+	command = Mock()
+	command.return_value.output.return_value = b'\n'.join([b'/dev/sda2', fsencode(inside), fsencode(outside)]) + b'\n'
+	monkeypatch.setattr(utils, 'SysCommand', command)
+
+	utils.umount(Path('/dev/sda1'), recursive=True)
+
+	assert command.call_args_list == [
+		call(SWAPON_QUERY),
+		call(['swapoff', str(inside)]),
+		call(['umount', '-R', str(mountpoint)]),
+	]
