@@ -1,3 +1,5 @@
+from codecs import escape_decode
+from os import fsdecode
 from pathlib import Path
 from subprocess import CalledProcessError
 
@@ -186,16 +188,40 @@ def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 	if recursive:
 		cmd.append('-R')
 
+	for area in _active_swap():
+		if area.is_file() and any(area.is_relative_to(path) for path in lsblk_info.mountpoints):
+			debug(f'Disabling swap file: {area}')
+			SysCommand(['swapoff', str(area)])
+
 	for path in lsblk_info.mountpoints:
 		debug(f'Unmounting mountpoint: {path}')
 		SysCommand([*cmd, str(path)])
 
 
+def _active_swap() -> list[Path]:
+	output = SysCommand(['swapon', '--show=NAME', '--noheadings', '--raw']).output()
+	# --raw escapes filename bytes as \xNN.
+	return [Path(fsdecode(escape_decode(line)[0])) for line in output.splitlines()]
+
+
+def _is_active_swap(path: Path) -> bool:
+	return path.resolve() in {area.resolve() for area in _active_swap()}
+
+
 def swapon(path: Path) -> None:
 	try:
-		SysCommand(['swapon', str(path)])
+		if not _is_active_swap(path):
+			SysCommand(['swapon', str(path)])
 	except SysCallError as err:
 		raise DiskError(f'Could not enable swap {path}:\n{err.message}')
+
+
+def swapoff(path: Path) -> None:
+	try:
+		if _is_active_swap(path):
+			SysCommand(['swapoff', str(path)])
+	except SysCallError as err:
+		raise DiskError(f'Could not disable swap {path}:\n{err.message}')
 
 
 def linux_root_guid(arch: str | None) -> PartitionGUID:

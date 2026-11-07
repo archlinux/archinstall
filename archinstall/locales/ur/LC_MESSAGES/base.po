@@ -996,7 +996,7 @@ msgstr "{} graphics driver"
 
 #, python-brace-format
 msgid "{} greeter"
-msgstr "Greeter"
+msgstr "{} Greeter"
 
 msgid "very weak"
 msgstr "Buhat kamzor"
