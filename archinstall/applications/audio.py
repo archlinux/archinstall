@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from archinstall.lib.hardware import SysInfo
 from archinstall.lib.log import debug
 from archinstall.lib.models.application import Audio, AudioConfiguration
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.models.users import User
 
 if TYPE_CHECKING:
@@ -67,10 +68,10 @@ class AudioApp:
 			return
 
 		if SysInfo.requires_sof_fw():
-			install_session.add_additional_packages('sof-firmware')
+			install_session.add_additional_packages(InstallationPackage.SOF_FIRMWARE.value)
 
 		if SysInfo.requires_alsa_fw():
-			install_session.add_additional_packages('alsa-firmware')
+			install_session.add_additional_packages(InstallationPackage.ALSA_FIRMWARE.value)
 
 		match audio_config.audio:
 			case Audio.PIPEWIRE:

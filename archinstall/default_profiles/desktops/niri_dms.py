@@ -27,7 +27,7 @@ class NiriDmsProfile(Profile):
 	def packages(self) -> list[str]:
 		return [
 			'niri',
-			'dms-shell-niri',
+			'dms-shell',
 			'polkit',
 			'xdg-desktop-portal-gnome',
 			'xorg-xwayland',

@@ -2,6 +2,7 @@ import textwrap
 
 from archinstall.lib.installer import Installer
 from archinstall.lib.models.network import NetworkConfiguration, NicType
+from archinstall.lib.models.package_types import InstallationPackage
 from archinstall.lib.models.profile import ProfileConfiguration
 
 
@@ -15,16 +16,16 @@ def install_network_config(
 			# Sources the ISO network configuration to the install medium.
 			installation.copy_iso_network_config(enable_services=True)
 		case NicType.NM | NicType.NM_IWD:
-			packages = ['networkmanager']
+			packages = [InstallationPackage.NETWORKMANAGER.value]
 
 			if network_config.type == NicType.NM:
-				packages.append('wpa_supplicant')
+				packages.append(InstallationPackage.WPA_SUPPLICANT.value)
 			else:
-				packages.append('iwd')
+				packages.append(InstallationPackage.IWD.value)
 
 			if profile_config and profile_config.profile:
 				if profile_config.profile.is_desktop_profile():
-					packages.append('network-manager-applet')
+					packages.append(InstallationPackage.NETWORK_MANAGER_APPLET.value)
 
 			installation.add_additional_packages(packages)
 			installation.enable_service('NetworkManager.service')
@@ -34,7 +35,7 @@ def install_network_config(
 				installation.disable_service('iwd.service')
 
 		case NicType.IWD:
-			installation.add_additional_packages(['iwd'])
+			installation.add_additional_packages([InstallationPackage.IWD.value])
 			_configure_iwd_standalone(installation)
 			installation.enable_service('iwd.service')
 			installation.enable_service('systemd-networkd.service')
