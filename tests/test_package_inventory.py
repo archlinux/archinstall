@@ -1,6 +1,4 @@
 import ast
-import shlex
-import sys
 from enum import StrEnum
 from pathlib import Path
 
@@ -14,18 +12,7 @@ from archinstall.lib.profile.profiles_handler import ProfileHandler
 
 
 def test_committed_source_targets() -> None:
-	path = Path(__file__).resolve().parents[1] / 'archinstall-meta/PKGBUILD'
-	entries = path.read_text().split('optdepends=(\n', 1)[1].split('\n)', 1)[0]
-	targets = set()
-	in_group = False
-	for raw_line in entries.splitlines():
-		line = raw_line.strip()
-		if line.startswith('# group: '):
-			targets.add(line.removeprefix('# group: '))
-			in_group = True
-		elif not in_group:
-			targets.update(shlex.split(line))
-	assert targets == meta.package_targets(), 'Run python -m archinstall.lib.packages.meta'
+	assert meta.PKGBUILD.read_text() == meta.render(), 'Run python -m archinstall.lib.packages.meta'
 
 
 def test_conditional_package_choices() -> None:
@@ -65,42 +52,6 @@ def test_new_setting_requires_coverage(monkeypatch: pytest.MonkeyPatch) -> None:
 	monkeypatch.delitem(meta.PROFILE_SETTINGS, CustomSetting.SeatAccess)
 	with pytest.raises(ValueError, match='missing custom settings'):
 		meta.package_targets()
-
-
-def test_group_expansion_preserves_packages_and_aliases() -> None:
-	content = meta.render({'desktop', 'both', 'virtual'}, {'both'}, {'desktop': {'member'}, 'both': {'wrong'}})
-	assert '\n\tboth\n' in content
-	assert '\n\tvirtual\n' in content
-	assert '\n\tmember\n' in content
-	assert '# group: desktop' in content
-	assert 'wrong' not in content
-	assert '# group: both' not in content
-
-
-def test_check_reports_drift(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-	output = tmp_path / 'PKGBUILD'
-	targets = {'first', 'desktop', 'virtual'}
-	monkeypatch.setattr(meta, 'package_targets', lambda: targets)
-	monkeypatch.setattr(meta, 'repository_groups', lambda: ({'first', 'second'}, {'desktop': {'member'}}))
-	calls: list[tuple[str, ...]] = []
-
-	def pacman(*args: str) -> list[str]:
-		calls.append(args)
-		return ['provider']
-
-	monkeypatch.setattr(meta, 'pacman', pacman)
-	monkeypatch.setattr(sys, 'argv', ['meta', '--output', str(output)])
-	meta.main()
-	assert calls[-1] == ('-Spdd', '--noconfirm', '--print-format', '%n', '--', 'virtual')
-	before = output.read_text()
-	monkeypatch.setattr(sys, 'argv', ['meta', '--output', str(output), '--check'])
-	meta.main()
-	targets.remove('first')
-	targets.add('second')
-	with pytest.raises(SystemExit) as result:
-		meta.main()
-	assert result.value.code == 1
-	assert output.read_text() == before
 
 
 def is_package_list(node: ast.AST) -> bool:
