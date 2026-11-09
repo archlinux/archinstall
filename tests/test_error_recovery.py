@@ -1,3 +1,8 @@
+import io
+import select
+import sys
+import termios
+
 import pytest
 
 from archinstall.lib import error_recovery
@@ -34,6 +39,32 @@ def test_invalid_answers_are_rejected_without_advancing(monkeypatch: pytest.Monk
 	_answers(monkeypatch, 'yes', '', '9', '-1', '2')
 
 	assert prompt('Package conflict', OPTIONS, safe='drop') == 'drop'
+
+
+def test_wrong_answers_do_not_redraw_the_choices(
+	monkeypatch: pytest.MonkeyPatch,
+	capsys: pytest.CaptureFixture[str],
+) -> None:
+	"""Stray Enters from the pacstrap run used to stack copies of the whole block."""
+	_answers(monkeypatch, '', '', '', 'nope', '2')
+
+	assert prompt('Package conflict', OPTIONS, safe='drop') == 'drop'
+
+	out = capsys.readouterr().out
+	assert out.count('Package conflict') == 1
+	assert out.count('Please enter a number') == 1
+
+
+def test_keys_pressed_before_the_question_are_discarded(monkeypatch: pytest.MonkeyPatch) -> None:
+	flushed: list[int] = []
+	monkeypatch.setattr(termios, 'tcflush', lambda _fd, how: flushed.append(how))
+	monkeypatch.setattr(select, 'select', lambda *_args: ([sys.stdin], [], []))
+	stdin = io.StringIO('1\n')
+	monkeypatch.setattr(stdin, 'fileno', lambda: 0)
+	monkeypatch.setattr(sys, 'stdin', stdin)
+
+	assert error_recovery._read_line('Select an option [1-4]: ', None) == '1'
+	assert flushed == [termios.TCIFLUSH]
 
 
 def test_no_answer_falls_back_to_the_safe_option(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -11,11 +11,13 @@ The prompt is deliberately plain ``print``/``input`` and must only be used
 outside of the Textual application, i.e. during the installation itself.
 """
 
+import contextlib
 import os
 import re
 import select
 import subprocess
 import sys
+import termios
 import time
 from dataclasses import dataclass
 
@@ -108,21 +110,7 @@ def prompt(
 	while True:
 		_render(header, detail, choices)
 
-		answer = _read_line(_question(choices, safe, timeout), timeout if safe is not None else None)
-
-		if answer is None:
-			# Timed out, or stdin went away and we can no longer ask anything.
-			if safe is None:
-				raise InstallationAbortedError(header)
-
-			warn(f'No answer within {int(timeout)}s, continuing with the safe option')
-			return safe
-
-		if not answer.isdigit() or not 1 <= int(answer) <= len(choices):
-			print(f'Please enter a number between 1 and {len(choices)}.')
-			continue
-
-		key = choices[int(answer) - 1].key
+		key = _pick(header, choices, safe, timeout)
 
 		if key == _MANUAL:
 			open_shell(hint)
@@ -172,6 +160,33 @@ def confirm(question: str, default: bool) -> bool:
 	return answer.lower() in ('y', 'yes')
 
 
+def _pick(header: str, choices: list[Recovery], safe: str | None, timeout: float) -> str:
+	"""
+	Read a choice, asking again on one line after a wrong answer.
+
+	Re-rendering the whole block for every stray line buried the choices under
+	copies of themselves.
+	"""
+	question = _question(choices, safe, timeout)
+
+	while True:
+		answer = _read_line(question, timeout if safe is not None else None)
+
+		if answer is None:
+			# Timed out, or stdin went away and we can no longer ask anything.
+			if safe is None:
+				raise InstallationAbortedError(header)
+
+			warn(f'No answer within {int(timeout)}s, continuing with the safe option')
+			return safe
+
+		if answer.isdigit() and 1 <= int(answer) <= len(choices):
+			return choices[int(answer) - 1].key
+
+		if answer:
+			print(f'Please enter a number between 1 and {len(choices)}.')
+
+
 def _question(choices: list[Recovery], safe: str | None, timeout: float) -> str:
 	prefix = f'Select an option [1-{len(choices)}]'
 
@@ -211,7 +226,13 @@ def _read_line(question: str, timeout: float | None) -> str | None:
 	The remaining time is shown up front rather than counted down live: a
 	redrawn countdown would overwrite whatever the user is halfway through
 	typing.
+
+	Keys pressed while the failed command was still running (an impatient Enter
+	or two) are discarded first, so that they cannot answer the question unseen.
 	"""
+	with contextlib.suppress(OSError, ValueError, termios.error):
+		termios.tcflush(sys.stdin.fileno(), termios.TCIFLUSH)
+
 	sys.stdout.write(question)
 	sys.stdout.flush()
 
