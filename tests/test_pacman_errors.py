@@ -1,5 +1,11 @@
+from pathlib import Path
+
+import pytest
+
+from archinstall.lib.exceptions import SysCallError
+from archinstall.lib.pacman import pacman
 from archinstall.lib.pacman.errors import FailureKind, classify, strip_version
-from archinstall.lib.pacman.pacman import _recovery_options
+from archinstall.lib.pacman.pacman import Pacman, _recovery_options
 
 CONFLICT = """\
 :: Synchronizing package databases...
@@ -207,3 +213,45 @@ def test_a_repeated_failure_stops_offering_the_same_way_out() -> None:
 
 	assert [option.key for option in options] == ['abandon']
 	assert safe is None
+
+
+def _strap_with(monkeypatch: pytest.MonkeyPatch, failure: str, choice: str) -> tuple[Pacman, list[str]]:
+	"""Run strap() against one recorded failure, answer the prompt with `choice`, then succeed."""
+	commands: list[str] = []
+	pending = [failure.encode()]
+
+	def run(command: str, **_: object) -> None:
+		commands.append(command)
+
+		if pending:
+			raise SysCallError('pacstrap failed', 1, worker_log=pending.pop(0))
+
+	monkeypatch.setattr(pacman, 'SysCommand', run)
+	monkeypatch.setattr(pacman, 'prompt', lambda *_args, **_kwargs: choice)
+	monkeypatch.setattr(Pacman, 'sync', lambda _self: None)
+	monkeypatch.setattr(Pacman, 'wait_for_db_lock', staticmethod(lambda: None))
+
+	installer_pacman = Pacman(Path('/mnt'))
+	installer_pacman.strap(['jack2', 'pipewire-jack'])
+
+	return installer_pacman, commands
+
+
+def test_keeping_one_side_also_removes_the_other_from_the_target(monkeypatch: pytest.MonkeyPatch) -> None:
+	"""
+	pipewire-jack was already installed by an earlier step, so dropping it from
+	the request alone left pacman asking "Remove pipewire-jack? [y/N]", which
+	--noconfirm answers with no. Keeping jack2 has to let pacman replace it.
+	"""
+	installer_pacman, commands = _strap_with(monkeypatch, CONFLICT_VERSIONED, 'keep_first')
+
+	assert len(commands) == 2
+	assert ' pipewire-jack ' not in commands[1]
+	assert commands[1].endswith('--ask=4')
+	assert installer_pacman.dropped_packages == ['pipewire-jack']
+
+
+def test_dropping_both_never_removes_anything_from_the_target(monkeypatch: pytest.MonkeyPatch) -> None:
+	_, commands = _strap_with(monkeypatch, CONFLICT_VERSIONED, 'drop')
+
+	assert '--ask' not in ' '.join(commands)

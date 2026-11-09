@@ -23,6 +23,9 @@ _HEADERS = {
 	FailureKind.UNKNOWN: 'Package installation failed',
 }
 
+# Answers pacman's "Remove <package>? [y/N]" conflict question with yes.
+_REPLACE_CONFLICTING = '--ask=4'
+
 
 class Pacman:
 	def __init__(self, target: Path, silent: bool = False) -> None:
@@ -129,7 +132,7 @@ class Pacman:
 		if not packages:
 			return
 
-		overwrite: list[str] = []
+		flags: list[str] = []
 		seen: set[str] = set()
 
 		while packages:
@@ -137,7 +140,7 @@ class Pacman:
 			info(f'Installing packages: {packages}')
 
 			command = f'pacstrap -C {PACMAN_CONF} -K {self.target} {" ".join(packages)} --noconfirm --needed'
-			command += ''.join(f' --overwrite {shlex.quote(path)}' for path in overwrite)
+			command += ''.join(f' {flag}' for flag in flags)
 
 			try:
 				SysCommand(command, peek_output=True)
@@ -145,7 +148,7 @@ class Pacman:
 			except SysCallError as err:
 				error('Could not strap in packages')
 
-				if not self._recover(err, packages, overwrite, seen):
+				if not self._recover(err, packages, flags, seen):
 					raise RequirementError(
 						'Pacstrap failed. See /var/log/archinstall/install.log or above message for error details',
 					) from err
@@ -158,13 +161,13 @@ class Pacman:
 		self,
 		err: SysCallError,
 		packages: list[str],
-		overwrite: list[str],
+		flags: list[str],
 		seen: set[str],
 	) -> bool:
 		"""
 		Halt and ask the user how to deal with a failed pacstrap run.
 
-		`packages` and `overwrite` are updated in place. Returns True when
+		`packages` and the extra pacstrap `flags` are updated in place. Returns True when
 		something actually changed and retrying makes sense, and False when the
 		caller should give up so that the original error is raised.
 		"""
@@ -197,7 +200,7 @@ class Pacman:
 			return True
 
 		if choice == 'overwrite':
-			overwrite.extend(failure.paths)
+			flags.extend(f'--overwrite {shlex.quote(path)}' for path in failure.paths)
 			return True
 
 		before = list(packages)
@@ -207,8 +210,10 @@ class Pacman:
 		match choice:
 			case 'keep_first':
 				self._drop(packages, droppable[1])
+				_replace_conflicting(flags)
 			case 'keep_second':
 				self._drop(packages, droppable[0])
+				_replace_conflicting(flags)
 			case 'drop':
 				self._drop(packages, *droppable)
 			case 'rename':
@@ -297,6 +302,19 @@ def _explain_no_options(failure: Failure, droppable: list[str]) -> str:
 		return f'\n{names} was pulled in as a dependency, so it cannot be removed from the requested package list.'
 
 	return ''
+
+
+def _replace_conflicting(flags: list[str]) -> None:
+	"""
+	Let pacman remove the package the user chose to drop when it is already on the target.
+
+	Dropping it from the request list is not enough once an earlier step installed
+	it: pacman then asks "Remove pipewire-jack? [y/N]" and --noconfirm answers no.
+	``--ask=4`` (ALPM_QUESTION_CONFLICT_PKG) answers that one question with yes.
+	It is only ever added after the user explicitly picked which side to keep.
+	"""
+	if _REPLACE_CONFLICTING not in flags:
+		flags.append(_REPLACE_CONFLICTING)
 
 
 def _requested(packages: list[str], name: str) -> bool:
