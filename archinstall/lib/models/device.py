@@ -551,6 +551,8 @@ class _PartitionInfo:
 	disk: Disk
 	mountpoints: list[Path]
 	btrfs_subvol_infos: list[_BtrfsSubvolumeInfo] = field(default_factory=list)
+	is_encrypted: bool = False
+	mapper_name: str | None = None
 
 	@property
 	def sector_size(self) -> SectorSize:
@@ -604,6 +606,12 @@ class _PartitionInfo:
 		if btrfs_subvol_infos is None:
 			btrfs_subvol_infos = []
 
+		crypt_child = lsblk_info.find_child_by_type('crypt')
+		is_encrypted = (lsblk_info.fstype == FilesystemType.CRYPTO_LUKS) or (crypt_child is not None)
+		mapper_name = crypt_child.name if crypt_child else None
+
+		mountpoints = lsblk_info.all_mountpoints if not lsblk_info.mountpoints else lsblk_info.mountpoints
+
 		return cls(
 			partition=partition,
 			name=partition.name,
@@ -617,8 +625,10 @@ class _PartitionInfo:
 			partuuid=lsblk_info.partuuid,
 			uuid=lsblk_info.uuid,
 			disk=partition.disk,
-			mountpoints=lsblk_info.mountpoints,
+			mountpoints=mountpoints,
 			btrfs_subvol_infos=btrfs_subvol_infos,
+			is_encrypted=is_encrypted,
+			mapper_name=mapper_name,
 		)
 
 
@@ -914,6 +924,8 @@ class PartitionModification(SubConfig):
 	partn: int | None = None
 	partuuid: str | None = None
 	uuid: str | None = None
+	is_encrypted: bool = False
+	_mapper_name: str | None = None
 
 	_obj_id: UUID | str = field(init=False)
 
@@ -982,6 +994,8 @@ class PartitionModification(SubConfig):
 			flags=partition_info.flags,
 			mountpoint=mountpoint,
 			btrfs_subvols=subvol_mods,
+			is_encrypted=partition_info.is_encrypted,
+			_mapper_name=partition_info.mapper_name,
 		)
 
 	@property
@@ -1040,6 +1054,8 @@ class PartitionModification(SubConfig):
 
 	@property
 	def mapper_name(self) -> str | None:
+		if self._mapper_name:
+			return self._mapper_name
 		if self.is_root():
 			return 'root'
 		if self.is_home():
@@ -1047,6 +1063,10 @@ class PartitionModification(SubConfig):
 		if self.dev_path:
 			return f'{ENC_IDENTIFIER}{self.dev_path.name}'
 		return None
+
+	@mapper_name.setter
+	def mapper_name(self, value: str | None) -> None:
+		self._mapper_name = value
 
 	def set_flag(self, flag: PartitionFlag) -> None:
 		if flag not in self.flags:
@@ -1806,6 +1826,23 @@ class LsblkInfo(BaseModel):
 	@field_serializer('size', when_used='json')
 	def serialize_size(self, size: Size) -> str:
 		return size.format_size(Unit.MiB)
+
+	@property
+	def all_mountpoints(self) -> list[Path]:
+		mountpoints = list(self.mountpoints)
+		for child in self.children:
+			for mp in child.all_mountpoints:
+				if mp not in mountpoints:
+					mountpoints.append(mp)
+		return mountpoints
+
+	def find_child_by_type(self, device_type: str) -> LsblkInfo | None:
+		for child in self.children:
+			if child.type == device_type:
+				return child
+			if found := child.find_child_by_type(device_type):
+				return found
+		return None
 
 	@classmethod
 	def fields(cls) -> list[str]:
