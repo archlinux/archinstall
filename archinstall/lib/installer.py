@@ -914,7 +914,7 @@ class Installer:
 
 					self._prepare_fs_type(part.fs_type)
 
-					if part in self._disk_encryption.partitions:
+					if part in self._disk_encryption.partitions or part.is_encrypted:
 						self._prepare_encrypt()
 
 		if ucode := self._get_microcode():
@@ -1105,26 +1105,27 @@ class Installer:
 	) -> list[str]:
 		kernel_parameters = []
 
-		if root_partition in self._disk_encryption.partitions:
+		if root_partition in self._disk_encryption.partitions or root_partition.is_encrypted:
 			# TODO: We need to detect if the encrypted device is a whole disk encryption,
 			# or simply a partition encryption. Right now we assume it's a partition (and we always have)
+			mapper_name = root_partition.mapper_name or 'root'
 
 			if self._disk_encryption.hsm_device:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
 				# Note: UUID must be used, not PARTUUID for sd-encrypt to work
-				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}=root')
+				kernel_parameters.append(f'rd.luks.name={root_partition.uuid}={mapper_name}')
 				# Note: tpm2-device and fido2-device don't play along very well:
 				# https://github.com/archlinux/archinstall/pull/1196#issuecomment-1129715645
 				kernel_parameters.append('rd.luks.options=fido2-device=auto,password-echo=no')
-			elif partuuid:
+			elif partuuid and root_partition.partuuid:
 				debug(f'Root partition is an encrypted device, identifying by PARTUUID: {root_partition.partuuid}')
-				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:root')
+				kernel_parameters.append(f'cryptdevice=PARTUUID={root_partition.partuuid}:{mapper_name}')
 			else:
 				debug(f'Root partition is an encrypted device, identifying by UUID: {root_partition.uuid}')
-				kernel_parameters.append(f'cryptdevice=UUID={root_partition.uuid}:root')
+				kernel_parameters.append(f'cryptdevice=UUID={root_partition.uuid}:{mapper_name}')
 
 			if id_root:
-				kernel_parameters.append('root=/dev/mapper/root')
+				kernel_parameters.append(f'root=/dev/mapper/{mapper_name}')
 		elif id_root:
 			if partuuid:
 				debug(f'Identifying root partition by PARTUUID: {root_partition.partuuid}')

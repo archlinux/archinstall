@@ -148,12 +148,24 @@ class DeviceHandler:
 		lsblk_info: LsblkInfo | None = None,
 	) -> FilesystemType | None:
 		try:
+			if lsblk_info is not None:
+				if crypt_child := lsblk_info.find_child_by_type('crypt'):
+					if crypt_child.fstype:
+						try:
+							return FilesystemType(crypt_child.fstype)
+						except ValueError:
+							pass
+				if lsblk_info.fstype == FilesystemType.CRYPTO_LUKS:
+					return FilesystemType.CRYPTO_LUKS
+
 			if partition.fileSystem:
 				if partition.fileSystem.type == FilesystemType.LINUX_SWAP.parted_value:
 					return FilesystemType.LINUX_SWAP
 				return FilesystemType(partition.fileSystem.type)
-			if lsblk_info is not None:
-				return FilesystemType(lsblk_info.fstype) if lsblk_info.fstype else None
+
+			if lsblk_info is not None and lsblk_info.fstype:
+				return FilesystemType(lsblk_info.fstype)
+
 			return None
 		except ValueError:
 			debug(f'Could not determine the filesystem: {partition.fileSystem}')
@@ -191,8 +203,13 @@ class DeviceHandler:
 
 		subvol_infos: list[_BtrfsSubvolumeInfo] = []
 
-		if not lsblk_info.mountpoint:
-			mount(dev_path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
+		target_lsblk = lsblk_info
+		if crypt_child := lsblk_info.find_child_by_type('crypt'):
+			if crypt_child.fstype == FilesystemType.BTRFS:
+				target_lsblk = crypt_child
+
+		if not target_lsblk.mountpoint and not target_lsblk.mountpoints:
+			mount(target_lsblk.path, self._TMP_BTRFS_MOUNT, create_target_mountpoint=True)
 			mountpoint = self._TMP_BTRFS_MOUNT
 		else:
 			# when multiple subvolumes are mounted then the lsblk output may look like
@@ -200,7 +217,7 @@ class DeviceHandler:
 			# "mountpoints": ["/mnt/archinstall/var/log", "/mnt/archinstall/home", ..]
 			# so we'll determine the minimum common path and assume that's the root
 			try:
-				common_path = os.path.commonpath(lsblk_info.mountpoints)
+				common_path = os.path.commonpath(target_lsblk.mountpoints)
 			except ValueError:
 				return subvol_infos
 
@@ -217,7 +234,7 @@ class DeviceHandler:
 		# "fsroots": ["/@log", "/@home", "/@"...]
 		# we'll thereby map the fsroot, which are the mounted filesystem roots
 		# to the corresponding mountpoints
-		btrfs_subvol_info = dict(zip(lsblk_info.fsroots, lsblk_info.mountpoints, strict=True))
+		btrfs_subvol_info = dict(zip(target_lsblk.fsroots, target_lsblk.mountpoints, strict=True))
 
 		# ID 256 gen 16 top level 5 path @
 		for line in result.splitlines():
@@ -227,8 +244,8 @@ class DeviceHandler:
 			sub_vol_mountpoint = btrfs_subvol_info.get('/' / name, None)
 			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 
-		if not lsblk_info.mountpoint:
-			umount(dev_path)
+		if not target_lsblk.mountpoint and not target_lsblk.mountpoints:
+			umount(self._TMP_BTRFS_MOUNT)
 
 		return subvol_infos
 
