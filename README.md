@@ -84,7 +84,7 @@ By default, all user account credentials are hashed with `yescrypt` and only the
 This is not possible for disk encryption password which needs to be stored in plaintext to be able to apply it.
 
 However, when selecting to save configuration files, `archinstall` will prompt for the option to encrypt the `user_credentials.json` file content.
-A prompt will require to enter a encryption password to encrypt the file. When providing an encrypted `user_configuration.json` as a argument with `--creds <user_credentials.json>`
+A prompt will require to enter a encryption password to encrypt the file. When providing an encrypted `user_credentials.json` as a argument with `--creds <user_credentials.json>`
 there are multiple ways to provide the decryption key:
 * Provide the decryption key via the command line argument `--creds-decryption-key <password>`
 * Store the encryption key in the environment variable `ARCHINSTALL_CREDS_DECRYPTION_KEY` which will be read automatically
