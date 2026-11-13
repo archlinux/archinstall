@@ -29,6 +29,7 @@ class NiriProfile(Profile):
 			'swayidle',
 			'swaylock',
 			'xdg-desktop-portal-gnome',
+			'ttf-nerd-fonts-symbols',
 			*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
 		]
 
