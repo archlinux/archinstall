@@ -379,7 +379,7 @@ class Installer:
 			options = part_mod.mount_options
 
 			if part_mod.is_efi():
-				options = list(dict.fromkeys(options + ['fmask=0177', 'dmask=0077']))
+				options = list(dict.fromkeys([*options, 'fmask=0177', 'dmask=0077']))
 
 			mount(part_mod.dev_path, target, options=options)
 		elif part_mod.fs_type == FilesystemType.BTRFS:
@@ -444,7 +444,7 @@ class Installer:
 		subvols_with_mountpoints = [sv for sv in subvolumes if sv.mountpoint is not None]
 		for subvol in sorted(subvols_with_mountpoints, key=lambda x: x.relative_mountpoint):
 			mountpoint = self.target / subvol.relative_mountpoint
-			options = mount_options + [f'subvol={subvol.name}']
+			options = [*mount_options, f'subvol={subvol.name}']
 			mount(dev_path, mountpoint, options=options)
 
 	def generate_key_files(self) -> None:

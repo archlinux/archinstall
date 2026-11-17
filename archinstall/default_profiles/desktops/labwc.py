@@ -21,7 +21,8 @@ class LabwcProfile(Profile):
 		return [
 			'alacritty',
 			'labwc',
-		] + seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess))
+			*seat_access_packages(self.custom_settings.get(CustomSetting.SeatAccess)),
+		]
 
 	@property
 	@override

@@ -188,7 +188,7 @@ def umount(mountpoint: Path | str, recursive: bool = False) -> None:
 
 	for path in lsblk_info.mountpoints:
 		debug(f'Unmounting mountpoint: {path}')
-		SysCommand(cmd + [str(path)])
+		SysCommand([*cmd, str(path)])
 
 
 def swapon(path: Path) -> None:
