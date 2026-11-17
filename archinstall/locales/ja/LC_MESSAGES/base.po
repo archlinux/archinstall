@@ -219,10 +219,10 @@ msgid "Select Plymouth theme"
 msgstr "Plymouth のテーマを選択"
 
 msgid "The specified configuration will be applied"
-msgstr "指定された設定が適用されます"
+msgstr "指定した設定を適用します"
 
 msgid "Would you like to continue?"
-msgstr "続行しますか？"
+msgstr "続けますか？"
 
 msgid "Configuration preview"
 msgstr "設定プレビュー"
@@ -537,6 +537,10 @@ msgid "Select which kernel(s) to install"
 msgstr "インストールするカーネルを選択"
 
 msgid ""
+"Select optional firmware to install (none are pulled in by linux-firmware)"
+msgstr "インストールするオプションファームウェアを選択（linux-firmware はこれらをプルしません）"
+
+msgid ""
 "For the best compatibility with your AMD hardware, you may want to use "
 "either the all open-source or AMD / ATI options."
 msgstr ""
@@ -576,6 +580,9 @@ msgstr "スワップ"
 
 msgid "Kernels"
 msgstr "カーネル"
+
+msgid "Additional firmware"
+msgstr "追加ファームウェア"
 
 msgid "Hostname"
 msgstr "ホスト名"
@@ -663,7 +670,7 @@ msgid "Invalid configuration:"
 msgstr "無効な設定:"
 
 msgid "Ready to install"
-msgstr "インストールの準備が完了"
+msgstr "インストール準備が完了"
 
 msgid "Warnings:"
 msgstr "警告:"
@@ -905,7 +912,7 @@ msgid "Plymouth \"{}\""
 msgstr "Plymouth \"{}\""
 
 msgid "Use a best-effort default partition layout"
-msgstr "ベストエフォートのデフォルトパーティションレイアウトを使用"
+msgstr "最善を尽くしたデフォルトパーティションレイアウトを使用"
 
 msgid "Manual Partitioning"
 msgstr "手動でパーティションを作成"
@@ -1155,6 +1162,24 @@ msgstr "DNSサーバー \"{}\""
 msgid "Network"
 msgstr "ネットワーク"
 
+msgid "Cavium LiquidIO server adapters"
+msgstr "Cavium LiquidIO サーバーアダプター"
+
+msgid "Marvell devices"
+msgstr "Marvell デバイス"
+
+msgid "Mellanox Spectrum switches"
+msgstr "Mellanox Spectrum スイッチ"
+
+msgid "Netronome Flow Processors"
+msgstr "Netronome フロープロセッサ"
+
+msgid "Qualcomm SoCs"
+msgstr "Qualcomm SoC"
+
+msgid "QLogic devices"
+msgstr "QLogic デバイス"
+
 msgid "Package group:"
 msgstr "パッケージグループ:"
 
@@ -1374,7 +1399,7 @@ msgid "About to upload \"{}\" to the publicly accessible {}"
 msgstr "\"{}\" を公開アクセス可能な {} にアップロードしようとしています"
 
 msgid "Do you want to continue?"
-msgstr "続行しますか？"
+msgstr "続けますか？"
 
 #, python-brace-format
 msgid "Log uploaded successfully. URL: {}"
