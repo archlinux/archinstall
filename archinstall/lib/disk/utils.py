@@ -168,7 +168,7 @@ def mount(
 	debug(f'Mounting {dev_path}: {command}')
 
 	try:
-		SysCommand(command)
+		SysCommand(cmd)
 	except SysCallError as err:
 		raise DiskError(f'Could not mount {dev_path}: {command}\n{err.message}')
 

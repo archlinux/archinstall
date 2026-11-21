@@ -207,7 +207,7 @@ class DeviceHandler:
 			mountpoint = Path(common_path)
 
 		try:
-			result = SysCommand(f'btrfs subvolume list {mountpoint}').decode()
+			result = SysCommand(['btrfs', 'subvolume', 'list', str(mountpoint)]).decode()
 		except SysCallError as err:
 			debug(f'Failed to read btrfs subvolume information: {err}')
 			return subvol_infos
@@ -223,7 +223,7 @@ class DeviceHandler:
 		for line in result.splitlines():
 			# expected output format:
 			# ID 257 gen 8 top level 5 path @home
-			name = Path(line.split(' ')[-1])
+			name = Path(line.split(' path ', maxsplit=1)[-1])
 			sub_vol_mountpoint = btrfs_subvol_info.get('/' / name, None)
 			subvol_infos.append(_BtrfsSubvolumeInfo(name, sub_vol_mountpoint))
 
@@ -441,17 +441,17 @@ class DeviceHandler:
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f'btrfs subvolume create -p {subvol_path}')
+			SysCommand(['btrfs', 'subvolume', 'create', '-p', str(subvol_path)])
 
 			if BtrfsMountOption.nodatacow.value in mount_options:
 				try:
-					SysCommand(f'chattr +C {subvol_path}')
+					SysCommand(['chattr', '+C', str(subvol_path)])
 				except SysCallError as err:
 					raise DiskError(f'Could not set nodatacow attribute at {subvol_path}: {err}')
 
 			if BtrfsMountOption.compress.value in mount_options:
 				try:
-					SysCommand(f'chattr +c {subvol_path}')
+					SysCommand(['chattr', '+c', str(subvol_path)])
 				except SysCallError as err:
 					raise DiskError(f'Could not set compress attribute at {subvol_path}: {err}')
 
@@ -495,7 +495,7 @@ class DeviceHandler:
 
 			subvol_path = self._TMP_BTRFS_MOUNT / sub_vol.name
 
-			SysCommand(f'btrfs subvolume create -p {subvol_path}')
+			SysCommand(['btrfs', 'subvolume', 'create', '-p', str(subvol_path)])
 
 		umount(dev_path)
 
