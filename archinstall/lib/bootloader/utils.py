@@ -48,7 +48,7 @@ def validate_bootloader_layout(
 		None,
 	)
 
-	if bootloader == Bootloader.Efistub:
+	if bootloader == Bootloader.Efistub and not bootloader_config.uki:
 		# The UEFI firmware reads the kernel directly from the boot partition,
 		# which must be FAT.
 		if boot_part and (boot_part.fs_type is None or not boot_part.fs_type.is_fat()):
