@@ -32,7 +32,7 @@ def list_locales() -> list[str]:
 @lru_cache
 def list_console_fonts() -> list[str]:
 	directory = Path('/usr/share/kbd/consolefonts')
-	fonts = {path.name.split('.')[0] for path in directory.glob('*.gz')}
+	fonts = {path.stem.removesuffix('.psfu').removesuffix('.psf').removesuffix('.fnt').removesuffix('.cp') for path in directory.glob('*.gz')}
 	return sorted(fonts)
 
 
