@@ -71,8 +71,10 @@ class ProfileMenu(AbstractSubMenu[ProfileConfiguration]):
 				self._item_group.find_by_key('gfx_driver').enabled = False
 				self._item_group.find_by_key('gfx_driver').value = None
 			else:
-				self._item_group.find_by_key('gfx_driver').enabled = True
-				self._item_group.find_by_key('gfx_driver').value = GfxDriver.AllOpenSource
+				gfx_driver = self._item_group.find_by_key('gfx_driver')
+				gfx_driver.enabled = True
+				# keep a driver the user already picked, leaving this menu with Esc also lands here
+				gfx_driver.value = gfx_driver.value or GfxDriver.AllOpenSource
 
 			if not profile.is_greeter_supported():
 				self._item_group.find_by_key('greeter').enabled = False
