@@ -153,7 +153,7 @@ class WifiHandler(InstanceRunnable[bool]):
 
 		network_id = self._find_network_id(network.ssid, wifi_iface)
 
-		if not network_id:
+		if network_id is None:
 			debug('Failed to find network id')
 			await self._notify_failure()
 			return False
