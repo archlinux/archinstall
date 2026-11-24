@@ -212,7 +212,7 @@ class WifiNetwork:
 			if value.lower().startswith('bssid'):
 				continue
 
-			parts = value.split(None, 4)
+			parts = line.split('\t', 4)
 			if len(parts) < 4:
 				continue
 
