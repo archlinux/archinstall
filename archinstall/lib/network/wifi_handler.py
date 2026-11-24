@@ -193,7 +193,7 @@ class WifiHandler(InstanceRunnable[bool]):
 		cmd += f' {command}'
 
 		try:
-			result = SysCommand(cmd).decode()
+			result = SysCommand(cmd).decode(strip=False)
 		except SysCallError as err:
 			debug(f'error running wpa_cli command: {err}')
 			return WpaCliResult(
