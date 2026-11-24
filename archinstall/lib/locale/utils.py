@@ -6,6 +6,8 @@ from archinstall.lib.exceptions import ServiceExceptionError, SysCallError
 from archinstall.lib.log import error
 from archinstall.lib.utils.util import running_from_iso
 
+ZONE_TAB = Path('/usr/share/zoneinfo/zone.tab')
+
 
 def list_keyboard_languages() -> list[str]:
 	return (
@@ -111,11 +113,7 @@ def set_kb_layout(locale: str) -> bool:
 
 
 def list_timezones() -> list[str]:
-	return (
-		SysCommand(
-			'timedatectl --no-pager list-timezones',
-			environment_vars={'SYSTEMD_COLORS': '0'},
-		)
-		.decode()
-		.splitlines()
-	)
+	# `timedatectl list-timezones` also lists tzdata's backward links (e.g. Europe/Kiev next to Europe/Kyiv),
+	# zone.tab has one current name per region; UTC is a link so it is added explicitly
+	zones = [line.split('\t')[2] for line in ZONE_TAB.read_text().splitlines() if line and not line.startswith('#')]
+	return sorted(['UTC', *zones])
