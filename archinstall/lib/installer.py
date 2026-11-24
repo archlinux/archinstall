@@ -1611,6 +1611,7 @@ class Installer:
 	def _add_efistub_bootloader(
 		self,
 		boot_partition: PartitionModification,
+		efi_partition: PartitionModification | None,
 		root: PartitionModification | LvmVolume,
 		uki_enabled: bool = False,
 	) -> None:
@@ -1638,7 +1639,11 @@ class Installer:
 			loader = '/EFI/Linux/arch-{kernel}.efi'
 			cmdline = []
 
-		parent_dev_path = get_parent_device_path(boot_partition.safe_dev_path)
+		loader_partition = efi_partition if uki_enabled else boot_partition
+		if loader_partition is None:
+			raise ValueError('Could not detect EFI system partition')
+
+		parent_dev_path = get_parent_device_path(loader_partition.safe_dev_path)
 
 		cmd_template = (
 			'efibootmgr',
@@ -1646,7 +1651,7 @@ class Installer:
 			'--disk',
 			str(parent_dev_path),
 			'--part',
-			str(boot_partition.partn),
+			str(loader_partition.partn),
 			'--label',
 			'Arch Linux ({kernel})',
 			'--loader',
@@ -1904,7 +1909,7 @@ class Installer:
 			case Bootloader.Grub:
 				self._add_grub_bootloader(boot_partition, root, efi_partition, uki_enabled, bootloader_removable)
 			case Bootloader.Efistub:
-				self._add_efistub_bootloader(boot_partition, root, uki_enabled)
+				self._add_efistub_bootloader(boot_partition, efi_partition, root, uki_enabled)
 			case Bootloader.Limine:
 				self._add_limine_bootloader(boot_partition, efi_partition, root, uki_enabled, bootloader_removable)
 			case Bootloader.Refind:
