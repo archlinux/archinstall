@@ -11,382 +11,467 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.1\n"
 
-msgid "[!] A log file has been created here: {} {}"
-msgstr "[!] Ένα αρχείο καταγραφής έχει δημιουργηθεί εδώ: {} {}"
+msgid "Recommended"
+msgstr "Προτεινόμενο"
 
-msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Παρακαλώ επισυνάψτε αυτό το issue (και αρχείο) στο https://github.com/archlinux/archinstall/issues"
+msgid "Package"
+msgstr "Πακέτο"
 
-msgid "Do you really want to abort?"
-msgstr "Θέλετε σίγουρα να διακόψετε;"
+msgid "Curated selection of KDE Plasma packages"
+msgstr "Επιμελημένη επιλογή πακέτων KDE Plasma"
 
-msgid "And one more time for verification: "
-msgstr "Και άλλη μία φορά για επαλήθευση: "
+msgid "Dependencies"
+msgstr "Εξαρτήσεις"
 
-msgid "Would you like to use swap on zram?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε swap με zram;"
+msgid "Package group"
+msgstr "Ομάδα πακέτων"
 
-msgid "Desired hostname for the installation: "
-msgstr "Επιθυμητό όνομα υπολογιστή για την εγκατάσταση: "
+msgid "Extensive KDE Plasma installation"
+msgstr "Πλήρης εγκατάσταση του KDE Plasma"
 
-msgid "Username for required superuser with sudo privileges: "
-msgstr "Όνομα χρήστη για τον απαιτούμενο υπερ-χρήστη με δικαιώματα sudo: "
+msgid "Packages in group"
+msgstr "Πακέτα στην ομάδα"
 
-msgid "Any additional users to install (leave blank for no users): "
-msgstr "Επιπρόσθετοι χρήστες για την εγκατάσταση (αφήστε κενό για κανέναν χρήστη): "
+msgid "Minimal KDE Plasma installation"
+msgstr "Ελάχιστη εγκατάσταση KDE Plasma"
 
-msgid "Should this user be a superuser (sudoer)?"
-msgstr "Θα έπρεπε αυτός ο χρήστης να είναι ένας υπερχρήστης (χρήστης sudo);"
+msgid "Type"
+msgstr "Τύπος"
 
-msgid "Select a timezone"
-msgstr "Επιλέξτε μία ζώνη ώρας"
+msgid "Description"
+msgstr "Περιγραφή"
 
-msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε το GRUB ως bootloader αντί του systemd-boot;"
+msgid "Select a flavor of KDE Plasma to install"
+msgstr "Επιλέξτε παραλλαγή του KDE Plasma για εγκατάσταση"
 
-msgid "Choose a bootloader"
-msgstr "Επιλέξτε έναν bootloader"
+msgid "{} needs access to your seat"
+msgstr "Το {} χρειάζεται πρόσβαση στο seat σας"
 
-msgid "Choose an audio server"
-msgstr "Επιλέξτε έναν διακομιστή ήχου"
+msgid "collection of hardware devices i.e. keyboard, mouse"
+msgstr "σύνολο συσκευών υλισμικού, π.χ. πληκτρολόγιο, ποντίκι"
 
-msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Εγκαθίστανται μόνο πακέτα όπως το base, base-devel, linux, linux-firmware, efibootmgr και προαιρετικά πακέτα προφίλ."
+msgid "Choose an option how to give {} access to your hardware"
+msgstr "Επιλέξτε τον τρόπο με τον οποίο το {} θα αποκτήσει πρόσβαση στο υλισμικό σας"
 
-msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
-msgstr ""
+msgid "Environment type: {} {}"
+msgstr "Τύπος περιβάλλοντος: {} {}"
 
-msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
-msgstr "Εάν επιθυμείτε έναν περιηγητή διαδικτύου, όπως ο firefox ή ο chromium, πρέπει να το καθορίσετε στο επακόλουθο prompt."
+msgid "Environment type: {}"
+msgstr "Τύπος περιβάλλοντος: {}"
 
-msgid "Write additional packages to install (space separated, leave blank to skip): "
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+msgid "Installed packages"
+msgstr "Εγκατεστημένα πακέτα"
 
-msgid "Copy ISO network configuration to installation"
-msgstr "Αντιγραφή διαμόρφωση δικτύου ISO στην εγκατάσταση"
-
-msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
-msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
-
-msgid "Select one network interface to configure"
-msgstr "Επιλέξτε μία διεπαφή δικτύου για διαμόρφωση"
-
-msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
-msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
-
-#, python-brace-format
-msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
-msgstr "Εισάγετε την IP και το υποδίκτυο για το {} (παράδειγμα: 192.168.0.5/24): "
-
-msgid "Enter your gateway (router) IP address or leave blank for none: "
-msgstr "Εισάγετε τη διεύθυνση IP του router σας ή αφήστε κενό για καμία διεύθυνση: "
-
-msgid "Enter your DNS servers (space separated, blank for none): "
-msgstr "Εισάγετε τους διακομιστές DNS σας (χωρισμένοι με κενό, αφήστε κενό για κανέναν διακομιστή): "
-
-msgid "Select which filesystem your main partition should use"
-msgstr "Επιλέξτε ποιο σύστημα αρχείων θέλετε να χρησιμοποιεί η κύρια διαμέριση"
-
-msgid "Current partition layout"
-msgstr "Τρέχουσα διάταξη διαμέρισης"
-
-msgid ""
-"Select what to do with\n"
-"{}"
-msgstr ""
-"Επιλέξτε τι να γίνει με\n"
-"{}"
-
-msgid "Enter a desired filesystem type for the partition"
-msgstr "Εισάγετε ένα επιθυμητό τύπο συστήματος αρχείων για τη διαμέριση"
-
-msgid "Enter the start location (in parted units: s, GB, %, etc. ; default: {}): "
-msgstr ""
-
-msgid "Enter the end location (in parted units: s, GB, %, etc. ; ex: {}): "
-msgstr ""
-
-msgid "{} contains queued partitions, this will remove those, are you sure?"
-msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
-
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partitions to delete"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε ποιες διαμερίσεις να διαγραφούν μέσω δείκτη"
-
-msgid ""
-"{}\n"
-"\n"
-"Select by index which partition to mount where"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε ποια διαμέριση να γίνει mount που, μέσω δείκτη"
-
-msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
-
-msgid "Select where to mount partition (leave blank to remove mountpoint): "
-msgstr "Επιλέξτε που να γίνει mount η διαμέρισιη (αφήστε κενό για να διαγραφεί το σημείο mount): "
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mask for formatting"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε ποια διαμέριση να μεταμφιεστεί για μορφοποίηση"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as encrypted"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε ποια διαμέριση να σημειωθεί ως κρυπτογραφημένη"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to mark as bootable"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε ποια διαμέριση να σημειωθεί ως bootable"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set a filesystem on"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε σε ποια διαμέριση να δημιουργηθεί σύστημα αρχείων"
-
-msgid "Enter a desired filesystem type for the partition: "
-msgstr "Εισάγετε τον επιθυμητό τύπο συστήματος αρχείων για αυτήν τη διαμέριση: "
-
-msgid "Archinstall language"
-msgstr "Γλώσσα archinstall"
-
-msgid "Wipe all selected drives and use a best-effort default partition layout"
-msgstr "Διαγραφή όλων των επιλεγμένων δίσκων και χρήση μίας προκαθορισμένης διάταξης βέλτιστης προσπάθειας"
-
-msgid "Select what to do with each individual drive (followed by partition usage)"
-msgstr "Επιλέξτε τι να γίνει με κάθε ξεχωριστό δίσκο (με επακόλουθο τη χρήση διαμέρισης)"
-
-msgid "Select what you wish to do with the selected block devices"
-msgstr "Επιλέξτε τι θέλετε να κάνετε με τις επιλεγμένες συσκευές block"
-
-msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
-msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
-
-msgid "Select keyboard layout"
-msgstr "Επιλέξτε διάταξη πληκτρολογίου"
-
-msgid "Select one of the regions to download packages from"
-msgstr "Επιλέξτε μία από τις περιοχές από τις οποίες να γίνει λήψη πακέτων"
-
-msgid "Select one or more hard drives to use and configure"
-msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
-
-msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
-msgstr "Για την καλύτερη συμβατότητα με το AMD υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την AMD / ATI επιλογή."
-
-msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
-msgstr "Για την καλύτερη συμβατότητα με το Intel υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την Intel επιλογή.\n"
-
-msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
-msgstr "Για την καλύτερη συμβατότητα με το Nvidia υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε τον ιδιόκτητο οδηγό της Nvidia.\n"
-
-msgid ""
-"\n"
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"\n"
-"Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
-
-msgid "All open-source (default)"
-msgstr "Όλα ανοιχτού κώδικα (προκαθορισμένο)"
-
-msgid "Choose which kernels to use or leave blank for default \"{}\""
-msgstr "Επιλέξτε ποιοι kernels να χρησιμοποιηθούν ή αφήστε κενό για το προκαθορισμένο \"{}\""
-
-msgid "Choose which locale language to use"
-msgstr "Επιλέξτε ποια τοπική γλώσσα να χρησιμοποιηθεί"
-
-msgid "Choose which locale encoding to use"
-msgstr "Επιλέξτε ποια τοπική κωδικοποίηση να χρησιμοποιηθεί"
-
-msgid "Select one of the values shown below: "
-msgstr "Επιλέξτε μία από τις τιμές που φαίνονται παρακάτω: "
-
-msgid "Select one or more of the options below: "
-msgstr "Επιλέξτε μία ή παραπάνω από τις επιλογές παρακάτω: "
-
-msgid "Adding partition...."
-msgstr "Προσθέτωντας τη διαμέριση...."
-
-msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
-msgstr "Πρέπει να εισάγετε έναν έγκυρο fs-type ώστε να συνεχίσετε. Δείτε `man parted` για έγκυρους fs-type."
-
-msgid "Error: Listing profiles on URL \"{}\" resulted in:"
-msgstr "Σφάλμα: Η καταγραφή προφίλ στο URL \"{}\" είχε ως αποτέλεσμα:"
-
-msgid "Error: Could not decode \"{}\" result as JSON:"
-msgstr "Σφάλμα: Η αποκωδικοποίηση του αποτελέσματος \"{}\" ως JSON ήταν ανεπιτυχής:"
-
-msgid "Keyboard layout"
-msgstr "Διάταξη πληκτρολογίου"
-
-msgid "Mirror region"
-msgstr "Περιοχή mirror"
-
-msgid "Locale language"
-msgstr "Τοπική γλώσσα"
-
-msgid "Locale encoding"
-msgstr "Τοπική κωδικοποίηση"
-
-msgid "Drive(s)"
-msgstr "Δίσκος(οι)"
-
-msgid "Disk layout"
-msgstr "Διάταξη δίσκου"
-
-msgid "Encryption password"
-msgstr "Κωδικός κρυπτογράφησης"
-
-msgid "Swap"
-msgstr "Swap"
-
-msgid "Bootloader"
-msgstr "Bootloader"
-
-msgid "Root password"
-msgstr "Κωδικός root"
-
-msgid "Superuser account"
-msgstr "Λογαριασμός υπερχρήστη"
-
-msgid "User account"
-msgstr "Λογαριασμός χρήστη"
-
-msgid "Profile"
-msgstr "Προφίλ"
+msgid "Bluetooth"
+msgstr "Bluetooth"
 
 msgid "Audio"
 msgstr "Ήχος"
 
-msgid "Kernels"
-msgstr "Kernels"
+msgid "Print service"
+msgstr "Υπηρεσία εκτύπωσης"
 
-msgid "Additional packages"
-msgstr "Περαιτέρω πακέτα"
+msgid "Power management"
+msgstr "Διαχείριση ενέργειας"
 
-msgid "Network configuration"
-msgstr "Διαμόρφωση δικτύου"
+msgid "Firewall"
+msgstr "Τείχος προστασίας"
 
-msgid "Automatic time sync (NTP)"
-msgstr "Αυτόματη ενημέρωση ώρας (NTP)"
+msgid "Additional fonts"
+msgstr "Επιπλέον γραμματοσειρές"
 
-msgid "Install ({} config(s) missing)"
-msgstr "Εγκατάσταση (η/οι {} διαμόρφωση/εις λείπει/ουν)"
+msgid "Enabled"
+msgstr "Ενεργοποιημένο"
 
-msgid ""
-"You decided to skip harddrive selection\n"
-"and will use whatever drive-setup is mounted at {} (experimental)\n"
-"WARNING: Archinstall won't check the suitability of this setup\n"
-"Do you wish to continue?"
-msgstr ""
-"Επιλέξατε να παραλείψετε την επιλογή σκληρού δίσκου\n"
-"και θα χρησιμοποιηθεί οποιαδήποτε εγκατάσταση δίσκου είναι mount στο {} (πειραματικό)\n"
-"ΠΡΟΣΟΧΗ: Το archinstall δεν μπορεί να ελέγξει την καταλληλότητα αυτής της εγκατάστασης\n"
-"Θέλετε να συνεχίσετε;"
+msgid "Disabled"
+msgstr "Απενεργοποιημένο"
 
-msgid "Re-using partition instance: {}"
-msgstr "Επαναχρησιμοποιώντας την instance διαμέρισης: {}"
+msgid "Would you like to configure Bluetooth?"
+msgstr "Θα θέλατε να διαμορφώσετε το Bluetooth;"
 
-msgid "Create a new partition"
-msgstr "Δημιουργία καινούργιας διαμέρισης"
+msgid "Would you like to configure the print service?"
+msgstr "Θα θέλατε να διαμορφώσετε την υπηρεσία εκτύπωσης;"
 
-msgid "Delete a partition"
-msgstr "Διαγραφή διαμέρισης"
+msgid "Select audio configuration"
+msgstr "Επιλέξτε διαμόρφωση ήχου"
 
-msgid "Clear/Delete all partitions"
-msgstr "Καθαρισμός/Διαγραφή όλων των διαμερίσεων"
+msgid "Select font packages to install"
+msgstr "Επιλέξτε πακέτα γραμματοσειρών για εγκατάσταση"
 
-msgid "Assign mount-point for a partition"
-msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
+msgid "Incorrect credentials file decryption password"
+msgstr "Λανθασμένος κωδικός αποκρυπτογράφησης του αρχείου διαπιστευτηρίων"
 
-msgid "Mark/Unmark a partition to be formatted (wipes data)"
-msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
+msgid "Enter credentials file decryption password"
+msgstr "Εισάγετε τον κωδικό αποκρυπτογράφησης του αρχείου διαπιστευτηρίων"
 
-msgid "Mark/Unmark a partition as encrypted"
-msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης ως κρυπτογραφημένη"
+msgid "Incorrect password"
+msgstr "Λανθασμένος κωδικός"
 
-msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
-msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης ως ικανή για boot (αυτόματο για /boot)"
+msgid "Setting up U2F login: {}"
+msgstr "Ρύθμιση σύνδεσης U2F: {}"
 
-msgid "Set desired filesystem for a partition"
-msgstr "Θέση επιθυμητού συστήματος αρχείων για μία διαμέριση"
+msgid "Setting up U2F device for user: {}"
+msgstr "Ρύθμιση συσκευής U2F για τον χρήστη: {}"
 
-msgid "Abort"
-msgstr "Εγκατάλειψη"
+msgid "You may need to enter the PIN and then touch your U2F device to register it"
+msgstr "Ίσως χρειαστεί να εισάγετε το PIN και έπειτα να αγγίξετε τη συσκευή U2F για να την καταχωρίσετε"
 
-msgid "Hostname"
-msgstr "Όνομα υπολογιστή"
+msgid "Root password"
+msgstr "Κωδικός root"
 
-msgid "Not configured, unavailable unless setup manually"
-msgstr "Δεν έχει διαμορφωθεί, μη διαθέσιμο εκτός εάν εγκατασταθεί χειροκίνητα"
+msgid "User account"
+msgstr "Λογαριασμός χρήστη"
 
-msgid "Timezone"
-msgstr "Ζώνη ώρας"
+msgid "U2F login setup"
+msgstr "Ρύθμιση σύνδεσης U2F"
 
-msgid "Set/Modify the below options"
-msgstr "Θέση/Τροποποίηση των παρακάτω επιλογών"
+msgid "U2F login method: "
+msgstr "Μέθοδος σύνδεσης U2F: "
 
-msgid "Install"
-msgstr "Εγκατάσταση"
+msgid "Passwordless sudo: "
+msgstr "Sudo χωρίς κωδικό: "
 
-msgid ""
-"Use ESC to skip\n"
-"\n"
-msgstr ""
-"Χρησιμοποιήστε ESC για παράλειψη\n"
-"\n"
+msgid "No U2F devices found"
+msgstr "Δεν βρέθηκαν συσκευές U2F"
+
+msgid "Enter root password"
+msgstr "Εισάγετε κωδικό root"
+
+msgid "Enable passwordless sudo?"
+msgstr "Ενεργοποίηση sudo χωρίς κωδικό;"
+
+msgid "Bootloader"
+msgstr "Bootloader"
+
+msgid "Unified kernel images"
+msgstr "Unified kernel images"
+
+msgid "Install to removable location"
+msgstr "Εγκατάσταση σε θέση για αφαιρούμενα μέσα"
+
+msgid "Plymouth"
+msgstr "Plymouth"
+
+msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
+msgstr "Θα εγκατασταθεί στο /EFI/BOOT/ (θέση για αφαιρούμενα μέσα, ασφαλής προεπιλογή)"
+
+msgid "Will install to custom location with NVRAM entry"
+msgstr "Θα εγκατασταθεί σε προσαρμοσμένη τοποθεσία με εγγραφή NVRAM"
+
+msgid "Plymouth adds a cosmetic boot splash but can cause boot problems on some setups:"
+msgstr "Το Plymouth προσθέτει μια διακοσμητική οθόνη εκκίνησης, αλλά μπορεί να προκαλέσει προβλήματα εκκίνησης σε ορισμένα συστήματα:"
+
+msgid "black screen with the NVIDIA driver"
+msgstr "μαύρη οθόνη με τον οδηγό NVIDIA"
+
+msgid "hidden password prompt with disk encryption (LUKS)"
+msgstr "μη ορατή προτροπή εισαγωγής κωδικού με κρυπτογράφηση δίσκου (LUKS)"
+
+msgid "Would you like to enable it?"
+msgstr "Θα θέλατε να το ενεργοποιήσετε;"
+
+msgid "Would you like to use unified kernel images?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε unified kernel images (UKI);"
+
+msgid "Would you like to install the bootloader to the default removable media search location?"
+msgstr "Θα θέλατε να εγκαταστήσετε τον bootloader στην προκαθορισμένη τοποθεσία αναζήτησης αφαιρούμενων μέσων;"
+
+msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
+msgstr "Αυτό εγκαθιστά τον bootloader στο /EFI/BOOT/BOOTX64.EFI (ή παρόμοιο), κάτι που είναι χρήσιμο για:"
+
+msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
+msgstr "Συστήματα με firmware που δεν υποστηρίζει σωστά εγγραφές εκκίνησης NVRAM, όπως οι περισσότερες μητρικές MSI,"
+
+msgid "most Apple Macs, many laptops..."
+msgstr "οι περισσότεροι Apple Mac, πολλοί φορητοί υπολογιστές..."
+
+msgid "USB drives or other portable external media."
+msgstr "Μονάδες USB ή άλλα φορητά εξωτερικά μέσα."
+
+msgid "Systems where you want the disk to be bootable on any computer."
+msgstr "Συστήματα όπου θέλετε ο δίσκος να μπορεί να εκκινήσει σε οποιονδήποτε υπολογιστή."
+
+msgid "Select bootloader to install"
+msgstr "Επιλέξτε bootloader για εγκατάσταση"
+
+msgid "UEFI is not detected and some options are disabled"
+msgstr "Δεν εντοπίστηκε UEFI και ορισμένες επιλογές είναι απενεργοποιημένες"
+
+msgid "Select Plymouth theme"
+msgstr "Επιλέξτε θέμα Plymouth"
+
+msgid "The specified configuration will be applied"
+msgstr "Θα εφαρμοστεί η καθορισμένη διαμόρφωση"
+
+msgid "Would you like to continue?"
+msgstr "Θα θέλατε να συνεχίσετε;"
+
+msgid "Configuration preview"
+msgstr "Προεπισκόπηση διαμόρφωσης"
+
+msgid "No configuration"
+msgstr "Καμία διαμόρφωση"
+
+msgid "Save user configuration (including disk layout)"
+msgstr "Αποθήκευση διαμόρφωσης χρήστη (συμπεριλαμβανομένης της διάταξης δίσκου)"
+
+msgid "Save user credentials"
+msgstr "Αποθήκευση στοιχείων χρήστη"
+
+msgid "Save all"
+msgstr "Αποθήκευση όλων"
+
+msgid "Enter a directory for the configuration(s) to be saved"
+msgstr "Εισάγετε έναν φάκελο για την αποθήκευση των διαμορφώσεων"
+
+msgid "Do you want to save the configuration file(s) to {}?"
+msgstr "Θέλετε να αποθηκεύσετε τα αρχεία διαμόρφωσης στο {};"
+
+msgid "Do you want to encrypt the user_credentials.json file?"
+msgstr "Θέλετε να κρυπτογραφήσετε το αρχείο user_credentials.json;"
+
+msgid "Credentials file encryption password"
+msgstr "Κωδικός κρυπτογράφησης αρχείου διαπιστευτηρίων"
+
+msgid "Select main filesystem"
+msgstr "Επιλέξτε κύριο σύστημα αρχείων"
+
+msgid "Would you like to use compression or disable CoW?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση ή να απενεργοποιήσετε το CoW;"
+
+msgid "Use compression"
+msgstr "Χρήση συμπίεσης"
+
+msgid "Disable Copy-on-Write"
+msgstr "Απενεργοποίηση Copy-on-Write"
+
+msgid "Would you like to use BTRFS subvolumes with a default structure?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε BTRFS υποόγκους με μία προκαθορισμένη δομή;"
+
+msgid "Would you like to create a separate partition for /home?"
+msgstr "Θα θέλατε να δημιουργήσετε μία ξεχωριστή διαμέριση για το /home;"
+
+msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
+msgstr "Οι επιλεγμένοι δίσκοι δεν έχουν την ελάχιστη χωρητικότητα που απαιτείται για μία αυτόματη πρόταση\n"
+
+msgid "Minimum capacity for /home partition: {}GiB\n"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GiB\n"
+
+msgid "Minimum capacity for Arch Linux partition: {}GiB"
+msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GiB"
+
+msgid "Partitioning"
+msgstr "Διαμερισμός"
+
+msgid "Disk encryption"
+msgstr "Κρυπτογράφηση δίσκου"
+
+msgid "Configuration type: {}"
+msgstr "Τύπος διαμόρφωσης: {}"
+
+msgid "Mountpoint"
+msgstr "Σημείο mount"
+
+msgid "Configuration"
+msgstr "Διαμόρφωση"
+
+msgid "Wipe"
+msgstr "Διαγραφή δεδομένων"
+
+msgid "Physical volumes"
+msgstr "Φυσικοί τόμοι"
+
+msgid "Volumes"
+msgstr "Τόμοι"
+
+msgid "Snapshot type: {}"
+msgstr "Τύπος στιγμιότυπου: {}"
+
+msgid "LVM disk encryption with more than 2 partitions is currently not supported"
+msgstr "Η κρυπτογράφηση δίσκου LVM με περισσότερες από 2 διαμερίσεις δεν υποστηρίζεται προς το παρόν"
+
+msgid "Encryption type"
+msgstr "Τύπος κρυπτογράφησης"
+
+msgid "Password"
+msgstr "Κωδικός"
+
+msgid "Iteration time"
+msgstr "Χρόνος επανάληψης"
+
+msgid "No disks were detected. A disk is required to be able to install Arch Linux"
+msgstr "Δεν εντοπίστηκαν δίσκοι. Απαιτείται ένας δίσκος για την εγκατάσταση του Arch Linux"
+
+msgid "Select disks for the installation"
+msgstr "Επιλέξτε δίσκους για την εγκατάσταση"
+
+msgid "Partitions"
+msgstr "Διαμερίσεις"
+
+msgid "Select a disk configuration"
+msgstr "Επιλέξτε διαμόρφωση δίσκου"
+
+msgid "Enter root mount directory"
+msgstr "Εισάγετε τον ριζικό φάκελο mount"
+
+msgid "You will use whatever drive-setup is mounted at the specified directory"
+msgstr "Θα χρησιμοποιηθεί η διάταξη δίσκων που είναι προσαρτημένη στον καθορισμένο φάκελο, όποια κι αν είναι"
+
+msgid "WARNING: Archinstall won't check the suitability of this setup"
+msgstr "ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Το Archinstall δεν θα ελέγξει την καταλληλότητα αυτής της διάταξης"
+
+msgid "Encryption password"
+msgstr "Κωδικός κρυπτογράφησης"
+
+msgid "LVM volumes"
+msgstr "Τόμοι LVM"
+
+msgid "HSM"
+msgstr "HSM"
+
+msgid "Partitions to be encrypted"
+msgstr "Διαμερίσεις προς κρυπτογράφηση"
+
+msgid "LVM volumes to be encrypted"
+msgstr "Τόμοι LVM προς κρυπτογράφηση"
+
+msgid "HSM device"
+msgstr "Συσκευή HSM"
+
+msgid "Select encryption type"
+msgstr "Επιλέξτε τύπο κρυπτογράφησης"
+
+msgid "Enter disk encryption password (leave blank for no encryption)"
+msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε κενό για καμία κρυπτογράφηση)"
+
+msgid "Select a FIDO2 device to use for HSM"
+msgstr "Επιλέξτε μία συσκευή FIDO2 για χρήση ως HSM"
+
+msgid "Enter iteration time for LUKS encryption (in milliseconds)"
+msgstr "Εισάγετε τον χρόνο επανάληψης για την κρυπτογράφηση LUKS (σε χιλιοστά του δευτερολέπτου)"
+
+msgid "Higher values increase security but slow down boot time"
+msgstr "Μεγαλύτερες τιμές αυξάνουν την ασφάλεια αλλά καθυστερούν την εκκίνηση"
+
+msgid "Default: {}ms, Recommended range: 1000-60000"
+msgstr "Προεπιλογή: {}ms, Προτεινόμενο εύρος: 1000-60000"
+
+msgid "Iteration time must be at least 100ms"
+msgstr "Ο χρόνος επανάληψης πρέπει να είναι τουλάχιστον 100ms"
+
+msgid "Iteration time must be at most 120000ms"
+msgstr "Ο χρόνος επανάληψης πρέπει να είναι το πολύ 120000ms"
+
+msgid "Please enter a valid number"
+msgstr "Παρακαλώ εισάγετε έναν έγκυρο αριθμό"
 
 msgid "Suggest partition layout"
 msgstr "Πρόταση διάταξης διαμέρισης"
 
-msgid "Enter a password: "
-msgstr "Εισάγετε κωδικό: "
+msgid "Remove all newly added partitions"
+msgstr "Αφαίρεση όλων των νέων διαμερίσεων"
 
-msgid "Enter a encryption password for {}"
-msgstr "Εισάγετε έναν κωδικό κρυπτογράφησης για {}"
+msgid "Assign mountpoint"
+msgstr "Εκχώρηση σημείου mount"
 
-msgid "Enter disk encryption password (leave blank for no encryption): "
-msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε κενό για καμία κρυπτογράφηση): "
+msgid "Mark/Unmark to be formatted (wipes data)"
+msgstr "Επιλογή/Αποεπιλογή για μορφοποίηση (διαγράφει τα δεδομένα)"
 
-msgid "Create a required super-user with sudo privileges: "
-msgstr "Δημιουργήστε έναν απαιτούμενο υπερχρήστη με δικαιώματα sudo: "
+msgid "Mark/Unmark as bootable"
+msgstr "Επιλογή/Αποεπιλογή ως bootable"
 
-msgid "Enter root password (leave blank to disable root): "
-msgstr "Εισάγετε τον κωδικό root (αφήστε κενό για να απενεργοποιηθεί το root): "
+msgid "Mark/Unmark as ESP"
+msgstr "Επιλογή/Αποεπιλογή ως ESP"
 
-msgid "Password for user \"{}\": "
-msgstr "Κωδικός για τον χρήστη \"{}\": "
+msgid "Mark/Unmark as XBOOTLDR"
+msgstr "Επιλογή/Αποεπιλογή ως XBOOTLDR"
 
-msgid "Verifying that additional packages exist (this might take a few seconds)"
-msgstr "Επαληθεύοντας ότι υπάρχουν περαιτέρω πακέτα (μπορεί να πάρει μερικά δευτερόλεπτα)"
+msgid "Change filesystem"
+msgstr "Αλλαγή συστήματος αρχείων"
+
+msgid "Mark/Unmark as compressed"
+msgstr "Επιλογή/Αποεπιλογή ως συμπιεσμένη"
+
+msgid "Mark/Unmark as nodatacow"
+msgstr "Επιλογή/Αποεπιλογή ως nodatacow"
+
+msgid "Set subvolumes"
+msgstr "Ορισμός υποόγκων"
+
+msgid "Delete partition"
+msgstr "Διαγραφή διαμέρισης"
+
+msgid "Partition management: {}"
+msgstr "Διαχείριση διαμερίσεων: {}"
+
+msgid "Total length: {}"
+msgstr "Συνολικό μήκος: {}"
+
+msgid "Partition - New"
+msgstr "Διαμέριση - Νέα"
+
+msgid "Partition"
+msgstr "Διαμέριση"
+
+msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
+msgstr "Αυτή η διαμέριση είναι κρυπτογραφημένη, για μορφοποίηση πρέπει να οριστεί ένα σύστημα αρχείων"
+
+msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+msgstr "Τα σημεία mount των διαμερίσεων είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
+
+msgid "Enter a mountpoint"
+msgstr "Εισάγετε ένα σημείο mount"
+
+msgid "Invalid size"
+msgstr "Μη έγκυρο μέγεθος"
+
+msgid "Selected free space segment on device {}:"
+msgstr "Επιλεγμένο τμήμα ελεύθερου χώρου στη συσκευή {}:"
+
+msgid "Size: {} / {}"
+msgstr "Μέγεθος: {} / {}"
+
+msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
+msgstr "Όλες οι τιμές μπορούν να συνοδεύονται από μονάδα: %, B, KB, KiB, MB, MiB..."
+
+msgid "If no unit is provided, the value is interpreted as sectors"
+msgstr "Αν δεν έχει δοθεί μονάδα, η τιμή ερμηνεύεται ως sectors"
+
+msgid "Enter a size (default: {}): "
+msgstr "Εισάγετε μέγεθος (προκαθορισμένο: {}): "
+
+msgid "This will remove all newly added partitions, continue?"
+msgstr "Αυτή η ενέργεια θα αφαιρέσει τις νέες διαμερίσεις, συνέχεια;"
+
+msgid "Add subvolume"
+msgstr "Προσθήκη υποόγκου"
+
+msgid "Edit subvolume"
+msgstr "Επεξεργασία υποόγκου"
+
+msgid "Delete subvolume"
+msgstr "Διαγραφή υποόγκου"
+
+msgid "Value cannot be empty"
+msgstr "Η τιμή δεν μπορεί να είναι κενή"
+
+msgid "Enter subvolume name"
+msgstr "Εισάγετε όνομα υποόγκου"
+
+msgid "Subvolume name"
+msgstr "Όνομα υποόγκου"
+
+msgid "Enter subvolume mountpoint"
+msgstr "Εισάγετε σημείο mount υποόγκου"
+
+msgid "Exit archinstall"
+msgstr "Έξοδος από το archinstall"
+
+msgid "Reboot system"
+msgstr "Επανεκκίνηση συστήματος"
+
+msgid "chroot into installation for post-installation configurations"
+msgstr "chroot στην εγκατάσταση για διαμορφώσεις μετά την εγκατάσταση"
 
 msgid "Would you like to use automatic time synchronization (NTP) with the default time servers?\n"
 msgstr "Θα θέλατε να χρησιμοποιήσετε αυτόματο συγχρονισμό χρόνου (NTP) με τους προκαθορισμένους διακομιστές χρόνου;\n"
@@ -398,378 +483,611 @@ msgstr ""
 "Ο χρόνος υλισμικού και άλλα βήματα μετά τη διαμόρφωση ενδέχεται να απαιτούνται ώστε να δουλέψει ο NTP.\n"
 "Για περισσότερες πληροφορίες, παρακαλώ ελέγξτε το Arch wiki"
 
-msgid "Enter a username to create an additional user (leave blank to skip): "
-msgstr "Εισάγετε ένα όνομα χρήστη για να δημιουργήσετε έναν ακόμα χρήστη (αφήστε κενό για παράλειψη): "
+msgid "Enter a hostname"
+msgstr "Εισάγετε όνομα υπολογιστή"
 
-msgid "Use ESC to skip\n"
-msgstr "Χρησιμοποιήστε ESC για παράλειψη\n"
+msgid "Select timezone"
+msgstr "Επιλέξτε ζώνη ώρας"
 
-msgid ""
-"\n"
-" Choose an object from the list, and select one of the available actions for it to execute"
-msgstr ""
-"\n"
-"Επιλέξτε ένα αντικείμενο από τη λίστα, και επιλέξτε μία από τις διαθέσιμες επιλογές προς εκτέλεση"
+msgid "What would you like to do next?"
+msgstr "Τι θα θέλατε να κάνετε στη συνέχεια;"
 
-msgid "Cancel"
-msgstr "Ακύρωση"
+msgid "Select which kernel(s) to install"
+msgstr "Επιλέξτε ποιους kernels να εγκαταστήσετε"
 
-msgid "Confirm and exit"
-msgstr "Επιβεβαίωση και έξοδος"
+msgid "Select optional firmware to install (none are pulled in by linux-firmware)"
+msgstr "Επιλέξτε προαιρετικό firmware για εγκατάσταση (κανένα δεν περιλαμβάνεται στο linux-firmware)"
 
-msgid "Add"
-msgstr "Προσθήκη"
+msgid "For the best compatibility with your AMD hardware, you may want to use either the all open-source or AMD / ATI options."
+msgstr "Για την καλύτερη συμβατότητα με το AMD υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την AMD / ATI επιλογή."
 
-msgid "Copy"
-msgstr "Αντιγραφή"
+msgid "For the best compatibility with your Intel hardware, you may want to use either the all open-source or Intel options.\n"
+msgstr "Για την καλύτερη συμβατότητα με το Intel υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε είτε την \"όλα ανοιχτού κώδικα\", είτε την Intel επιλογή.\n"
 
-msgid "Edit"
-msgstr "Επεξεργασία"
+msgid "For the best compatibility with your Nvidia hardware, you may want to use the Nvidia proprietary driver.\n"
+msgstr "Για την καλύτερη συμβατότητα με το Nvidia υλισμικό σας, ίσως θέλετε να χρησιμοποιήσετε τον ιδιόκτητο οδηγό της Nvidia.\n"
 
-msgid "Delete"
-msgstr "Διαγραφή"
+msgid "Would you like to use swap on zram?"
+msgstr "Θα θέλατε να χρησιμοποιήσετε swap με zram;"
 
-msgid "Select an action for '{}'"
-msgstr "Επιλέξτε μία ενέργεια για '{}'"
+msgid "Select zram compression algorithm:"
+msgstr "Επιλέξτε αλγόριθμο συμπίεσης zram:"
 
-msgid "Copy to new key:"
-msgstr "Αντιγραφή σε νέο κλειδί:"
+msgid "Archinstall language"
+msgstr "Γλώσσα archinstall"
 
-msgid "Unknown nic type: {}. Possible values are {}"
-msgstr "Άγνωστος τύπος nic: {}. Πιθανές τιμές είναι οι {}"
+msgid "Locales"
+msgstr "Τοπικές ρυθμίσεις"
 
-msgid ""
-"\n"
-"This is your chosen configuration:"
-msgstr ""
-"\n"
-"Αυτή είναι η επιλεγμένη σας διαμόρφωση:"
+msgid "Mirrors and repositories"
+msgstr "Mirrors και αποθετήρια"
 
-msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
-msgstr "Ο Pacman ήδη εκτελείται, αναμονή μέχρι 10 λεπτά ώστε να τερματίσει."
+msgid "Disk configuration"
+msgstr "Διαμόρφωση δίσκου"
 
-msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
-msgstr "Η προϋπάρχουσα pacman lock δεν εξήλθε. Παρακαλώ καθαρίστε τυχόν συνεδρίες pacman πριν τη χρήση του archinstall."
+msgid "Swap"
+msgstr "Swap"
 
-msgid "Choose which optional additional repositories to enable"
-msgstr "Επιλέξτε ποια προαιρετικά περαιτέρω αποθετήρια να ενεργοποιηθούν"
+msgid "Kernels"
+msgstr "Kernels"
 
-msgid "Add a user"
-msgstr "Προσθήκη χρήστη"
+msgid "Additional firmware"
+msgstr "Επιπλέον firmware"
 
-msgid "Change password"
-msgstr "Αλλαγή κωδικού"
+msgid "Hostname"
+msgstr "Όνομα υπολογιστή"
 
-msgid "Promote/Demote user"
-msgstr "Προαγωγή/Υποβιβασμός χρήστη"
+msgid "Authentication"
+msgstr "Ταυτοποίηση"
 
-msgid "Delete User"
-msgstr "Διαγραφή Χρήστη"
+msgid "Profile"
+msgstr "Προφίλ"
 
-msgid ""
-"\n"
-"Define a new user\n"
-msgstr ""
-"\n"
-"Ορισμός νέου χρήστη\n"
+msgid "Applications"
+msgstr "Εφαρμογές"
 
-msgid "User Name : "
-msgstr "Όνομα Χρήστη : "
+msgid "Network configuration"
+msgstr "Διαμόρφωση δικτύου"
 
-msgid "Should {} be a superuser (sudoer)?"
-msgstr "Θα έπρεπε ο {} να είναι υπερχρήστης (χρήστης sudo);"
+msgid "Pacman"
+msgstr "Pacman"
 
-msgid "Define users with sudo privilege: "
-msgstr "Καθορίστε τους χρήστες με δικαιώματα sudo: "
+msgid "Additional packages"
+msgstr "Περαιτέρω πακέτα"
 
-msgid "No network configuration"
-msgstr "Καμία διαμόρφωση δικτύου"
+msgid "Timezone"
+msgstr "Ζώνη ώρας"
 
-msgid "Set desired subvolumes on a btrfs partition"
-msgstr "Θέση επιθυμητών υποόγκων σε μία διαμέριση btrfs"
-
-msgid ""
-"{}\n"
-"\n"
-"Select which partition to set subvolumes on"
-msgstr ""
-"{}\n"
-"\n"
-"Επιλέξτε σε ποια διαμέριση να τεθούν υποόγκοι"
-
-msgid "Manage btrfs subvolumes for current partition"
-msgstr "Διαχειριστείτε τους υποόγκους btrfs για την τρέχουσα διαμέριση"
-
-msgid "No configuration"
-msgstr "Καμία διαμόρφωση"
-
-msgid "Save user configuration"
-msgstr "Αποθήκευση διαμόρφωσης χρήστη"
-
-msgid "Save user credentials"
-msgstr "Αποθήκευση στοιχείων χρήστη"
-
-msgid "Save disk layout"
-msgstr "Αποθήκευση διάταξης δίσκου"
-
-msgid "Save all"
-msgstr "Αποθήκευση όλων"
-
-msgid "Choose which configuration to save"
-msgstr "Επιλέξτε ποια διαμόρφωση να αποθηκευτεί"
-
-msgid "Enter a directory for the configuration(s) to be saved: "
-msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
-
-msgid "Not a valid directory: {}"
-msgstr "Μη έγκυρος φάκελος: {}"
-
-msgid "The password you are using seems to be weak,"
-msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος,"
-
-msgid "are you sure you want to use it?"
-msgstr "είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
-
-msgid "Optional repositories"
-msgstr "Προαιρετικά αποθετήρια"
+msgid "Automatic time sync (NTP)"
+msgstr "Αυτόματη ενημέρωση ώρας (NTP)"
 
 msgid "Save configuration"
 msgstr "Αποθήκευση διαμόρφωσης"
 
-msgid "Missing configurations:\n"
-msgstr "Διαμορφώσεις που λείπουν:\n"
-
-msgid "Either root-password or at least 1 superuser must be specified"
-msgstr "Πρέπει να καθοριστεί είτε ο κωδικός του root είτε τουλάχιστον 1 υπερχρήστης"
-
-msgid "Manage superuser accounts: "
-msgstr "Διαχείριση λογαριασμών υπερχρήστη: "
-
-msgid "Manage ordinary user accounts: "
-msgstr "Διαχείριση λογαριασμών κανονικών χρηστών: "
-
-msgid " Subvolume :{:16}"
-msgstr " Υποόγκος :{:16}"
-
-msgid " mounted at {:16}"
-msgstr " Έχει γίνει mount στο {:16}"
-
-msgid " with option {}"
-msgstr " με επιλογή {}"
-
-msgid ""
-"\n"
-" Fill the desired values for a new subvolume \n"
-msgstr ""
-"\n"
-" Συμπληρώστε τις επιθυμητές τιμές για έναν νέο υποόγκο \n"
-
-msgid "Subvolume name "
-msgstr "Όνομα υποόγκου "
-
-msgid "Subvolume mountpoint"
-msgstr "Σημείο mount υποόγκου"
-
-msgid "Subvolume options"
-msgstr "Επιλογές υποόγκου"
-
-msgid "Save"
-msgstr "Αποθήκευση"
-
-msgid "Subvolume name :"
-msgstr "Όνομα υποόγκου :"
-
-msgid "Select a mount point :"
-msgstr "Επιλέξτε ένα σημείο mount :"
-
-msgid "Select the desired subvolume options "
-msgstr "Επιλέξτε τις επιθυμητές επιλογές υποόγκου "
-
-msgid "Define users with sudo privilege, by username: "
-msgstr "Καθορίστε τους χρήστες με δικαιώματα sudo, μέσω όνομα χρήστη: "
-
-#, python-brace-format
-msgid "[!] A log file has been created here: {}"
-msgstr "[!] Ένα αρχείο ιστορικού έχει δημιουργηθεί εδώ: {}"
-
-msgid "Would you like to use BTRFS subvolumes with a default structure?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε BTRFS υποόγκους με μία προκαθορισμένη δομή;"
-
-msgid "Would you like to use BTRFS compression?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-msgid "Would you like to create a separate partition for /home?"
-msgstr "Θα θέλατε να δημιουργήσετε μία ξεχωριστή διαμέριση για το /home;"
-
-msgid "The selected drives do not have the minimum capacity required for an automatic suggestion\n"
-msgstr "Οι επιλεγμένοι δίσκοι δεν έχουν την ελάχιστη χωρητικότητα που απαιτείται για μία αυτόματη πρόταση\n"
-
-msgid "Minimum capacity for /home partition: {}GB\n"
-msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
-
-msgid "Minimum capacity for Arch Linux partition: {}GB"
-msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
-
-msgid "Continue"
-msgstr "Συνέχεια"
-
-msgid "yes"
-msgstr "ναι"
-
-msgid "no"
-msgstr "οχι"
-
-msgid "set: {}"
-msgstr "θέση {}"
-
-msgid "Manual configuration setting must be a list"
-msgstr "Η ρύθμιση χειροκίνητης διαμόρφωσης πρέπει να είναι μία λίστα"
-
-msgid "No iface specified for manual configuration"
-msgstr "Δεν έχει καθοριστεί iface για χειροκίνητη διαμόρφωση"
-
-msgid "Manual nic configuration with no auto DHCP requires an IP address"
-msgstr "Η χειροκίνητη διαμόρφωση nic χωρίς αυτόματο DHCP απαιτεί μία διεύθυνση IP"
-
-msgid "Add interface"
-msgstr "Προσθήκη διεπαφής"
-
-msgid "Edit interface"
-msgstr "Επεξεργασία διεπαφής"
-
-msgid "Delete interface"
-msgstr "Διαγραφή διεπαφής"
-
-msgid "Select interface to add"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-msgid "Manual configuration"
-msgstr "Χειροκίνητη διαμόρφωση"
-
-msgid "Mark/Unmark a partition as compressed (btrfs only)"
-msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
-
-msgid "The password you are using seems to be weak, are you sure you want to use it?"
-msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος, είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
-
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
-msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
-
-msgid "Select your desired desktop environment"
-msgstr "Επιλέξτε το επιθυμητό σας περιβάλλον επιφάνειας εργασίας"
-
-msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
-msgstr "Μία πολύ βασική εγκατάσταση που σας επιτρέπει να προσαρμόσετε τα Arch Linux όπως εσείς κρίνετε κατάλληλο."
-
-msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
-msgstr "Παρέχει μία επιλογή από ποικίλα πακέτα διακομιστών προς εγκατάσταση και ενεργοποίηση, π.χ. httpd, nginx, mariadb"
-
-msgid "Choose which servers to install, if none then a minimal installation will be done"
-msgstr "Επιλέξτε ποιους διακομιστές να εγκατασταθούν, αν δεν επιλεχθεί κανένας τότε θα γίνει μία minimal εγκατάσταση"
-
-msgid "Installs a minimal system as well as xorg and graphics drivers."
-msgstr "Εγκαθιστά ένα minimal σύστημα καθώς και το xorg και οδηγούς γραφικών."
-
-msgid "Press Enter to continue."
-msgstr "Πατήστε Enter για να συνεχίσετε."
-
-msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
-msgstr "Θα θέλατε να κάνετε chroot εντός της καινούργιας εγκατάστασης για περαιτέρω διαμόρφωση;"
-
-msgid "Are you sure you want to reset this setting?"
-msgstr "Είστε σίγουρη/ος ότι θέλετε να επαναφέρετε αυτήν τη ρύθμιση;"
-
-msgid "Select one or more hard drives to use and configure\n"
-msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση\n"
-
-msgid "Any modifications to the existing setting will reset the disk layout!"
-msgstr "Τυχόν τροποποιήσεις στην ήδη υπάρχουσα ρύθμιση θα επαναφέρουν τη διάταξη δίσκου!"
-
-msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
-msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
-
-msgid "Save and exit"
-msgstr "Αποθήκευση και έξοδος"
-
-msgid ""
-"{}\n"
-"contains queued partitions, this will remove those, are you sure?"
-msgstr ""
-"{}\n"
-"περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
-
-msgid "No audio server"
-msgstr "Κανένας διακομιστής ήχου"
-
-msgid "(default)"
-msgstr "(προκαθορισμένο)"
-
-msgid "Use ESC to skip"
-msgstr "Χρησιμοποιήστε ESC για παράλειψη"
-
-msgid ""
-"Use CTRL+C to reset current selection\n"
-"\n"
-msgstr ""
-"Χρησιμοποιήστε CTRL+C για να επαναφέρετε την τρέχουσα επιλογή\n"
-"\n"
-
-msgid "Copy to: "
-msgstr "Αντιγραφή σε: "
-
-msgid "Edit: "
-msgstr "Επεξεργασία "
-
-msgid "Key: "
-msgstr "Κλειδί: "
-
-msgid "Edit {}: "
-msgstr "Επεξεργασία {}: "
-
-msgid "Add: "
-msgstr "Προσθήκη: "
-
-msgid "Value: "
-msgstr "Τιμή: "
-
-msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
-msgstr "Μπορείτε να παραλείψετε την επιλογή δίσκου και διαμερισμού και να χρησιμοποιήσετε οποιαδήποτε εγκατάσαση δίσκου είναι mount στο /mnt (πειραματικό)"
-
-msgid "Select one of the disks or skip and use /mnt as default"
-msgstr "Επιλέξτε έναν από τους δίσκους ή παραλείψτε και χρησιμοποιήστε το /mnt ως προκαθορισμένο"
-
-msgid "Select which partitions to mark for formatting:"
-msgstr "Επιλέξτε ποιες διαμερίσεις να σημειωθούν για μορφοποίηση:"
-
-msgid "Use HSM to unlock encrypted drive"
-msgstr "Χρήση HSM για ξεκλείδωμα κρυπτογραφημένου δίσκου"
-
-msgid "Device"
-msgstr "Συσκευή"
-
-msgid "Size"
-msgstr "Μέγεθος"
-
-msgid "Free space"
-msgstr "Ελεύθερος χώρος"
-
-msgid "Bus-type"
-msgstr "Τύπος bus"
+msgid "Install"
+msgstr "Εγκατάσταση"
+
+msgid "Abort"
+msgstr "Εγκατάλειψη"
 
 msgid "Either root-password or at least 1 user with sudo privileges must be specified"
 msgstr "Πρέπει να καθοριστεί είτε ο κωδικός root ή τουλάχιστον 1 χρήστης με δικαιώματα sudo"
 
-msgid "Enter username (leave blank to skip): "
-msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+msgid "The selected desktop profile requires a regular user to log in via the greeter"
+msgstr "Το επιλεγμένο προφίλ επιφάνειας εργασίας απαιτεί έναν κανονικό χρήστη για σύνδεση μέσω του greeter"
 
-msgid "The username you entered is invalid. Try again"
-msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
+msgid "Language"
+msgstr "Γλώσσα"
 
-msgid "Should \"{}\" be a superuser (sudo)?"
-msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
+msgid "NTP"
+msgstr "NTP"
 
-msgid "Select which partitions to encrypt"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+msgid "LVM configuration type"
+msgstr "Τύπος διαμόρφωσης LVM"
+
+msgid "Btrfs snapshot type: {}"
+msgstr "Τύπος στιγμιότυπου Btrfs: {}"
+
+msgid "Swap on zram"
+msgstr "Swap σε zram"
+
+msgid "Compression algorithm"
+msgstr "Αλγόριθμος συμπίεσης"
+
+msgid "Parallel Downloads"
+msgstr "Παράλληλες Λήψεις"
+
+msgid "Color"
+msgstr "Χρώμα"
+
+msgid "Kernel"
+msgstr "Kernel"
+
+msgid "No network configuration selected. Network will need to be set up manually on the installed system."
+msgstr "Δεν επιλέχθηκε διαμόρφωση δικτύου. Το δίκτυο θα πρέπει να ρυθμιστεί χειροκίνητα στο εγκατεστημένο σύστημα."
+
+msgid "Missing configurations:"
+msgstr "Διαμορφώσεις που λείπουν:"
+
+msgid "Invalid configuration:"
+msgstr "Μη έγκυρη διαμόρφωση:"
+
+msgid "Ready to install"
+msgstr "Έτοιμο για εγκατάσταση"
+
+msgid "Warnings:"
+msgstr "Προειδοποιήσεις:"
+
+msgid "Profiles"
+msgstr "Προφίλ"
+
+msgid "Graphics driver"
+msgstr "Οδηγός γραφικών"
+
+msgid "Greeter"
+msgstr "Greeter"
+
+msgid "Selected mirror regions"
+msgstr "Επιλεγμένες περιοχές mirror"
+
+msgid "Custom servers"
+msgstr "Προσαρμοσμένοι διακομιστές"
+
+msgid "Optional repositories"
+msgstr "Προαιρετικά αποθετήρια"
+
+msgid "Custom repositories"
+msgstr "Προσαρμοσμένα αποθετήρια"
+
+msgid "[!] A log file has been created here: {}"
+msgstr "[!] Ένα αρχείο ιστορικού έχει δημιουργηθεί εδώ: {}"
+
+msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+msgstr "Παρακαλώ υποβάλετε αυτό το πρόβλημα (και το αρχείο) στο https://github.com/archlinux/archinstall/issues"
+
+msgid "Syncing the system..."
+msgstr "Συγχρονισμός του συστήματος..."
+
+msgid "Waiting for time sync (timedatectl show) to complete."
+msgstr "Περιμένοντας να ολοκληρωθεί ο συγχρονισμός του χρόνου (timedatectl show)"
+
+msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
+
+msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
+msgstr "Παραλείποντας την αναμονή για αυτόματο συγχρονισμό χρόνου (μπορεί να προκαλέσει προβλήματα αν ο χρόνος δεν είναι συγχρονισμένος κατά την εγκατάσταση)"
+
+msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
+msgstr "Αναμονή για την ολοκλήρωση του συγχρονισμού του keyring του Arch Linux (archlinux-keyring-wkd-sync)."
+
+msgid "Keyboard layout"
+msgstr "Διάταξη πληκτρολογίου"
+
+msgid "Locale language"
+msgstr "Τοπική γλώσσα"
+
+msgid "Locale encoding"
+msgstr "Τοπική κωδικοποίηση"
+
+msgid "Console font"
+msgstr "Γραμματοσειρά κονσόλας"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "Are you sure you want to reset this setting?"
+msgstr "Είστε σίγουρη/ος ότι θέλετε να επαναφέρετε αυτήν τη ρύθμιση;"
+
+msgid "Confirm and exit"
+msgstr "Επιβεβαίωση και έξοδος"
+
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+msgid "Password strength: Weak"
+msgstr "Ισχύς κωδικού: Αδύναμος"
+
+msgid "Password strength: Moderate"
+msgstr "Ισχύς κωδικού: Μέτριος"
+
+msgid "Password strength: Strong"
+msgstr "Ισχύς κωδικού: Ισχυρός"
+
+msgid "Confirm password"
+msgstr "Επιβεβαίωση κωδικού"
+
+msgid "The password did not match, please try again"
+msgstr "Οι κωδικοί δεν ταιριάζουν, παρακαλώ προσπαθήστε ξανά"
+
+msgid "Not a valid directory"
+msgstr "Μη έγκυρος φάκελος"
+
+msgid "Do you really want to abort?"
+msgstr "Θέλετε σίγουρα να διακόψετε;"
+
+msgid "Add a custom repository"
+msgstr "Προσθήκη προσαρμοσμένου αποθετηρίου"
+
+msgid "Change custom repository"
+msgstr "Αλλαγή προσαρμοσμένου αποθετηρίου"
+
+msgid "Delete custom repository"
+msgstr "Διαγραφή προσαρμοσμένου αποθετηρίου"
+
+msgid "Enter a repository name"
+msgstr "Εισάγετε όνομα αποθετηρίου"
+
+msgid "Name"
+msgstr "Όνομα"
+
+msgid "Enter the repository url"
+msgstr "Εισάγετε το url του αποθετηρίου"
+
+msgid "Url"
+msgstr "Url"
+
+msgid "Select signature check"
+msgstr "Επιλέξτε έλεγχο υπογραφής"
+
+msgid "Signature check"
+msgstr "Έλεγχος υπογραφής"
+
+msgid "Select signature option"
+msgstr "Επιλέξτε ρύθμιση υπογραφής"
+
+msgid "Add a custom server"
+msgstr "Προσθήκη προσαρμοσμένου διακομιστή"
+
+msgid "Change custom server"
+msgstr "Αλλαγή προσαρμοσμένου διακομιστή"
+
+msgid "Delete custom server"
+msgstr "Διαγραφή προσαρμοσμένου διακομιστή"
+
+msgid "Enter server url"
+msgstr "Εισάγετε το url του διακομιστή"
+
+msgid "Select regions"
+msgstr "Επιλέξτε περιοχές"
+
+msgid "Add custom servers"
+msgstr "Προσθήκη προσαρμοσμένων διακομιστών"
+
+msgid "Add custom repository"
+msgstr "Προσθήκη προσαρμοσμένου αποθετηρίου"
+
+msgid "Additional repositories"
+msgstr "Επιπλέον αποθετήρια"
+
+msgid "Loading mirror regions..."
+msgstr "Φόρτωση περιοχών mirror..."
+
+msgid "Select mirror regions to be enabled"
+msgstr "Επιλέξτε περιοχές mirror προς ενεργοποίηση"
+
+msgid "Select optional repositories to be enabled"
+msgstr "Επιλέξτε προαιρετικά αποθετήρια προς ενεργοποίηση"
+
+msgid "Unicode font coverage for most languages"
+msgstr "Κάλυψη Unicode για τις περισσότερες γλώσσες"
+
+msgid "color emoji for browsers and apps"
+msgstr "έγχρωμα emoji για προγράμματα περιήγησης και εφαρμογές"
+
+msgid "Chinese, Japanese, Korean characters"
+msgstr "Κινεζικοί, Ιαπωνικοί, Κορεατικοί χαρακτήρες"
+
+msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
+msgstr "αντικατάσταση των Arial/Times/Courier, υποστήριξη Κυριλλικών για Steam/παιχνίδια"
+
+msgid "wide Unicode coverage, good fallback font"
+msgstr "ευρεία κάλυψη Unicode, καλή εναλλακτική γραμματοσειρά"
+
+msgid "enabled"
+msgstr "ενεργοποιημένο"
+
+msgid "Fonts"
+msgstr "Γραμματοσειρές"
+
+msgid "Zram"
+msgstr "Zram"
+
+msgid "Algorithm \"{}\""
+msgstr "Αλγόριθμος \"{}\""
+
+msgid "Zram disabled"
+msgstr "Zram απενεργοποιημένο"
+
+msgid "Application"
+msgstr "Εφαρμογή"
+
+msgid "Passwordless login"
+msgstr "Σύνδεση χωρίς κωδικό"
+
+msgid "Second factor login"
+msgstr "Σύνδεση με δεύτερο παράγοντα"
+
+msgid "U2F login"
+msgstr "Σύνδεση U2F"
+
+msgid "U2F login method \"{}\""
+msgstr "Μέθοδος σύνδεσης U2F \"{}\""
+
+msgid "U2F passwordless sudo enabled"
+msgstr "Sudo χωρίς κωδικό μέσω U2F ενεργοποιημένο"
+
+msgid "U2F passwordless sudo disabled"
+msgstr "Sudo χωρίς κωδικό μέσω U2F απενεργοποιημένο"
+
+msgid "Root password set"
+msgstr "Ο κωδικός root έχει οριστεί"
+
+msgid "Configured {} user(s)"
+msgstr "Διαμορφωμένοι χρήστες: {}"
+
+msgid "U2F configured"
+msgstr "Το U2F έχει διαμορφωθεί"
+
+msgid "UKI \"enabled\""
+msgstr "UKI \"ενεργοποιημένο\""
+
+msgid "Removable"
+msgstr "Αφαιρούμενα μέσα"
+
+msgid "Plymouth \"{}\""
+msgstr "Plymouth \"{}\""
+
+msgid "Use a best-effort default partition layout"
+msgstr "Χρήση προκαθορισμένης διάταξης διαμερίσεων βέλτιστης προσπάθειας"
+
+msgid "Manual Partitioning"
+msgstr "Χειροκίνητος διαμερισμός"
+
+msgid "Pre-mounted configuration"
+msgstr "Διαμόρφωση ήδη προσαρτημένων (pre-mounted) δίσκων"
+
+msgid "Default"
+msgstr "Προκαθορισμένη"
+
+msgid "Manual"
+msgstr "Χειροκίνητη"
+
+msgid "Pre-mount"
+msgstr "Pre-mount"
+
+msgid "Disk layout"
+msgstr "Διάταξη δίσκου"
+
+msgid "{} layout"
+msgstr "Διάταξη {}"
+
+msgid "Device(s) \"{}\""
+msgstr "Συσκευή(ές) \"{}\""
+
+msgid "LVM set up"
+msgstr "Ρύθμιση LVM"
+
+msgid "\"{}\" encryption"
+msgstr "Κρυπτογράφηση \"{}\""
+
+msgid "Btrfs snapshot \"{}\""
+msgstr "Στιγμιότυπο Btrfs \"{}\""
+
+msgid "Mountpoint \"{}\""
+msgstr "Σημείο mount \"{}\""
+
+msgid "Unknown"
+msgstr "Άγνωστο"
+
+msgid "Partition modification"
+msgstr "Τροποποίηση διαμέρισης"
+
+msgid "Filesystem {}"
+msgstr "Σύστημα αρχείων {}"
+
+msgid "Size {}"
+msgstr "Μέγεθος {}"
+
+msgid "Status {}"
+msgstr "Κατάσταση {}"
+
+msgid "Mountpoint {}"
+msgstr "Σημείο mount {}"
+
+msgid "{} subvolume(s)"
+msgstr "Υποόγκοι: {}"
+
+msgid "Default layout"
+msgstr "Προκαθορισμένη διάταξη"
+
+msgid "LVM volume group"
+msgstr "Ομάδα τόμων LVM"
+
+msgid "Volume group \"{}\""
+msgstr "Ομάδα τόμων \"{}\""
+
+msgid "Volume group \"{}\" on {}"
+msgstr "Ομάδα τόμων \"{}\" στο {}"
+
+msgid "LVM volume"
+msgstr "Τόμος LVM"
+
+msgid "Volume \"{}\""
+msgstr "Τόμος \"{}\""
+
+msgid "LVM"
+msgstr "LVM"
+
+msgid "LVM \"{}\""
+msgstr "LVM \"{}\""
+
+msgid "Btrfs snapshot"
+msgstr "Στιγμιότυπο Btrfs"
+
+msgid "Btrfs options"
+msgstr "Επιλογές Btrfs"
+
+msgid "Device modification"
+msgstr "Τροποποίηση συσκευής"
+
+msgid "Device {}"
+msgstr "Συσκευή {}"
+
+msgid "wipe"
+msgstr "διαγραφή δεδομένων"
+
+msgid "keep existing data"
+msgstr "διατήρηση υπαρχόντων δεδομένων"
+
+msgid "Device \"{}\" ({})"
+msgstr "Συσκευή \"{}\" ({})"
+
+msgid "No Encryption"
+msgstr "Χωρίς κρυπτογράφηση"
+
+msgid "LUKS"
+msgstr "LUKS"
+
+msgid "LVM on LUKS"
+msgstr "LVM σε LUKS"
+
+msgid "LUKS on LVM"
+msgstr "LUKS σε LVM"
+
+msgid "{} encryption"
+msgstr "Κρυπτογράφηση {}"
+
+msgid "{} encrypted partition(s)"
+msgstr "Κρυπτογραφημένες διαμερίσεις: {}"
+
+msgid "{} encrypted volume(s)"
+msgstr "Κρυπτογραφημένοι τόμοι: {}"
+
+msgid "FIDO2 device \"{}\""
+msgstr "Συσκευή FIDO2 \"{}\""
+
+msgid "Iteration time {} ms"
+msgstr "Χρόνος επανάληψης {} ms"
+
+msgid "Locale"
+msgstr "Τοπικές ρυθμίσεις"
+
+msgid "Keyboard layout \"{}\""
+msgstr "Διάταξη πληκτρολογίου \"{}\""
+
+msgid "Language \"{}\""
+msgstr "Γλώσσα \"{}\""
+
+msgid "Encoding \"{}\""
+msgstr "Κωδικοποίηση \"{}\""
+
+msgid "Console font \"{}\""
+msgstr "Γραμματοσειρά κονσόλας \"{}\""
+
+msgid "Mirror region"
+msgstr "Περιοχή mirror"
+
+msgid "Region \"{}\""
+msgstr "Περιοχή \"{}\""
+
+msgid "Custom repository"
+msgstr "Προσαρμοσμένο αποθετήριο"
+
+msgid "Repository \"{}\""
+msgstr "Αποθετήριο \"{}\""
+
+msgid "Sign check"
+msgstr "Έλεγχος υπογραφής"
+
+msgid "Sign options"
+msgstr "Επιλογές υπογραφής"
+
+msgid "Custom server"
+msgstr "Προσαρμοσμένος διακομιστής"
+
+msgid "Mirrors"
+msgstr "Mirrors"
+
+msgid "{} Mirror region(s)"
+msgstr "Περιοχές mirror: {}"
+
+msgid "Optional repositories \"{}\""
+msgstr "Προαιρετικά αποθετήρια \"{}\""
+
+msgid "{} Custom server(s)"
+msgstr "Προσαρμοσμένοι διακομιστές: {}"
+
+msgid "{} Custom repository(s)"
+msgstr "Προσαρμοσμένα αποθετήρια: {}"
+
+msgid "Copy ISO network configuration to installation"
+msgstr "Αντιγραφή διαμόρφωση δικτύου ISO στην εγκατάσταση"
+
+msgid "Use Network Manager (default backend)"
+msgstr "Χρήση Network Manager (προκαθορισμένο backend)"
+
+msgid "Use Network Manager (iwd backend)"
+msgstr "Χρήση Network Manager (backend iwd)"
+
+msgid "Use standalone iwd"
+msgstr "Χρήση αυτόνομου iwd"
+
+msgid "Manual configuration"
+msgstr "Χειροκίνητη διαμόρφωση"
+
+msgid "Interface \"{}\""
+msgstr "Διεπαφή \"{}\""
+
+msgid "DHCP enabled"
+msgstr "DHCP ενεργοποιημένο"
+
+msgid "IP address \"{}\""
+msgstr "Διεύθυνση IP \"{}\""
+
+msgid "Gateway \"{}\""
+msgstr "Πύλη \"{}\""
+
+msgid "DNS servers \"{}\""
+msgstr "Διακομιστές DNS \"{}\""
+
+msgid "Network"
+msgstr "Δίκτυο"
+
+msgid "Cavium LiquidIO server adapters"
+msgstr "Προσαρμογείς διακομιστών Cavium LiquidIO"
+
+msgid "Marvell devices"
+msgstr "Συσκευές Marvell"
+
+msgid "Mellanox Spectrum switches"
+msgstr "Μεταγωγείς Mellanox Spectrum"
+
+msgid "Netronome Flow Processors"
+msgstr "Επεξεργαστές Netronome Flow"
+
+msgid "Qualcomm SoCs"
+msgstr "Qualcomm SoC"
+
+msgid "QLogic devices"
+msgstr "Συσκευές QLogic"
+
+msgid "Package group:"
+msgstr "Ομάδα πακέτων:"
+
+msgid "Parallel downloads \"{}\""
+msgstr "Παράλληλες λήψεις \"{}\""
+
+msgid "Color \"enabled\""
+msgstr "Χρώμα \"ενεργοποιημένο\""
+
+msgid "Selected profiles \"{}\""
+msgstr "Επιλεγμένα προφίλ \"{}\""
+
+msgid "\"{}\" graphics driver"
+msgstr "Οδηγός γραφικών \"{}\""
+
+msgid "\"{}\" greeter"
+msgstr "Greeter \"{}\""
 
 msgid "very weak"
 msgstr "πολύ αδύναμος"
@@ -783,1089 +1101,274 @@ msgstr "μέτριος"
 msgid "strong"
 msgstr "ισχυρός"
 
-msgid "Add subvolume"
-msgstr "Προσθήκη υποόγκου"
+msgid "User"
+msgstr "Χρήστης"
 
-msgid "Edit subvolume"
-msgstr "Επεξεργασία υποόγκου"
+msgid "User \"{}\""
+msgstr "Χρήστης \"{}\""
 
-msgid "Delete subvolume"
-msgstr "Διαγραφή υποόγκου"
+msgid "sudo user"
+msgstr "χρήστης sudo"
 
-msgid "Configured {} interfaces"
-msgstr "Διαμορφωμένες {} διεπαφές"
+msgid "groups {}"
+msgstr "ομάδες {}"
 
-msgid "This option enables the number of parallel downloads that can occur during installation"
-msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
+msgid "Add interface"
+msgstr "Προσθήκη διεπαφής"
 
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-" (Enter a value between 1 to {})\n"
-"Note:"
-msgstr ""
-"Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
-"Σημείωση:"
+msgid "Edit interface"
+msgstr "Επεξεργασία διεπαφής"
 
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
-msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
+msgid "Delete interface"
+msgstr "Διαγραφή διεπαφής"
 
-msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
-msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλληλη λήψη, επιτρέπει 2 λήψεις σε μία στιγμή )"
+msgid "Select an interface"
+msgstr "Επιλέξτε μία διεπαφή"
 
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
-msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
+msgid "You need to enter a valid IP in IP-config mode"
+msgstr "Πρέπει να εισάγετε μία έγκυρη IP στη λειτουργία IP-config"
 
-#, fuzzy, python-brace-format
-msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {max_downloads}, ή 0 για απενεργοποίηση]"
+msgid "Select which mode to configure for \"{}\""
+msgstr "Επιλέξτε ποια λειτουργία να διαμορφωθεί για το \"{}\""
 
-msgid "Parallel Downloads"
-msgstr "Παράλληλες Λήψεις"
+msgid "Enter the IP and subnet for {} (example: 192.168.0.5/24): "
+msgstr "Εισάγετε την IP και το υποδίκτυο για το {} (παράδειγμα: 192.168.0.5/24): "
 
-msgid "Pacman"
-msgstr ""
+msgid "Enter your gateway (router) IP address (leave blank for none)"
+msgstr "Εισάγετε τη διεύθυνση IP της πύλης (router) σας (αφήστε κενό για καμία)"
 
-msgid "Color"
-msgstr ""
+msgid "Enter your DNS servers with space separated (leave blank for none)"
+msgstr "Εισάγετε τους διακομιστές DNS σας χωρισμένους με κενό (αφήστε κενό για κανέναν)"
 
-#, fuzzy, python-brace-format
+msgid "Choose network configuration"
+msgstr "Επιλέξτε διαμόρφωση δικτύου"
+
+msgid "Recommended: Network Manager for desktop, Manual for server"
+msgstr "Προτείνεται: Network Manager για επιτραπέζιο υπολογιστή, Χειροκίνητη διαμόρφωση για διακομιστή"
+
+msgid "Configure interfaces"
+msgstr "Διαμόρφωση διεπαφών"
+
+msgid "No network connection found"
+msgstr "Δεν βρέθηκε σύνδεση δικτύου"
+
+msgid "Would you like to connect to a Wifi?"
+msgstr "Θα θέλατε να συνδεθείτε σε ένα δίκτυο Wifi;"
+
+msgid "No wifi interface found"
+msgstr "Δεν βρέθηκε διεπαφή wifi"
+
+msgid "No wifi networks found"
+msgstr "Δεν βρέθηκαν δίκτυα wifi"
+
+msgid "Select wifi network to connect to"
+msgstr "Επιλέξτε δίκτυο wifi για σύνδεση"
+
+msgid "Scanning wifi networks..."
+msgstr "Σάρωση δικτύων wifi..."
+
+msgid "Failed setting up wifi"
+msgstr "Αποτυχία ρύθμισης του wifi"
+
+msgid "Enter wifi password"
+msgstr "Εισάγετε κωδικό wifi"
+
+msgid "Repositories: {}"
+msgstr "Αποθετήρια: {}"
+
+msgid "Loading packages..."
+msgstr "Φόρτωση πακέτων..."
+
+msgid "No packages found"
+msgstr "Δεν βρέθηκαν πακέτα"
+
+msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+msgstr "Εγκαθίστανται μόνο πακέτα όπως τα base, sudo, linux, linux-firmware, efibootmgr και προαιρετικά πακέτα προφίλ."
+
+msgid "Note: base-devel is no longer installed by default. Add it here if you need build tools."
+msgstr "Σημείωση: το base-devel δεν εγκαθίσταται πλέον από προεπιλογή. Προσθέστε το εδώ αν χρειάζεστε εργαλεία μεταγλώττισης."
+
+msgid "Select any packages from the below list that should be installed additionally"
+msgstr "Επιλέξτε από την παρακάτω λίστα όσα πακέτα θέλετε να εγκατασταθούν επιπλέον"
+
+msgid "Pacman is already running, waiting maximum 10 minutes for it to terminate."
+msgstr "Ο Pacman ήδη εκτελείται, αναμονή μέχρι 10 λεπτά ώστε να τερματίσει."
+
+msgid "Pre-existing pacman lock never exited. Please clean up any existing pacman sessions before using archinstall."
+msgstr "Η προϋπάρχουσα pacman lock δεν εξήλθε. Παρακαλώ καθαρίστε τυχόν συνεδρίες pacman πριν τη χρήση του archinstall."
+
 msgid "Enter the number of parallel downloads (1-{})"
-msgstr ""
-"Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
-"Σημείωση:"
+msgstr "Εισάγετε τον αριθμό των παράλληλων λήψεων (1-{})"
+
+msgid "Value must be between 1 and {}"
+msgstr "Η τιμή πρέπει να είναι μεταξύ 1 και {}"
 
 msgid "Enable colored output for pacman"
-msgstr ""
+msgstr "Ενεργοποίηση έγχρωμης εξόδου για το pacman"
 
-#, fuzzy
-msgid "ESC to skip"
-msgstr "Χρησιμοποιήστε ESC για παράλειψη"
+msgid "The proprietary Nvidia driver is not supported by Sway."
+msgstr "Ο ιδιόκτητος οδηγός της Nvidia δεν υποστηρίζεται από το Sway."
 
-msgid "CTRL+C to reset"
-msgstr "CTRL+C για επαναφορά"
+msgid "It is likely that you will run into issues, are you okay with that?"
+msgstr "Είναι πιθανό να αντιμετωπίσετε προβλήματα, είστε εντάξει με αυτό;"
 
-msgid "TAB to select"
-msgstr "TAB για επιλογή"
+msgid "Selected profiles: "
+msgstr "Επιλεγμένα προφίλ: "
 
-msgid "[Default value: 0] > "
-msgstr "[Προεπιλεγμένη τιμή: 0] > "
+msgid "Select which greeter to install"
+msgstr "Επιλέξτε ποιον greeter να εγκαταστήσετε"
 
-msgid "To be able to use this translation, please install a font manually that supports the language."
-msgstr "Για να μπορείτε να χρησιμοποιήσετε αυτή την μετάφραση, παρακαλώ εγκαταστήστε χειροκίνητα την γραμματοσειρά που υποστηρίζει την γλώσσα."
+msgid "Select a profile type"
+msgstr "Επιλέξτε τύπο προφίλ"
 
-msgid "The font should be stored as {}"
-msgstr "Η γραμματοσειρά θα πρέπει να αποθηκευτεί ως {}"
+msgid "Unable to fetch profile from specified url: {}"
+msgstr "Αδύνατη η λήψη προφίλ από το συγκεκριμένο url: {}"
+
+msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
+msgstr "Τα προφίλ πρέπει να έχουν μοναδικό όνομα, αλλά βρέθηκαν ορισμοί προφίλ με διπλό όνομα: {}"
+
+msgid "Add a user"
+msgstr "Προσθήκη χρήστη"
+
+msgid "Change password"
+msgstr "Αλλαγή κωδικού"
+
+msgid "Promote/Demote user"
+msgstr "Προαγωγή/Υποβιβασμός χρήστη"
+
+msgid "Delete User"
+msgstr "Διαγραφή Χρήστη"
+
+msgid "Enter new password"
+msgstr "Εισάγετε νέο κωδικό"
+
+msgid "The username you entered is invalid"
+msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο"
+
+msgid "Enter a username"
+msgstr "Εισάγετε όνομα χρήστη"
+
+msgid "Username"
+msgstr "Όνομα χρήστη"
+
+msgid "Enter a password"
+msgstr "Εισάγετε κωδικό"
+
+msgid "Should \"{}\" be a superuser (sudo)?\n"
+msgstr "Θα πρέπει ο χρήστης \"{}\" να είναι υπερχρήστης (sudo);\n"
+
+msgid "About to upload \"{}\" to the publicly accessible {}"
+msgstr "Πρόκειται να ανέβει το \"{}\" στο δημόσια προσβάσιμο {}"
+
+msgid "Do you want to continue?"
+msgstr "Θέλετε να συνεχίσετε;"
+
+msgid "Log uploaded successfully. URL: {}"
+msgstr "Το αρχείο καταγραφής ανέβηκε επιτυχώς. URL: {}"
+
+msgid "Failed to upload log."
+msgstr "Αποτυχία ανεβάσματος του αρχείου καταγραφής."
 
 msgid "Archinstall requires root privileges to run. See --help for more."
 msgstr "Το Archinstall απαιτεί δικαιώματα υπερχρήστη για να εκτελεστεί. Δείτε --help for more."
 
-#, fuzzy
-msgid "Select an execution mode"
-msgstr "Επιλέξτε μία ενέργεια για '{}'"
+msgid "New version available"
+msgstr "Διαθέσιμη νέα έκδοση"
 
-#, python-brace-format
-msgid "Unable to fetch profile from specified url: {}"
-msgstr "Αδύνατη η λήψη προφίλ από το συγκεκριμένο url: {}"
+msgid "Starting device modifications in "
+msgstr "Έναρξη τροποποιήσεων συσκευών σε "
 
-#, python-brace-format
-msgid "Profiles must have unique name, but profile definitions with duplicate name found: {}"
-msgstr "Τα προφίλ πρέπει να έχουν μοναδικό όνομα, αλλά βρέθηκαν ορισμοί προφίλ με διπλό όνομα: {}"
+msgid "Bottom"
+msgstr "Βάση"
 
-#, fuzzy
-msgid "Select one or more devices to use and configure"
-msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+msgid "Copy selected text"
+msgstr "Αντιγραφή επιλεγμένου κειμένου"
 
-#, fuzzy
-msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
-msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
+msgid "Cursor down"
+msgstr "Δρομέας κάτω"
 
-#, fuzzy
-msgid "Existing Partitions"
-msgstr "Προσθέτωντας τη διαμέριση...."
+msgid "Cursor left"
+msgstr "Δρομέας αριστερά"
 
-#, fuzzy
-msgid "Select a partitioning option"
-msgstr "Διαγραφή διαμέρισης"
+msgid "Cursor right"
+msgstr "Δρομέας δεξιά"
 
-#, fuzzy
-msgid "Enter the root directory of the mounted devices: "
-msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+msgid "Cursor up"
+msgstr "Δρομέας πάνω"
 
-#, fuzzy, python-brace-format
-msgid "Minimum capacity for /home partition: {}GiB\n"
-msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
+msgid "Cut selected text"
+msgstr "Αποκοπή επιλεγμένου κειμένου"
 
-#, fuzzy, python-brace-format
-msgid "Minimum capacity for Arch Linux partition: {}GiB"
-msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
+msgid "Delete all to the left"
+msgstr "Διαγραφή όλων προς τα αριστερά"
 
-#, fuzzy
-msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
-msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
+msgid "Delete all to the right"
+msgstr "Διαγραφή όλων προς τα δεξιά"
 
-#, fuzzy
-msgid "Current profile selection"
-msgstr "Τρέχουσα διάταξη διαμέρισης"
+msgid "Delete character left"
+msgstr "Διαγραφή χαρακτήρα αριστερά"
 
-#, fuzzy
-msgid "Remove all newly added partitions"
-msgstr "Αφαίρεση όλων των νέων διαμερίσεων"
+msgid "Delete character right"
+msgstr "Διαγραφή χαρακτήρα δεξιά"
 
-#, fuzzy
-msgid "Assign mountpoint"
-msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
+msgid "Delete left to start of word"
+msgstr "Διαγραφή αριστερά έως την αρχή της λέξης"
 
-#, fuzzy
-msgid "Mark/Unmark to be formatted (wipes data)"
-msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
-
-msgid "Mark/Unmark as bootable"
-msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
-
-msgid "Change filesystem"
-msgstr "Αλλαγή συστήματος αρχείων"
-
-#, fuzzy
-msgid "Mark/Unmark as compressed"
-msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
-
-#, fuzzy
-msgid "Set subvolumes"
-msgstr "Ορισμός υποόγκων"
-
-#, fuzzy
-msgid "Delete partition"
-msgstr "Διαγραφή διαμέρισης"
-
-msgid "Partition"
-msgstr "Διαμέριση"
-
-msgid "This partition is currently encrypted, to format it a filesystem has to be specified"
-msgstr "Αυτή η διαμέριση είναι κρυπτογραφημένη, για μορφοποίηση πρέπει να οριστεί ένα σύστημα αρχείων"
-
-#, fuzzy
-msgid "Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
-msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
-
-msgid "If mountpoint /boot is set, then the partition will also be marked as bootable."
-msgstr ""
-
-msgid "Mountpoint: "
-msgstr ""
-
-msgid "Current free sectors on device {}:"
-msgstr ""
-
-#, fuzzy
-msgid "Total sectors: {}"
-msgstr "Σύνολο sectors: {}"
-
-#, fuzzy
-msgid "Enter the start sector (default: {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-#, fuzzy
-msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
-msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
-
-msgid "This will remove all newly added partitions, continue?"
-msgstr "Αυτή η ενέργεια θα αφαιρέσει τις νέες διαμερίσεις, συνέχεια;"
-
-#, fuzzy, python-brace-format
-msgid "Partition management: {}"
-msgstr "Διαχείριση διαμέρισης"
-
-#, python-brace-format
-msgid "Total length: {}"
-msgstr ""
-
-#, fuzzy
-msgid "Encryption type"
-msgstr "Κωδικός κρυπτογράφησης"
-
-msgid "Iteration time"
-msgstr ""
-
-msgid "Enter iteration time for LUKS encryption (in milliseconds)"
-msgstr ""
-
-msgid "Higher values increase security but slow down boot time"
-msgstr ""
-
-msgid "Default: 10000ms, Recommended range: 1000-60000"
-msgstr ""
-
-msgid "Iteration time cannot be empty"
-msgstr ""
-
-msgid "Iteration time must be at least 100ms"
-msgstr ""
-
-msgid "Iteration time must be at most 120000ms"
-msgstr ""
-
-msgid "Please enter a valid number"
-msgstr ""
-
-msgid "Partitions"
-msgstr "Διαμερίσεις"
-
-msgid "No HSM devices available"
-msgstr "Καμία διαθέσιμη συσκευή HSM"
-
-#, fuzzy
-msgid "Partitions to be encrypted"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
-
-msgid "Select disk encryption option"
-msgstr "Επιλογή κρυπτογράφησης δίσκου"
-
-msgid "Select a FIDO2 device to use for HSM"
-msgstr ""
-
-#, fuzzy
-msgid "Use a best-effort default partition layout"
-msgstr "Διαγραφή όλων των επιλεγμένων δίσκων και χρήση μίας προκαθορισμένης διάταξης βέλτιστης προσπάθειας"
-
-#, fuzzy
-msgid "Manual Partitioning"
-msgstr "Χειροκίνητη διαμόρφωση"
-
-#, fuzzy
-msgid "Pre-mounted configuration"
-msgstr "Καμία διαμόρφωση"
-
-msgid "Unknown"
-msgstr "Άγνωστο"
-
-msgid "Partition encryption"
-msgstr "Κρυπτογράφηση διαμέρισης"
-
-#, python-brace-format
-msgid " ! Formatting {} in "
-msgstr " ! Μορφοποίηση {} σε "
-
-msgid "← Back"
-msgstr "← Πίσω"
-
-msgid "Disk encryption"
-msgstr "Κρυπτογράφηση δίσκου"
-
-#, fuzzy
-msgid "Configuration"
-msgstr "Καμία διαμόρφωση"
-
-#, fuzzy
-msgid "Password"
-msgstr "Κωδικός root"
-
-#, fuzzy
-msgid "All settings will be reset, are you sure?"
-msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
-
-msgid "Back"
-msgstr "Πίσω"
-
-msgid "Please chose which greeter to install for the chosen profiles: {}"
-msgstr ""
-
-#, python-brace-format
-msgid "Environment type: {}"
-msgstr ""
-
-msgid "The proprietary Nvidia driver is not supported by Sway. It is likely that you will run into issues, are you okay with that?"
-msgstr ""
-
-#, fuzzy
-msgid "Installed packages"
-msgstr "Εγκατεστημένα πακέτα"
-
-#, fuzzy
-msgid "Add profile"
-msgstr "Προσθήκη προφίλ"
-
-#, fuzzy
-msgid "Edit profile"
-msgstr "Επεξεργασία προφίλ"
-
-#, fuzzy
-msgid "Delete profile"
-msgstr "Διαγραφή προφίλ"
-
-#, fuzzy
-msgid "Profile name: "
-msgstr "Όνομα προφίλ: "
-
-#, fuzzy
-msgid "The profile name you entered is already in use. Try again"
-msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
-
-#, fuzzy
-msgid "Packages to be install with this profile (space separated, leave blank to skip): "
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
-
-#, fuzzy
-msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
-
-msgid "Should this profile be enabled for installation?"
-msgstr "Ενεργοποίηση του προφίλ για εγκατάσταση;"
-
-msgid "Create your own"
-msgstr "Δημιουργήστε δικό σας"
-
-#, fuzzy
-msgid ""
-"\n"
-"Select a graphics driver or leave blank to install all open-source drivers"
-msgstr ""
-"\n"
-"\n"
-"Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
-
-msgid "Sway needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Sway access to your hardware"
-msgstr ""
-
-msgid "Graphics driver"
-msgstr "Οδηγός γραφικών"
-
-msgid "Greeter"
-msgstr ""
-
-msgid "Please chose which greeter to install"
-msgstr ""
-
-msgid "This is a list of pre-programmed default_profiles"
-msgstr ""
-
-#, fuzzy
-msgid "Disk configuration"
-msgstr "Καμία διαμόρφωση"
-
-#, fuzzy
-msgid "Profiles"
-msgstr "Προφίλ"
-
-msgid "Finding possible directories to save configuration files ..."
-msgstr ""
-
-#, fuzzy
-msgid "Select directory (or directories) for saving configuration files"
-msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
-
-#, fuzzy
-msgid "Add a custom mirror"
-msgstr "Προσθήκη custom mirror"
-
-msgid "Change custom mirror"
-msgstr "Αλλαγή custom mirror"
-
-msgid "Delete custom mirror"
-msgstr "Διαγραφή custom mirror"
-
-#, fuzzy
-msgid "Enter name (leave blank to skip): "
-msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
-
-#, fuzzy
-msgid "Enter url (leave blank to skip): "
-msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
-
-#, fuzzy
-msgid "Select signature check option"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-#, fuzzy
-msgid "Select signature option"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-msgid "Custom mirrors"
-msgstr ""
-
-msgid "Defined"
-msgstr ""
-
-#, fuzzy
-msgid "Save user configuration (including disk layout)"
-msgstr "Αποθήκευση διαμόρφωσης χρήστη"
-
-#, fuzzy
-msgid ""
-"Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
-"Save directory: "
-msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
-
-msgid ""
-"Do you want to save {} configuration file(s) in the following location?\n"
-"\n"
-"{}"
-msgstr ""
-
-#, fuzzy
-msgid "Saving {} configuration files to {}"
-msgstr "Αποθήκευση διαμόρφωσης"
-
-#, fuzzy
-msgid "Mirrors"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "Mirror regions"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
-msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
-
-msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
-
-msgid "Locales"
-msgstr ""
-
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
-msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
-
-msgid "Total: {} / {}"
-msgstr "Σύνολο: {} / {}"
-
-msgid "All entered values can be suffixed with a unit: B, KB, KiB, MB, MiB..."
-msgstr ""
-
-msgid "If no unit is provided, the value is interpreted as sectors"
-msgstr "Αν δεν έχει δωθεί μονάδα, η τιμή ερμηνεύεται ως sectors"
-
-#, fuzzy
-msgid "Enter start (default: sector {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-#, fuzzy
-msgid "Enter end (default: {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-msgid "Unable to determine fido2 devices. Is libfido2 installed?"
-msgstr ""
-
-msgid "Path"
-msgstr "Μονοπάτι"
-
-msgid "Manufacturer"
-msgstr "Κατασκευαστής"
-
-msgid "Product"
-msgstr "Προϊόν"
-
-#, fuzzy, python-brace-format
-msgid "Invalid configuration: {error}"
-msgstr "Χειροκίνητη διαμόρφωση"
-
-msgid "Type"
-msgstr "Τύπος"
-
-#, fuzzy
-msgid "This option enables the number of parallel downloads that can occur during package downloads"
-msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
-
-#, fuzzy
-msgid ""
-"Enter the number of parallel downloads to be enabled.\n"
-"\n"
-"Note:\n"
-msgstr ""
-"Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
-"Σημείωση:"
-
-#, fuzzy, python-brace-format
-msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
-msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
-
-#, fuzzy
-msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
-msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
-
-#, fuzzy
-msgid "Invalid input! Try again with a valid input [or 0 to disable]"
-msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
-
-msgid "Hyprland needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
-
-msgid ""
-"\n"
-"\n"
-"Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
-
-msgid "All entered values can be suffixed with a unit: %, B, KB, KiB, MB, MiB..."
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to use unified kernel images?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε swap με zram;"
-
-msgid "Unified kernel images"
-msgstr ""
-
-msgid "Waiting for time sync (timedatectl show) to complete."
-msgstr "Περιμένοντας να ολοκληρωθεί ο συγχρονισμός του χρόνου (timedatectl show)"
-
-msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
-
-msgid "Skipping waiting for automatic time sync (this can cause issues if time is out of sync during installation)"
-msgstr "Παραλείποντας την αναμονή για αυτόματο συγχρονισμό χρόνου (μπορεί να προκαλέσει προβλήματα αν ο χρόνος δεν είναι συγχρονισμένος κατά την εγκατάσταση)"
-
-msgid "Waiting for Arch Linux keyring sync (archlinux-keyring-wkd-sync) to complete."
-msgstr ""
-
-#, fuzzy
-msgid "Selected profiles: "
-msgstr "Διαγραφή προφίλ"
-
-#, fuzzy
-msgid "Time synchronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
-msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
-
-#, fuzzy
-msgid "Mark/Unmark as nodatacow"
-msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
-
-#, fuzzy
-msgid "Would you like to use compression or disable CoW?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-msgid "Use compression"
-msgstr ""
-
-msgid "Disable Copy-on-Write"
-msgstr ""
-
-#, fuzzy
-msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
-msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
-
-#, fuzzy, python-brace-format
-msgid "Configuration type: {}"
-msgstr "Καμία διαμόρφωση"
-
-#, fuzzy
-msgid "LVM configuration type"
-msgstr "Καμία διαμόρφωση"
-
-msgid "LVM disk encryption with more than 2 partitions is currently not supported"
-msgstr ""
-
-#, fuzzy
-msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
-msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
-
-#, fuzzy
-msgid "Select a LVM option"
-msgstr "Επιλέξτε μία ζώνη ώρας"
-
-#, fuzzy
-msgid "Partitioning"
-msgstr "Διαμέριση"
-
-msgid "Logical Volume Management (LVM)"
-msgstr ""
-
-msgid "Physical volumes"
-msgstr ""
-
-msgid "Volumes"
-msgstr ""
-
-#, fuzzy
-msgid "LVM volumes"
-msgstr "Ορισμός υποόγκων"
-
-#, fuzzy
-msgid "LVM volumes to be encrypted"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
-
-#, fuzzy
-msgid "Select which LVM volumes to encrypt"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
-
-#, fuzzy
-msgid "Default layout"
-msgstr "Διάταξη δίσκου"
-
-#, fuzzy
-msgid "No Encryption"
-msgstr "Κωδικός κρυπτογράφησης"
-
-msgid "LUKS"
-msgstr ""
-
-msgid "LVM on LUKS"
-msgstr ""
-
-msgid "LUKS on LVM"
-msgstr ""
-
-#, fuzzy
-msgid "Yes"
-msgstr "ναι"
-
-msgid "No"
-msgstr "όχι"
-
-#, fuzzy
-msgid "Archinstall help"
-msgstr "Γλώσσα archinstall"
-
-#, fuzzy
-msgid " (default)"
-msgstr "(προκαθορισμένο)"
-
-msgid "Press Ctrl+h for help"
-msgstr "Πατήστε Ctrl+h για βοήθεια"
-
-#, fuzzy
-msgid "Choose an option to give Sway access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
-
-msgid "Seat access"
-msgstr ""
-
-#, fuzzy
-msgid "Mountpoint"
-msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
-
-msgid "HSM"
-msgstr ""
-
-#, fuzzy
-msgid "Enter disk encryption password (leave blank for no encryption)"
-msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε κενό για καμία κρυπτογράφηση): "
-
-#, fuzzy
-msgid "Disk encryption password"
-msgstr "Κωδικός κρυπτογράφησης"
-
-#, fuzzy
-msgid "Partition - New"
-msgstr "Διαμέριση"
-
-#, fuzzy
-msgid "Filesystem"
-msgstr "Αλλαγή συστήματος αρχείων"
-
-msgid "Invalid size"
-msgstr ""
-
-#, fuzzy
-msgid "Start (default: sector {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-#, fuzzy
-msgid "End (default: {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-#, fuzzy
-msgid "Subvolume name"
-msgstr "Όνομα υποόγκου "
-
-#, fuzzy
-msgid "Disk configuration type"
-msgstr "Καμία διαμόρφωση"
-
-msgid "Root mount directory"
-msgstr ""
-
-#, fuzzy
-msgid "Select language"
-msgstr "Τοπική γλώσσα"
-
-#, fuzzy
-msgid "Write additional packages to install (space separated, leave blank to skip)"
-msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
-
-msgid "Invalid download number"
-msgstr ""
-
-msgid "Number downloads"
-msgstr ""
-
-#, fuzzy
-msgid "The username you entered is invalid"
-msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
-
-#, fuzzy
-msgid "Username"
-msgstr "Όνομα Χρήστη : "
-
-#, fuzzy, python-brace-format
-msgid "Should \"{}\" be a superuser (sudo)?\n"
-msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
-
-#, fuzzy
-msgid "Interfaces"
-msgstr "Προσθήκη διεπαφής"
-
-msgid "You need to enter a valid IP in IP-config mode"
-msgstr ""
-
-msgid "Modes"
-msgstr ""
-
-msgid "IP address"
-msgstr ""
-
-#, fuzzy
-msgid "Enter your gateway (router) IP address (leave blank for none)"
-msgstr "Εισάγετε τη διεύθυνση IP του router σας ή αφήστε κενό για καμία διεύθυνση: "
-
-msgid "Gateway address"
-msgstr ""
-
-#, fuzzy
-msgid "Enter your DNS servers with space separated (leave blank for none)"
-msgstr "Εισάγετε τους διακομιστές DNS σας (χωρισμένοι με κενό, αφήστε κενό για κανέναν διακομιστή): "
-
-#, fuzzy
-msgid "DNS servers"
-msgstr "Κανένας διακομιστής ήχου"
-
-#, fuzzy
-msgid "Configure interfaces"
-msgstr "Διαμορφωμένες {} διεπαφές"
-
-#, fuzzy
-msgid "Kernel"
-msgstr "Kernels"
-
-msgid "UEFI is not detected and some options are disabled"
-msgstr ""
-
-msgid "Info"
-msgstr ""
-
-msgid "The proprietary Nvidia driver is not supported by Sway."
-msgstr ""
-
-msgid "It is likely that you will run into issues, are you okay with that?"
-msgstr ""
-
-#, fuzzy
-msgid "Main profile"
-msgstr "Επεξεργασία προφίλ"
-
-#, fuzzy
-msgid "Confirm password"
-msgstr "Αλλαγή κωδικού"
-
-msgid "The confirmation password did not match, please try again"
-msgstr ""
-
-#, fuzzy
-msgid "Not a valid directory"
-msgstr "Μη έγκυρος φάκελος: {}"
-
-#, fuzzy
-msgid "Would you like to continue?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-msgid "Directory"
-msgstr ""
-
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
-msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
-
-#, fuzzy, python-brace-format
-msgid "Do you want to save the configuration file(s) to {}?"
-msgstr "Αποθήκευση διαμόρφωσης"
-
-msgid "Enabled"
-msgstr ""
-
-msgid "Disabled"
-msgstr ""
-
-#, fuzzy
-msgid "Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
-msgstr "    Παρακαλώ επισυνάψτε αυτό το issue (και αρχείο) στο https://github.com/archlinux/archinstall/issues"
-
-#, fuzzy
-msgid "Mirror name"
-msgstr "Περιοχή mirror"
-
-msgid "Url"
-msgstr ""
-
-#, fuzzy
-msgid "Select signature check"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-#, fuzzy
-msgid "Select execution mode"
-msgstr "Επιλέξτε μία ενέργεια για '{}'"
-
-msgid "Press ? for help"
-msgstr "Πατήστε ? για βοήθεια"
-
-#, fuzzy
-msgid "Choose an option to give Hyprland access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
-
-#, fuzzy
-msgid "Additional repositories"
-msgstr "Προαιρετικά αποθετήρια"
-
-msgid "NTP"
-msgstr ""
-
-msgid "Swap on zram"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-#, fuzzy
-msgid "Signature check"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-#, python-brace-format
-msgid "Selected free space segment on device {}:"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Size: {} / {}"
-msgstr "Σύνολο: {} / {}"
-
-#, fuzzy, python-brace-format
-msgid "Size (default: {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
-
-#, fuzzy
-msgid "HSM device"
-msgstr "Συσκευή"
-
-msgid "Some packages could not be found in the repository"
-msgstr ""
-
-#, fuzzy
-msgid "User"
-msgstr "Όνομα Χρήστη : "
-
-msgid "The specified configuration will be applied"
-msgstr ""
-
-msgid "Wipe"
-msgstr ""
-
-#, fuzzy
-msgid "Mark/Unmark as XBOOTLDR"
-msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
-
-#, fuzzy
-msgid "Loading packages..."
-msgstr "Περαιτέρω πακέτα"
-
-msgid "Select any packages from the below list that should be installed additionally"
-msgstr ""
-
-#, fuzzy
-msgid "Add a custom repository"
-msgstr "Προσθήκη custom mirror"
-
-#, fuzzy
-msgid "Change custom repository"
-msgstr "Αλλαγή custom mirror"
-
-#, fuzzy
-msgid "Delete custom repository"
-msgstr "Διαγραφή custom mirror"
-
-#, fuzzy
-msgid "Repository name"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "Add a custom server"
-msgstr "Προσθήκη custom mirror"
-
-#, fuzzy
-msgid "Change custom server"
-msgstr "Αλλαγή custom mirror"
-
-#, fuzzy
-msgid "Delete custom server"
-msgstr "Διαγραφή custom mirror"
-
-msgid "Server url"
-msgstr ""
-
-#, fuzzy
-msgid "Select regions"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-#, fuzzy
-msgid "Add custom servers"
-msgstr "Προσθήκη custom mirror"
-
-#, fuzzy
-msgid "Add custom repository"
-msgstr "Προσθήκη custom mirror"
-
-#, fuzzy
-msgid "Loading mirror regions..."
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "Mirrors and repositories"
-msgstr "Προαιρετικά αποθετήρια"
-
-#, fuzzy
-msgid "Selected mirror regions"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "Custom servers"
-msgstr "Κανένας διακομιστής ήχου"
-
-#, fuzzy
-msgid "Custom repositories"
-msgstr "Προαιρετικά αποθετήρια"
-
-msgid "Only ASCII characters are supported"
-msgstr ""
-
-msgid "Show help"
-msgstr "Εμφάνιση βοήθειας"
-
-msgid "Exit help"
-msgstr "Έξοδος από τη βοήθεια"
-
-msgid "Preview scroll up"
-msgstr "Κύλιση προεπισκόπησης πάνω"
-
-msgid "Preview scroll down"
-msgstr "Κύλιση προεπισκόπησης κάτω"
-
-msgid "Move up"
-msgstr "Μετακίνηση πάνω"
-
-msgid "Move down"
-msgstr "Μετακίνηση κάτω"
-
-msgid "Move right"
-msgstr "Μετακίνηση δεξιά"
-
-msgid "Move left"
-msgstr "Μετακίνηση αριστερά"
-
-msgid "Jump to entry"
-msgstr "Μετάβαση σε καταχώρηση"
-
-msgid "Skip selection (if available)"
-msgstr ""
-
-msgid "Reset selection (if available)"
-msgstr ""
-
-#, fuzzy
-msgid "Select on single select"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-#, fuzzy
-msgid "Select on multi select"
-msgstr "Επιλέξτε μία ζώνη ώρας"
-
-msgid "Reset"
-msgstr "Επαναφορά"
-
-#, fuzzy
-msgid "Skip selection menu"
-msgstr "Επιλέξτε μία ενέργεια για '{}'"
-
-msgid "Start search mode"
-msgstr "Έναρξη λειτουργίας αναζήτησης"
-
-msgid "Exit search mode"
-msgstr "Έξοδος από τη λειτουργία αναζήτησης"
-
-msgid "General"
-msgstr "Γενικά"
-
-#, fuzzy
-msgid "Navigation"
-msgstr "Αποθήκευση διαμόρφωσης"
-
-#, fuzzy
-msgid "Selection"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
-
-msgid "Search"
-msgstr "Αναζήτηση"
+msgid "Delete right to start of word"
+msgstr "Διαγραφή δεξιά έως την αρχή της λέξης"
 
 msgid "Down"
 msgstr "Κάτω"
 
-msgid "Up"
-msgstr "Πάνω"
-
-#, fuzzy
-msgid "Confirm"
-msgstr "Επιβεβαίωση και έξοδος"
-
-msgid "Focus right"
-msgstr "Εστίαση δεξιά"
-
-msgid "Focus left"
-msgstr "Εστίαση αριστερά"
-
-msgid "Toggle"
-msgstr "Εναλλαγή"
-
-msgid "Show/Hide help"
-msgstr "Εμφάνιση/Απόκρυψη βοήθειας"
-
-msgid "Quit"
-msgstr "Έξοδος"
+msgid "End"
+msgstr "Τέλος"
 
 msgid "First"
 msgstr "Πρώτο"
 
+msgid "Focus Next"
+msgstr "Εστίαση στο επόμενο"
+
+msgid "Focus Previous"
+msgstr "Εστίαση στο προηγούμενο"
+
+msgid "Go to end"
+msgstr "Μετάβαση στο τέλος"
+
+msgid "Go to start"
+msgstr "Μετάβαση στην αρχή"
+
+msgid "Home"
+msgstr "Αρχή"
+
 msgid "Last"
 msgstr "Τελευταίο"
 
-#, fuzzy
-msgid "Select"
-msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+msgid "Move cursor left"
+msgstr "Μετακίνηση δρομέα αριστερά"
 
-msgid "Page Up"
-msgstr "Σελίδα πάνω"
+msgid "Move cursor left a word"
+msgstr "Μετακίνηση δρομέα μία λέξη αριστερά"
+
+msgid "Move cursor left a word and select"
+msgstr "Μετακίνηση δρομέα μία λέξη αριστερά με επιλογή"
+
+msgid "Move cursor left and select"
+msgstr "Μετακίνηση δρομέα αριστερά με επιλογή"
+
+msgid "Move cursor right a word"
+msgstr "Μετακίνηση δρομέα μία λέξη δεξιά"
+
+msgid "Move cursor right a word and select"
+msgstr "Μετακίνηση δρομέα μία λέξη δεξιά με επιλογή"
+
+msgid "Move cursor right and select"
+msgstr "Μετακίνηση δρομέα δεξιά με επιλογή"
+
+msgid "Move cursor right or accept the completion suggestion"
+msgstr "Μετακίνηση δρομέα δεξιά ή αποδοχή της πρότασης συμπλήρωσης"
 
 msgid "Page Down"
-msgstr "Σελίδα κάτω"
-
-msgid "Page up"
-msgstr "Σελίδα πάνω"
-
-msgid "Page down"
 msgstr "Σελίδα κάτω"
 
 msgid "Page Left"
@@ -1874,39 +1377,32 @@ msgstr "Σελίδα αριστερά"
 msgid "Page Right"
 msgstr "Σελίδα δεξιά"
 
-msgid "Cursor up"
-msgstr "Δρομέας πάνω"
+msgid "Page Up"
+msgstr "Σελίδα πάνω"
 
-msgid "Cursor down"
-msgstr "Δρομέας κάτω"
+msgid "Page down"
+msgstr "Σελίδα κάτω"
 
-msgid "Cursor right"
-msgstr "Δρομέας δεξιά"
+msgid "Page up"
+msgstr "Σελίδα πάνω"
 
-msgid "Cursor left"
-msgstr "Δρομέας αριστερά"
+msgid "Paste text from the clipboard"
+msgstr "Επικόλληση κειμένου από το πρόχειρο"
 
-msgid "Top"
-msgstr "Κορυφή"
+msgid "Press button"
+msgstr "Πάτημα κουμπιού"
 
-msgid "Bottom"
-msgstr "Βάση"
-
-msgid "Home"
-msgstr "Αρχή"
-
-msgid "End"
-msgstr "Τέλος"
-
-#, fuzzy
-msgid "Toggle option"
-msgstr "Επιλογές υποόγκου"
-
-msgid "Scroll Up"
-msgstr "Κύλιση πάνω"
+msgid "Quit"
+msgstr "Έξοδος"
 
 msgid "Scroll Down"
 msgstr "Κύλιση κάτω"
+
+msgid "Scroll End"
+msgstr "Κύλιση στο τέλος"
+
+msgid "Scroll Home"
+msgstr "Κύλιση στην αρχή"
 
 msgid "Scroll Left"
 msgstr "Κύλιση αριστερά"
@@ -1914,482 +1410,1037 @@ msgstr "Κύλιση αριστερά"
 msgid "Scroll Right"
 msgstr "Κύλιση δεξιά"
 
-msgid "Scroll Home"
-msgstr "Κύλιση στην αρχή"
+msgid "Scroll Up"
+msgstr "Κύλιση πάνω"
 
-msgid "Scroll End"
-msgstr "Κύλιση στο τέλος"
+msgid "Select"
+msgstr "Επιλογή"
 
-msgid "Focus Next"
-msgstr "Εστίαση στο επόμενο"
+msgid "Select all"
+msgstr "Επιλογή όλων"
 
-msgid "Focus Previous"
-msgstr "Εστίαση στο προηγούμενο"
+msgid "Select line end"
+msgstr "Επιλογή έως το τέλος της γραμμής"
 
-msgid "Copy selected text"
-msgstr "Αντιγραφή επιλεγμένου κειμένου"
+msgid "Select line start"
+msgstr "Επιλογή έως την αρχή της γραμμής"
 
-msgid "labwc needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgid "Submit"
+msgstr "Υποβολή"
 
-#, fuzzy
-msgid "Choose an option to give labwc access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+msgid "Toggle option"
+msgstr "Εναλλαγή επιλογής"
 
-msgid "niri needs access to your seat (collection of hardware devices i.e. keyboard, mouse, etc)"
-msgstr ""
+msgid "Top"
+msgstr "Κορυφή"
 
-#, fuzzy
-msgid "Choose an option to give niri access to your hardware"
-msgstr ""
-"\n"
-"\n"
-"Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+msgid "Up"
+msgstr "Πάνω"
 
-#, fuzzy
-msgid "Mark/Unmark as ESP"
-msgstr "Σημείωση/Ξεμαρκάρισμα ως bootable"
+msgid "Reset"
+msgstr "Επαναφορά"
 
-msgid "Package group:"
-msgstr ""
+msgid "Search"
+msgstr "Αναζήτηση"
 
-#, fuzzy
-msgid "Exit archinstall"
-msgstr "Γλώσσα archinstall"
+msgid "Toggle"
+msgstr "Εναλλαγή"
 
-#, fuzzy
-msgid "Reboot system"
-msgstr "Αλλαγή συστήματος αρχείων"
+msgid "Confirm"
+msgstr "Επιβεβαίωση"
 
-#, fuzzy
-msgid "chroot into installation for post-installation configurations"
-msgstr "Θα θέλατε να κάνετε chroot εντός της καινούργιας εγκατάστασης για περαιτέρω διαμόρφωση;"
+msgid "Focus right"
+msgstr "Εστίαση δεξιά"
 
-msgid "Installation completed"
-msgstr ""
-
-#, fuzzy
-msgid "What would you like to do next?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-#, fuzzy, python-brace-format
-msgid "Select which mode to configure for \"{}\""
-msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
-
-#, fuzzy
-msgid "Incorrect credentials file decryption password"
-msgstr "Κωδικός κρυπτογράφησης"
-
-#, fuzzy
-msgid "Incorrect password"
-msgstr "Κωδικός root"
-
-#, fuzzy
-msgid "Credentials file decryption password"
-msgstr "Κωδικός κρυπτογράφησης"
-
-#, fuzzy
-msgid "Do you want to encrypt the user_credentials.json file?"
-msgstr "Αποθήκευση διαμόρφωσης"
-
-#, fuzzy
-msgid "Credentials file encryption password"
-msgstr "Κωδικός κρυπτογράφησης"
-
-#, fuzzy, python-brace-format
-msgid "Repositories: {}"
-msgstr "Περιοχή mirror"
-
-#, fuzzy
-msgid "New version available"
-msgstr "Καμία διαθέσιμη συσκευή HSM"
-
-#, fuzzy
-msgid "Passwordless login"
-msgstr "Κωδικός root"
-
-msgid "Second factor login"
-msgstr ""
-
-msgid "Bluetooth"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure Bluetooth?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-msgid "Print service"
-msgstr ""
-
-#, fuzzy
-msgid "Would you like to configure the print service?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-#, fuzzy
-msgid "Power management"
-msgstr "Διαχείριση διαμέρισης"
-
-msgid "Authentication"
-msgstr ""
-
-msgid "Applications"
-msgstr ""
-
-msgid "U2F login method: "
-msgstr ""
-
-msgid "Passwordless sudo: "
-msgstr ""
-
-#, python-brace-format
-msgid "Btrfs snapshot type: {}"
-msgstr ""
-
-msgid "Syncing the system..."
-msgstr ""
-
-msgid "Value cannot be empty"
-msgstr ""
-
-msgid "Snapshot type"
-msgstr ""
-
-#, fuzzy, python-brace-format
-msgid "Snapshot type: {}"
-msgstr "Καμία διαμόρφωση"
-
-msgid "U2F login setup"
-msgstr ""
-
-msgid "No U2F devices found"
-msgstr ""
-
-msgid "U2F Login Method"
-msgstr ""
-
-#, fuzzy
-msgid "Enable passwordless sudo?"
-msgstr "Εισάγετε κωδικό: "
-
-#, python-brace-format
-msgid "Setting up U2F device for user: {}"
-msgstr ""
-
-msgid "You may need to enter the PIN and then touch your U2F device to register it"
-msgstr ""
-
-msgid "Starting device modifications in "
-msgstr ""
-
-#, fuzzy
-msgid "No network connection found"
-msgstr "Καμία διαμόρφωση δικτύου"
-
-#, fuzzy
-msgid "Would you like to connect to a Wifi?"
-msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
-
-#, fuzzy
-msgid "No wifi interface found"
-msgstr "Διαμορφωμένες {} διεπαφές"
-
-#, fuzzy
-msgid "Select wifi network to connect to"
-msgstr "Επιλέξτε μία διεπαφή δικτύου για διαμόρφωση"
-
-msgid "Scanning wifi networks..."
-msgstr ""
-
-#, fuzzy
-msgid "No wifi networks found"
-msgstr "Καμία διαμόρφωση δικτύου"
-
-msgid "Failed setting up wifi"
-msgstr ""
-
-#, fuzzy
-msgid "Enter wifi password"
-msgstr "Εισάγετε κωδικό: "
+msgid "Focus left"
+msgstr "Εστίαση αριστερά"
 
 msgid "Ok"
 msgstr "Εντάξει"
 
-msgid "Removable"
-msgstr ""
+msgid "Input cannot be empty"
+msgstr "Η είσοδος δεν μπορεί να είναι κενή"
 
-msgid "Install to removable location"
-msgstr ""
+msgid "Show/Hide help"
+msgstr "Εμφάνιση/Απόκρυψη βοήθειας"
 
-msgid "Will install to /EFI/BOOT/ (removable location)"
-msgstr ""
+msgid "Yes"
+msgstr "Ναι"
 
-msgid "Will install to standard location with NVRAM entry"
-msgstr ""
+msgid "No"
+msgstr "Όχι"
 
-msgid "Would you like to install the bootloader to the default removable media search location?"
-msgstr ""
+msgid " (default)"
+msgstr " (προκαθορισμένο)"
 
-msgid "This installs the bootloader to /EFI/BOOT/BOOTX64.EFI (or similar) which is useful for:"
-msgstr ""
+#~ msgid "[!] A log file has been created here: {} {}"
+#~ msgstr "[!] Ένα αρχείο καταγραφής έχει δημιουργηθεί εδώ: {} {}"
 
-msgid "USB drives or other portable external media."
-msgstr ""
+#~ msgid "    Please submit this issue (and file) to https://github.com/archlinux/archinstall/issues"
+#~ msgstr "    Παρακαλώ επισυνάψτε αυτό το issue (και αρχείο) στο https://github.com/archlinux/archinstall/issues"
 
-msgid "Systems where you want the disk to be bootable on any computer."
-msgstr ""
+#~ msgid "And one more time for verification: "
+#~ msgstr "Και άλλη μία φορά για επαλήθευση: "
 
-msgid "Firmware that does not properly support NVRAM boot entries."
-msgstr ""
+#~ msgid "Desired hostname for the installation: "
+#~ msgstr "Επιθυμητό όνομα υπολογιστή για την εγκατάσταση: "
 
-msgid "Will install to /EFI/BOOT/ (removable location, safe default)"
-msgstr ""
+#~ msgid "Username for required superuser with sudo privileges: "
+#~ msgstr "Όνομα χρήστη για τον απαιτούμενο υπερ-χρήστη με δικαιώματα sudo: "
 
-msgid "Will install to custom location with NVRAM entry"
-msgstr ""
+#~ msgid "Any additional users to install (leave blank for no users): "
+#~ msgstr "Επιπρόσθετοι χρήστες για την εγκατάσταση (αφήστε κενό για κανέναν χρήστη): "
 
-msgid "Firmware that does not properly support NVRAM boot entries like most MSI motherboards,"
-msgstr ""
+#~ msgid "Should this user be a superuser (sudoer)?"
+#~ msgstr "Θα έπρεπε αυτός ο χρήστης να είναι ένας υπερχρήστης (χρήστης sudo);"
 
-msgid "most Apple Macs, many laptops..."
-msgstr ""
+#~ msgid "Select a timezone"
+#~ msgstr "Επιλέξτε μία ζώνη ώρας"
 
-#, fuzzy
-msgid "Language"
-msgstr "Τοπική γλώσσα"
+#~ msgid "Would you like to use GRUB as a bootloader instead of systemd-boot?"
+#~ msgstr "Θα θέλατε να χρησιμοποιήσετε το GRUB ως bootloader αντί του systemd-boot;"
 
-msgid "Compression algorithm"
-msgstr ""
+#~ msgid "Choose a bootloader"
+#~ msgstr "Επιλέξτε έναν bootloader"
 
-#, fuzzy
-msgid "Only packages such as base, sudo, linux, linux-firmware, efibootmgr and optional profile packages are installed."
-msgstr "Εγκαθίστανται μόνο πακέτα όπως το base, base-devel, linux, linux-firmware, efibootmgr και προαιρετικά πακέτα προφίλ."
+#~ msgid "Choose an audio server"
+#~ msgstr "Επιλέξτε έναν διακομιστή ήχου"
 
-#, fuzzy
-msgid "Select zram compression algorithm:"
-msgstr "Επιλέξτε ένα σημείο mount :"
+#~ msgid "Only packages such as base, base-devel, linux, linux-firmware, efibootmgr and optional profile packages are installed."
+#~ msgstr "Εγκαθίστανται μόνο πακέτα όπως το base, base-devel, linux, linux-firmware, efibootmgr και προαιρετικά πακέτα προφίλ."
 
-msgid "Use Network Manager (default backend)"
-msgstr ""
+#~ msgid "If you desire a web browser, such as firefox or chromium, you may specify it in the following prompt."
+#~ msgstr "Εάν επιθυμείτε έναν περιηγητή διαδικτύου, όπως ο firefox ή ο chromium, πρέπει να το καθορίσετε στο επακόλουθο prompt."
 
-msgid "Use Network Manager (iwd backend)"
-msgstr ""
+#~ msgid "Write additional packages to install (space separated, leave blank to skip): "
+#~ msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
 
-msgid "Firewall"
-msgstr ""
+#~ msgid "Use NetworkManager (necessary for configuring internet graphically in GNOME and KDE)"
+#~ msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
 
-#, fuzzy
-msgid "Additional fonts"
-msgstr "Προαιρετικά αποθετήρια"
+#~ msgid "Select one network interface to configure"
+#~ msgstr "Επιλέξτε μία διεπαφή δικτύου για διαμόρφωση"
 
-#, fuzzy
-msgid "Select font packages to install"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+#~ msgid "Select which mode to configure for \"{}\" or skip to use default mode \"{}\""
+#~ msgstr "Επιλέξτε ποιο mode να διαμορφωθεί για το \"{}\" ή παραλείψτε για να χρησιμοποιηθεί το default mode \"{}\""
 
-msgid "Unicode font coverage for most languages"
-msgstr ""
+#~ msgid "Enter your gateway (router) IP address or leave blank for none: "
+#~ msgstr "Εισάγετε τη διεύθυνση IP του router σας ή αφήστε κενό για καμία διεύθυνση: "
 
-msgid "color emoji for browsers and apps"
-msgstr ""
+#~ msgid "Enter your DNS servers (space separated, blank for none): "
+#~ msgstr "Εισάγετε τους διακομιστές DNS σας (χωρισμένοι με κενό, αφήστε κενό για κανέναν διακομιστή): "
 
-msgid "Chinese, Japanese, Korean characters"
-msgstr ""
+#~ msgid "Select which filesystem your main partition should use"
+#~ msgstr "Επιλέξτε ποιο σύστημα αρχείων θέλετε να χρησιμοποιεί η κύρια διαμέριση"
 
-#, fuzzy
-msgid "Select audio configuration"
-msgstr "Αποθήκευση διαμόρφωσης χρήστη"
+#~ msgid "Current partition layout"
+#~ msgstr "Τρέχουσα διάταξη διαμέρισης"
 
-#, fuzzy
-msgid "Enter credentials file decryption password"
-msgstr "Κωδικός κρυπτογράφησης"
+#~ msgid ""
+#~ "Select what to do with\n"
+#~ "{}"
+#~ msgstr ""
+#~ "Επιλέξτε τι να γίνει με\n"
+#~ "{}"
 
-#, fuzzy
-msgid "Enter root password"
-msgstr "Εισάγετε κωδικό: "
+#~ msgid "Enter a desired filesystem type for the partition"
+#~ msgstr "Εισάγετε ένα επιθυμητό τύπο συστήματος αρχείων για τη διαμέριση"
 
-msgid "Select bootloader to install"
-msgstr ""
+#~ msgid "{} contains queued partitions, this will remove those, are you sure?"
+#~ msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
 
-#, fuzzy
-msgid "Configuration preview"
-msgstr "Καμία διαμόρφωση"
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partitions to delete"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε ποιες διαμερίσεις να διαγραφούν μέσω δείκτη"
 
-#, fuzzy
-msgid "Enter a directory for the configuration(s) to be saved"
-msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select by index which partition to mount where"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε ποια διαμέριση να γίνει mount που, μέσω δείκτη"
 
-#, fuzzy
-msgid "Select encryption type"
-msgstr "Κωδικός κρυπτογράφησης"
+#~ msgid " * Partition mount-points are relative to inside the installation, the boot would be /boot as an example."
+#~ msgstr " * Τα σημεία mount της διαμέρισης είναι σχετικά ως προς το εσωτερικό της εγκατάστασης, για παράδειγμα το boot θα ήταν /boot."
 
-#, fuzzy
-msgid "Select disks for the installation"
-msgstr "Επιθυμητό όνομα υπολογιστή για την εγκατάσταση: "
+#~ msgid "Select where to mount partition (leave blank to remove mountpoint): "
+#~ msgstr "Επιλέξτε που να γίνει mount η διαμέρισιη (αφήστε κενό για να διαγραφεί το σημείο mount): "
 
-#, fuzzy
-msgid "Enter a mountpoint"
-msgstr "Επιλέξτε ένα σημείο mount :"
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mask for formatting"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε ποια διαμέριση να μεταμφιεστεί για μορφοποίηση"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as encrypted"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε ποια διαμέριση να σημειωθεί ως κρυπτογραφημένη"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to mark as bootable"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε ποια διαμέριση να σημειωθεί ως bootable"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set a filesystem on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε σε ποια διαμέριση να δημιουργηθεί σύστημα αρχείων"
+
+#~ msgid "Enter a desired filesystem type for the partition: "
+#~ msgstr "Εισάγετε τον επιθυμητό τύπο συστήματος αρχείων για αυτήν τη διαμέριση: "
+
+#~ msgid "Wipe all selected drives and use a best-effort default partition layout"
+#~ msgstr "Διαγραφή όλων των επιλεγμένων δίσκων και χρήση μίας προκαθορισμένης διάταξης βέλτιστης προσπάθειας"
+
+#~ msgid "Select what to do with each individual drive (followed by partition usage)"
+#~ msgstr "Επιλέξτε τι να γίνει με κάθε ξεχωριστό δίσκο (με επακόλουθο τη χρήση διαμέρισης)"
+
+#~ msgid "Select what you wish to do with the selected block devices"
+#~ msgstr "Επιλέξτε τι θέλετε να κάνετε με τις επιλεγμένες συσκευές block"
+
+#~ msgid "This is a list of pre-programmed profiles, they might make it easier to install things like desktop environments"
+#~ msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
+
+#~ msgid "Select keyboard layout"
+#~ msgstr "Επιλέξτε διάταξη πληκτρολογίου"
+
+#~ msgid "Select one of the regions to download packages from"
+#~ msgstr "Επιλέξτε μία από τις περιοχές από τις οποίες να γίνει λήψη πακέτων"
+
+#~ msgid "Select one or more hard drives to use and configure"
+#~ msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
+
+#~ msgid "All open-source (default)"
+#~ msgstr "Όλα ανοιχτού κώδικα (προκαθορισμένο)"
+
+#~ msgid "Choose which kernels to use or leave blank for default \"{}\""
+#~ msgstr "Επιλέξτε ποιοι kernels να χρησιμοποιηθούν ή αφήστε κενό για το προκαθορισμένο \"{}\""
+
+#~ msgid "Choose which locale language to use"
+#~ msgstr "Επιλέξτε ποια τοπική γλώσσα να χρησιμοποιηθεί"
+
+#~ msgid "Choose which locale encoding to use"
+#~ msgstr "Επιλέξτε ποια τοπική κωδικοποίηση να χρησιμοποιηθεί"
+
+#~ msgid "Select one of the values shown below: "
+#~ msgstr "Επιλέξτε μία από τις τιμές που φαίνονται παρακάτω: "
+
+#~ msgid "Select one or more of the options below: "
+#~ msgstr "Επιλέξτε μία ή παραπάνω από τις επιλογές παρακάτω: "
+
+#~ msgid "Adding partition...."
+#~ msgstr "Προσθέτωντας τη διαμέριση...."
+
+#~ msgid "You need to enter a valid fs-type in order to continue. See `man parted` for valid fs-type's."
+#~ msgstr "Πρέπει να εισάγετε έναν έγκυρο fs-type ώστε να συνεχίσετε. Δείτε `man parted` για έγκυρους fs-type."
+
+#~ msgid "Error: Listing profiles on URL \"{}\" resulted in:"
+#~ msgstr "Σφάλμα: Η καταγραφή προφίλ στο URL \"{}\" είχε ως αποτέλεσμα:"
+
+#~ msgid "Error: Could not decode \"{}\" result as JSON:"
+#~ msgstr "Σφάλμα: Η αποκωδικοποίηση του αποτελέσματος \"{}\" ως JSON ήταν ανεπιτυχής:"
+
+#~ msgid "Drive(s)"
+#~ msgstr "Δίσκος(οι)"
+
+#~ msgid "Superuser account"
+#~ msgstr "Λογαριασμός υπερχρήστη"
+
+#~ msgid "Install ({} config(s) missing)"
+#~ msgstr "Εγκατάσταση (η/οι {} διαμόρφωση/εις λείπει/ουν)"
+
+#~ msgid ""
+#~ "You decided to skip harddrive selection\n"
+#~ "and will use whatever drive-setup is mounted at {} (experimental)\n"
+#~ "WARNING: Archinstall won't check the suitability of this setup\n"
+#~ "Do you wish to continue?"
+#~ msgstr ""
+#~ "Επιλέξατε να παραλείψετε την επιλογή σκληρού δίσκου\n"
+#~ "και θα χρησιμοποιηθεί οποιαδήποτε εγκατάσταση δίσκου είναι mount στο {} (πειραματικό)\n"
+#~ "ΠΡΟΣΟΧΗ: Το archinstall δεν μπορεί να ελέγξει την καταλληλότητα αυτής της εγκατάστασης\n"
+#~ "Θέλετε να συνεχίσετε;"
+
+#~ msgid "Re-using partition instance: {}"
+#~ msgstr "Επαναχρησιμοποιώντας την instance διαμέρισης: {}"
+
+#~ msgid "Create a new partition"
+#~ msgstr "Δημιουργία καινούργιας διαμέρισης"
+
+#~ msgid "Delete a partition"
+#~ msgstr "Διαγραφή διαμέρισης"
+
+#~ msgid "Clear/Delete all partitions"
+#~ msgstr "Καθαρισμός/Διαγραφή όλων των διαμερίσεων"
+
+#~ msgid "Assign mount-point for a partition"
+#~ msgstr "Εκχώρηση σημείου mount για μία διαμέριση"
+
+#~ msgid "Mark/Unmark a partition to be formatted (wipes data)"
+#~ msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης προς μορφοποίηση (διαγράφει τα δεδομένα)"
+
+#~ msgid "Mark/Unmark a partition as encrypted"
+#~ msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης ως κρυπτογραφημένη"
+
+#~ msgid "Mark/Unmark a partition as bootable (automatic for /boot)"
+#~ msgstr "Σημείωση/Ξεμαρκάρισμα διαμέρισης ως ικανή για boot (αυτόματο για /boot)"
+
+#~ msgid "Set desired filesystem for a partition"
+#~ msgstr "Θέση επιθυμητού συστήματος αρχείων για μία διαμέριση"
+
+#~ msgid "Not configured, unavailable unless setup manually"
+#~ msgstr "Δεν έχει διαμορφωθεί, μη διαθέσιμο εκτός εάν εγκατασταθεί χειροκίνητα"
+
+#~ msgid "Set/Modify the below options"
+#~ msgstr "Θέση/Τροποποίηση των παρακάτω επιλογών"
+
+#~ msgid ""
+#~ "Use ESC to skip\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Χρησιμοποιήστε ESC για παράλειψη\n"
+#~ "\n"
+
+#~ msgid "Enter a password: "
+#~ msgstr "Εισάγετε κωδικό: "
+
+#~ msgid "Enter a encryption password for {}"
+#~ msgstr "Εισάγετε έναν κωδικό κρυπτογράφησης για {}"
+
+#~ msgid "Enter disk encryption password (leave blank for no encryption): "
+#~ msgstr "Εισάγετε κωδικό κρυπτογράφησης δίσκου (αφήστε κενό για καμία κρυπτογράφηση): "
+
+#~ msgid "Create a required super-user with sudo privileges: "
+#~ msgstr "Δημιουργήστε έναν απαιτούμενο υπερχρήστη με δικαιώματα sudo: "
+
+#~ msgid "Enter root password (leave blank to disable root): "
+#~ msgstr "Εισάγετε τον κωδικό root (αφήστε κενό για να απενεργοποιηθεί το root): "
+
+#~ msgid "Password for user \"{}\": "
+#~ msgstr "Κωδικός για τον χρήστη \"{}\": "
+
+#~ msgid "Verifying that additional packages exist (this might take a few seconds)"
+#~ msgstr "Επαληθεύοντας ότι υπάρχουν περαιτέρω πακέτα (μπορεί να πάρει μερικά δευτερόλεπτα)"
+
+#~ msgid "Enter a username to create an additional user (leave blank to skip): "
+#~ msgstr "Εισάγετε ένα όνομα χρήστη για να δημιουργήσετε έναν ακόμα χρήστη (αφήστε κενό για παράλειψη): "
+
+#~ msgid "Use ESC to skip\n"
+#~ msgstr "Χρησιμοποιήστε ESC για παράλειψη\n"
+
+#~ msgid ""
+#~ "\n"
+#~ " Choose an object from the list, and select one of the available actions for it to execute"
+#~ msgstr ""
+#~ "\n"
+#~ "Επιλέξτε ένα αντικείμενο από τη λίστα, και επιλέξτε μία από τις διαθέσιμες επιλογές προς εκτέλεση"
+
+#~ msgid "Add"
+#~ msgstr "Προσθήκη"
+
+#~ msgid "Copy"
+#~ msgstr "Αντιγραφή"
+
+#~ msgid "Edit"
+#~ msgstr "Επεξεργασία"
+
+#~ msgid "Delete"
+#~ msgstr "Διαγραφή"
+
+#~ msgid "Select an action for '{}'"
+#~ msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+#~ msgid "Copy to new key:"
+#~ msgstr "Αντιγραφή σε νέο κλειδί:"
+
+#~ msgid "Unknown nic type: {}. Possible values are {}"
+#~ msgstr "Άγνωστος τύπος nic: {}. Πιθανές τιμές είναι οι {}"
+
+#~ msgid ""
+#~ "\n"
+#~ "This is your chosen configuration:"
+#~ msgstr ""
+#~ "\n"
+#~ "Αυτή είναι η επιλεγμένη σας διαμόρφωση:"
+
+#~ msgid "Choose which optional additional repositories to enable"
+#~ msgstr "Επιλέξτε ποια προαιρετικά περαιτέρω αποθετήρια να ενεργοποιηθούν"
+
+#~ msgid ""
+#~ "\n"
+#~ "Define a new user\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Ορισμός νέου χρήστη\n"
+
+#~ msgid "User Name : "
+#~ msgstr "Όνομα Χρήστη : "
+
+#~ msgid "Should {} be a superuser (sudoer)?"
+#~ msgstr "Θα έπρεπε ο {} να είναι υπερχρήστης (χρήστης sudo);"
+
+#~ msgid "Define users with sudo privilege: "
+#~ msgstr "Καθορίστε τους χρήστες με δικαιώματα sudo: "
+
+#~ msgid "No network configuration"
+#~ msgstr "Καμία διαμόρφωση δικτύου"
+
+#~ msgid "Set desired subvolumes on a btrfs partition"
+#~ msgstr "Θέση επιθυμητών υποόγκων σε μία διαμέριση btrfs"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "\n"
+#~ "Select which partition to set subvolumes on"
+#~ msgstr ""
+#~ "{}\n"
+#~ "\n"
+#~ "Επιλέξτε σε ποια διαμέριση να τεθούν υποόγκοι"
+
+#~ msgid "Manage btrfs subvolumes for current partition"
+#~ msgstr "Διαχειριστείτε τους υποόγκους btrfs για την τρέχουσα διαμέριση"
+
+#~ msgid "Save user configuration"
+#~ msgstr "Αποθήκευση διαμόρφωσης χρήστη"
+
+#~ msgid "Save disk layout"
+#~ msgstr "Αποθήκευση διάταξης δίσκου"
+
+#~ msgid "Choose which configuration to save"
+#~ msgstr "Επιλέξτε ποια διαμόρφωση να αποθηκευτεί"
+
+#~ msgid "Enter a directory for the configuration(s) to be saved: "
+#~ msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+#~ msgid "Not a valid directory: {}"
+#~ msgstr "Μη έγκυρος φάκελος: {}"
+
+#~ msgid "The password you are using seems to be weak,"
+#~ msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος,"
+
+#~ msgid "are you sure you want to use it?"
+#~ msgstr "είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
+
+#~ msgid "Either root-password or at least 1 superuser must be specified"
+#~ msgstr "Πρέπει να καθοριστεί είτε ο κωδικός του root είτε τουλάχιστον 1 υπερχρήστης"
+
+#~ msgid "Manage superuser accounts: "
+#~ msgstr "Διαχείριση λογαριασμών υπερχρήστη: "
+
+#~ msgid "Manage ordinary user accounts: "
+#~ msgstr "Διαχείριση λογαριασμών κανονικών χρηστών: "
+
+#~ msgid " Subvolume :{:16}"
+#~ msgstr " Υποόγκος :{:16}"
+
+#~ msgid " mounted at {:16}"
+#~ msgstr " Έχει γίνει mount στο {:16}"
+
+#~ msgid " with option {}"
+#~ msgstr " με επιλογή {}"
+
+#~ msgid ""
+#~ "\n"
+#~ " Fill the desired values for a new subvolume \n"
+#~ msgstr ""
+#~ "\n"
+#~ " Συμπληρώστε τις επιθυμητές τιμές για έναν νέο υποόγκο \n"
+
+#~ msgid "Subvolume name "
+#~ msgstr "Όνομα υποόγκου "
+
+#~ msgid "Subvolume mountpoint"
+#~ msgstr "Σημείο mount υποόγκου"
+
+#~ msgid "Subvolume options"
+#~ msgstr "Επιλογές υποόγκου"
+
+#~ msgid "Save"
+#~ msgstr "Αποθήκευση"
+
+#~ msgid "Subvolume name :"
+#~ msgstr "Όνομα υποόγκου :"
+
+#~ msgid "Select the desired subvolume options "
+#~ msgstr "Επιλέξτε τις επιθυμητές επιλογές υποόγκου "
+
+#~ msgid "Define users with sudo privilege, by username: "
+#~ msgstr "Καθορίστε τους χρήστες με δικαιώματα sudo, μέσω όνομα χρήστη: "
+
+#~ msgid "Would you like to use BTRFS compression?"
+#~ msgstr "Θα θέλατε να χρησιμοποιήσετε συμπίεση BTRFS;"
+
+#~ msgid "Minimum capacity for /home partition: {}GB\n"
+#~ msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση /home: {}GB\n"
+
+#~ msgid "Minimum capacity for Arch Linux partition: {}GB"
+#~ msgstr "Ελάχιστη χωρητικότητα για τη διαμέριση Arch Linux: {}GB"
+
+#~ msgid "Continue"
+#~ msgstr "Συνέχεια"
+
+#~ msgid "yes"
+#~ msgstr "ναι"
+
+#~ msgid "no"
+#~ msgstr "οχι"
+
+#~ msgid "set: {}"
+#~ msgstr "θέση {}"
+
+#~ msgid "Manual configuration setting must be a list"
+#~ msgstr "Η ρύθμιση χειροκίνητης διαμόρφωσης πρέπει να είναι μία λίστα"
+
+#~ msgid "No iface specified for manual configuration"
+#~ msgstr "Δεν έχει καθοριστεί iface για χειροκίνητη διαμόρφωση"
+
+#~ msgid "Manual nic configuration with no auto DHCP requires an IP address"
+#~ msgstr "Η χειροκίνητη διαμόρφωση nic χωρίς αυτόματο DHCP απαιτεί μία διεύθυνση IP"
+
+#~ msgid "Mark/Unmark a partition as compressed (btrfs only)"
+#~ msgstr "Σημείωση/Ξεμαρκάρισμα μίας διαμέρισως ως συμπιεσμένη (μόνο για btrfs)"
+
+#~ msgid "The password you are using seems to be weak, are you sure you want to use it?"
+#~ msgstr "Ο κωδικός που χρησιμοποιείτε φαίνεται να είναι αδύναμος, είστε σίγουρη/ος ότι θέλετε να τον χρησιμοποιήσετε;"
+
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. gnome, kde, sway"
+#~ msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
+
+#~ msgid "Select your desired desktop environment"
+#~ msgstr "Επιλέξτε το επιθυμητό σας περιβάλλον επιφάνειας εργασίας"
+
+#~ msgid "A very basic installation that allows you to customize Arch Linux as you see fit."
+#~ msgstr "Μία πολύ βασική εγκατάσταση που σας επιτρέπει να προσαρμόσετε τα Arch Linux όπως εσείς κρίνετε κατάλληλο."
+
+#~ msgid "Provides a selection of various server packages to install and enable, e.g. httpd, nginx, mariadb"
+#~ msgstr "Παρέχει μία επιλογή από ποικίλα πακέτα διακομιστών προς εγκατάσταση και ενεργοποίηση, π.χ. httpd, nginx, mariadb"
+
+#~ msgid "Choose which servers to install, if none then a minimal installation will be done"
+#~ msgstr "Επιλέξτε ποιους διακομιστές να εγκατασταθούν, αν δεν επιλεχθεί κανένας τότε θα γίνει μία minimal εγκατάσταση"
+
+#~ msgid "Installs a minimal system as well as xorg and graphics drivers."
+#~ msgstr "Εγκαθιστά ένα minimal σύστημα καθώς και το xorg και οδηγούς γραφικών."
+
+#~ msgid "Press Enter to continue."
+#~ msgstr "Πατήστε Enter για να συνεχίσετε."
+
+#~ msgid "Would you like to chroot into the newly created installation and perform post-installation configuration?"
+#~ msgstr "Θα θέλατε να κάνετε chroot εντός της καινούργιας εγκατάστασης για περαιτέρω διαμόρφωση;"
+
+#~ msgid "Select one or more hard drives to use and configure\n"
+#~ msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση\n"
+
+#~ msgid "Any modifications to the existing setting will reset the disk layout!"
+#~ msgstr "Τυχόν τροποποιήσεις στην ήδη υπάρχουσα ρύθμιση θα επαναφέρουν τη διάταξη δίσκου!"
+
+#~ msgid "If you reset the harddrive selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
+
+#~ msgid "Save and exit"
+#~ msgstr "Αποθήκευση και έξοδος"
+
+#~ msgid ""
+#~ "{}\n"
+#~ "contains queued partitions, this will remove those, are you sure?"
+#~ msgstr ""
+#~ "{}\n"
+#~ "περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
+
+#~ msgid "No audio server"
+#~ msgstr "Κανένας διακομιστής ήχου"
+
+#~ msgid "Use ESC to skip"
+#~ msgstr "Χρησιμοποιήστε ESC για παράλειψη"
+
+#~ msgid ""
+#~ "Use CTRL+C to reset current selection\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Χρησιμοποιήστε CTRL+C για να επαναφέρετε την τρέχουσα επιλογή\n"
+#~ "\n"
+
+#~ msgid "Copy to: "
+#~ msgstr "Αντιγραφή σε: "
+
+#~ msgid "Edit: "
+#~ msgstr "Επεξεργασία "
+
+#~ msgid "Key: "
+#~ msgstr "Κλειδί: "
+
+#~ msgid "Edit {}: "
+#~ msgstr "Επεξεργασία {}: "
+
+#~ msgid "Add: "
+#~ msgstr "Προσθήκη: "
+
+#~ msgid "Value: "
+#~ msgstr "Τιμή: "
+
+#~ msgid "You can skip selecting a drive and partitioning and use whatever drive-setup is mounted at /mnt (experimental)"
+#~ msgstr "Μπορείτε να παραλείψετε την επιλογή δίσκου και διαμερισμού και να χρησιμοποιήσετε οποιαδήποτε εγκατάσαση δίσκου είναι mount στο /mnt (πειραματικό)"
+
+#~ msgid "Select one of the disks or skip and use /mnt as default"
+#~ msgstr "Επιλέξτε έναν από τους δίσκους ή παραλείψτε και χρησιμοποιήστε το /mnt ως προκαθορισμένο"
+
+#~ msgid "Select which partitions to mark for formatting:"
+#~ msgstr "Επιλέξτε ποιες διαμερίσεις να σημειωθούν για μορφοποίηση:"
+
+#~ msgid "Use HSM to unlock encrypted drive"
+#~ msgstr "Χρήση HSM για ξεκλείδωμα κρυπτογραφημένου δίσκου"
+
+#~ msgid "Free space"
+#~ msgstr "Ελεύθερος χώρος"
+
+#~ msgid "Bus-type"
+#~ msgstr "Τύπος bus"
+
+#~ msgid "Enter username (leave blank to skip): "
+#~ msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
+
+#~ msgid "The username you entered is invalid. Try again"
+#~ msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
+
+#~ msgid "Should \"{}\" be a superuser (sudo)?"
+#~ msgstr "Θα έπρεπε ο \"{}\" να είναι υπερχρήστης (sudo);"
+
+#~ msgid "Select which partitions to encrypt"
+#~ msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+
+#~ msgid "This option enables the number of parallel downloads that can occur during installation"
+#~ msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
+
+#~ msgid ""
+#~ "Enter the number of parallel downloads to be enabled.\n"
+#~ " (Enter a value between 1 to {})\n"
+#~ "Note:"
+#~ msgstr ""
+#~ "Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
+#~ " (Εισάγετε μία τιμή από 1 μέχρι {})\n"
+#~ "Σημείωση:"
+
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {} downloads at a time )"
+#~ msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
+
+#~ msgid " - Minimum value   : 1 ( Allows 1 parallel download, allows 2 downloads at a time )"
+#~ msgstr " - Ελάχιστη τιμή  : 1 ( Επιτρέπει 1 παράλληλη λήψη, επιτρέπει 2 λήψεις σε μία στιγμή )"
+
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )"
+#~ msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
 
 #, fuzzy, python-brace-format
-msgid "Enter a size (default: {}): "
-msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+#~ msgid "Invalid input! Try again with a valid input [1 to {max_downloads}, or 0 to disable]"
+#~ msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {max_downloads}, ή 0 για απενεργοποίηση]"
 
 #, fuzzy
-msgid "Enter subvolume name"
-msgstr "Όνομα υποόγκου "
+#~ msgid "ESC to skip"
+#~ msgstr "Χρησιμοποιήστε ESC για παράλειψη"
+
+#~ msgid "CTRL+C to reset"
+#~ msgstr "CTRL+C για επαναφορά"
+
+#~ msgid "TAB to select"
+#~ msgstr "TAB για επιλογή"
+
+#~ msgid "[Default value: 0] > "
+#~ msgstr "[Προεπιλεγμένη τιμή: 0] > "
+
+#~ msgid "To be able to use this translation, please install a font manually that supports the language."
+#~ msgstr "Για να μπορείτε να χρησιμοποιήσετε αυτή την μετάφραση, παρακαλώ εγκαταστήστε χειροκίνητα την γραμματοσειρά που υποστηρίζει την γλώσσα."
+
+#~ msgid "The font should be stored as {}"
+#~ msgstr "Η γραμματοσειρά θα πρέπει να αποθηκευτεί ως {}"
 
 #, fuzzy
-msgid "Enter subvolume mountpoint"
-msgstr "Σημείο mount υποόγκου"
+#~ msgid "Select an execution mode"
+#~ msgstr "Επιλέξτε μία ενέργεια για '{}'"
 
 #, fuzzy
-msgid "Select a disk configuration"
-msgstr "Καμία διαμόρφωση"
-
-msgid "Enter root mount directory"
-msgstr ""
-
-msgid "You will use whatever drive-setup is mounted at the specified directory"
-msgstr ""
-
-msgid "WARNING: Archinstall won't check the suitability of this setup"
-msgstr ""
+#~ msgid "Select one or more devices to use and configure"
+#~ msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
 
 #, fuzzy
-msgid "Select main filesystem"
-msgstr "Αλλαγή συστήματος αρχείων"
-
-msgid "Enter a hostname"
-msgstr ""
+#~ msgid "If you reset the device selection this will also reset the current disk layout. Are you sure?"
+#~ msgstr "Αν επαναφέρετε την επιλογή σκληρού δίσκου αυτό επίσης θα επαναφέρει την τρέχουσα διάταξη δίσκου. Είστε σίγουρη/ος;"
 
 #, fuzzy
-msgid "Select timezone"
-msgstr "Επιλέξτε μία ζώνη ώρας"
+#~ msgid "Existing Partitions"
+#~ msgstr "Προσθέτωντας τη διαμέριση...."
 
 #, fuzzy
-msgid "Enter the number of parallel downloads to be enabled"
-msgstr ""
-"Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
-" (Εισάγετε μία τιμή από 1 μέχρι {})\n"
-"Σημείωση:"
+#~ msgid "Select a partitioning option"
+#~ msgstr "Διαγραφή διαμέρισης"
+
+#, fuzzy
+#~ msgid "Enter the root directory of the mounted devices: "
+#~ msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+#, fuzzy
+#~ msgid "This is a list of pre-programmed profiles_bck, they might make it easier to install things like desktop environments"
+#~ msgstr "Αυτή είναι μία λίστα με προ-προγραμματισμένα προφίλ, που μπορεί να κάνουν την εγκατάσταση πραγμάτων όπως περιβάλλοντα επιφάνειας εργασίας πιο εύκολη"
+
+#, fuzzy
+#~ msgid "Current profile selection"
+#~ msgstr "Τρέχουσα διάταξη διαμέρισης"
+
+#, fuzzy
+#~ msgid "Total sectors: {}"
+#~ msgstr "Σύνολο sectors: {}"
+
+#, fuzzy
+#~ msgid "Enter the start sector (default: {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+#~ msgid "Enter the end sector of the partition (percentage or block number, default: {}): "
+#~ msgstr "Εισάγετε τον end sector της διαμέρισης (ποσοστό ή αριθμό block, πχ: {}) "
+
+#~ msgid "No HSM devices available"
+#~ msgstr "Καμία διαθέσιμη συσκευή HSM"
+
+#~ msgid "Select disk encryption option"
+#~ msgstr "Επιλογή κρυπτογράφησης δίσκου"
 
 #, python-brace-format
-msgid "Value must be between 1 and {}"
-msgstr ""
+#~ msgid " ! Formatting {} in "
+#~ msgstr " ! Μορφοποίηση {} σε "
+
+#~ msgid "← Back"
+#~ msgstr "← Πίσω"
 
 #, fuzzy
-msgid "Select which kernel(s) to install"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+#~ msgid "All settings will be reset, are you sure?"
+#~ msgstr "{} περιέχει διαμερίσεις στην ουρά, αυτό θα τις διαγράψει, είστε σίγουρη/ος;"
 
 #, fuzzy
-msgid "Enter a respository name"
-msgstr "Περιοχή mirror"
+#~ msgid "Add profile"
+#~ msgstr "Προσθήκη προφίλ"
 
 #, fuzzy
-msgid "Enter the repository url"
-msgstr "Αλλαγή custom mirror"
-
-msgid "Enter server url"
-msgstr ""
+#~ msgid "Edit profile"
+#~ msgstr "Επεξεργασία προφίλ"
 
 #, fuzzy
-msgid "Select mirror regions to be enabled"
-msgstr "Περιοχή mirror"
+#~ msgid "Delete profile"
+#~ msgstr "Διαγραφή προφίλ"
 
 #, fuzzy
-msgid "Select optional repositories to be enabled"
-msgstr "Επιλέξτε ποια προαιρετικά περαιτέρω αποθετήρια να ενεργοποιηθούν"
+#~ msgid "Profile name: "
+#~ msgstr "Όνομα προφίλ: "
 
 #, fuzzy
-msgid "Select an interface"
-msgstr "Διαγραφή διεπαφής"
+#~ msgid "The profile name you entered is already in use. Try again"
+#~ msgstr "Το όνομα χρήστη που εισάγατε δεν είναι έγκυρο. Προσπαθήστε ξανά"
 
 #, fuzzy
-msgid "Choose network configuration"
-msgstr "Καμία διαμόρφωση δικτύου"
+#~ msgid "Packages to be install with this profile (space separated, leave blank to skip): "
+#~ msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
 
 #, fuzzy
-msgid "No packages found"
-msgstr "Διαμορφωμένες {} διεπαφές"
+#~ msgid "Services to be enabled with this profile (space separated, leave blank to skip): "
+#~ msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε κενό για να παραληφθεί): "
+
+#~ msgid "Should this profile be enabled for installation?"
+#~ msgstr "Ενεργοποίηση του προφίλ για εγκατάσταση;"
+
+#~ msgid "Create your own"
+#~ msgstr "Δημιουργήστε δικό σας"
 
 #, fuzzy
-msgid "Select which greeter to install"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+#~ msgid ""
+#~ "\n"
+#~ "Select a graphics driver or leave blank to install all open-source drivers"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Επιλέξτε έναν οδηγό γραφικών ή αφήστε κενό για να εγκατασταθούν όλοι οι οδηγοί ανοιχτού κώδικα"
 
 #, fuzzy
-msgid "Select a profile type"
-msgstr "Διαγραφή προφίλ"
+#~ msgid "Select directory (or directories) for saving configuration files"
+#~ msgstr "Επιλέξτε έναν ή περισσότερους σκληρούς δίσκους προς χρήση και διαμόρφωση"
 
 #, fuzzy
-msgid "Enter new password"
-msgstr "Εισάγετε κωδικό: "
+#~ msgid "Add a custom mirror"
+#~ msgstr "Προσθήκη custom mirror"
 
-msgid "Enter a username"
-msgstr ""
+#~ msgid "Change custom mirror"
+#~ msgstr "Αλλαγή custom mirror"
+
+#~ msgid "Delete custom mirror"
+#~ msgstr "Διαγραφή custom mirror"
 
 #, fuzzy
-msgid "Enter a password"
-msgstr "Εισάγετε κωδικό: "
+#~ msgid "Enter name (leave blank to skip): "
+#~ msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
 
-msgid "The password did not match, please try again"
-msgstr ""
+#, fuzzy
+#~ msgid "Enter url (leave blank to skip): "
+#~ msgstr "Εισάγετε όνομα χρήστη (αφήστε κενό για παράλειψη): "
 
-msgid "Password strength: Weak"
-msgstr ""
+#, fuzzy
+#~ msgid "Select signature check option"
+#~ msgstr "Επιλέξτε διεπαφή προς προσθήκη"
 
-msgid "Password strength: Moderate"
-msgstr ""
+#, fuzzy
+#~ msgid ""
+#~ "Enter a directory for the configuration(s) to be saved (tab completion enabled)\n"
+#~ "Save directory: "
+#~ msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
 
-msgid "Password strength: Strong"
-msgstr ""
+#, fuzzy
+#~ msgid "Saving {} configuration files to {}"
+#~ msgstr "Αποθήκευση διαμόρφωσης"
 
-msgid "The selected desktop profile requires a regular user to log in via the greeter"
-msgstr ""
+#, fuzzy
+#~ msgid " - Maximum value   : {} ( Allows {} parallel downloads, allows {max_downloads+1} downloads at a time )"
+#~ msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
+
+#~ msgid "Invalid input! Try again with a valid input [1 to {}, or 0 to disable]"
+#~ msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
+
+#, fuzzy
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE)"
+#~ msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
+
+#~ msgid "Total: {} / {}"
+#~ msgstr "Σύνολο: {} / {}"
+
+#, fuzzy
+#~ msgid "Enter start (default: sector {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+#~ msgid "Enter end (default: {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#~ msgid "Path"
+#~ msgstr "Μονοπάτι"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Κατασκευαστής"
+
+#~ msgid "Product"
+#~ msgstr "Προϊόν"
+
+#, fuzzy
+#~ msgid "This option enables the number of parallel downloads that can occur during package downloads"
+#~ msgstr "Αυτή η επιλογή θέτει τον αριθμό των παράλληλων λήψεων που μπορούν να συμβούν κατά την εγκατάσταση"
+
+#, fuzzy
+#~ msgid ""
+#~ "Enter the number of parallel downloads to be enabled.\n"
+#~ "\n"
+#~ "Note:\n"
+#~ msgstr ""
+#~ "Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
+#~ " (Εισάγετε μία τιμή από 1 μέχρι {})\n"
+#~ "Σημείωση:"
 
 #, fuzzy, python-brace-format
-msgid "Environment type: {} {}"
-msgstr "Καμία διαμόρφωση"
-
-msgid "Input cannot be empty"
-msgstr ""
-
-msgid "Recommended"
-msgstr ""
-
-msgid "Package"
-msgstr ""
-
-msgid "Curated selection of KDE Plasma packages"
-msgstr ""
-
-msgid "Dependencies"
-msgstr ""
+#~ msgid " - Maximum recommended value : {} ( Allows {} parallel downloads at a time )"
+#~ msgstr " - Μέγιστη τιμή  : {} ( Επιτρέπει {} παράλληλες λήψεις, επιτρέπει {} λήψεις σε μία στιγμή )"
 
 #, fuzzy
-msgid "Package group"
-msgstr "Διαμορφωμένες {} διεπαφές"
-
-msgid "Extensive KDE Plasma installation"
-msgstr ""
-
-msgid "Packages in group"
-msgstr ""
-
-msgid "Minimal KDE Plasma installation"
-msgstr ""
+#~ msgid " - Disable/Default : 0 ( Disables parallel downloading, allows only 1 download at a time )\n"
+#~ msgstr " - Απενεργοποίηση/Προκαθορισμένο : 0 ( Απενεργοποιεί τις παράλληλες λήψεις, επιτρέπει μόνο 1 λήψη σε μία στιγμή )"
 
 #, fuzzy
-msgid "Description"
-msgstr "Κρυπτογράφηση δίσκου"
+#~ msgid "Invalid input! Try again with a valid input [or 0 to disable]"
+#~ msgstr "Μη έγκυρη είσοδος! Προσπαθήστε ξανά με μία έγκυρη είσοδο [1 μέχρι {}, ή 0 για απενεργοποίηση]"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Choose an option to give Hyprland access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#~ msgid "Time syncronization not completing, while you wait - check the docs for workarounds: https://archinstall.readthedocs.io/"
+#~ msgstr "Ο συγχρονισμός χρόνου δεν ολοκληρώνεται, όσο περιμένετε - ελέγξτε την τεκμηρίωση για λύσεις: https://archinstall.readthedocs.io/"
 
 #, fuzzy
-msgid "Select a flavor of KDE Plasma to install"
-msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+#~ msgid "Provides a selection of desktop environments and tiling window managers, e.g. GNOME, KDE Plasma, Sway"
+#~ msgstr "Παρέχει μία επιλογή από περιβάλλοντα επιφάνειας εργασίας και διαχειριστές tiling παραθύρων, π.χ. gnome, kde, sway"
 
-msgid "Arial/Times/Courier replacement, Cyrillic support for Steam/games"
-msgstr ""
+#, fuzzy
+#~ msgid "Use NetworkManager (necessary to configure internet graphically in GNOME and KDE Plasma)"
+#~ msgstr "Χρήση NetworkManager (απαραίτητος για τη διαμόρφωση του δικτύου γραφικά σε GNOME και KDE)"
 
-msgid "wide Unicode coverage, good fallback font"
-msgstr ""
+#, fuzzy
+#~ msgid "Select a LVM option"
+#~ msgstr "Επιλέξτε μία ζώνη ώρας"
+
+#, fuzzy
+#~ msgid "Select which LVM volumes to encrypt"
+#~ msgstr "Επιλέξτε ποιες διαμερίσεις να κρυπτογραφηθούν."
+
+#, fuzzy
+#~ msgid "Archinstall help"
+#~ msgstr "Γλώσσα archinstall"
+
+#~ msgid "Press Ctrl+h for help"
+#~ msgstr "Πατήστε Ctrl+h για βοήθεια"
+
+#, fuzzy
+#~ msgid "Disk encryption password"
+#~ msgstr "Κωδικός κρυπτογράφησης"
+
+#, fuzzy
+#~ msgid "Start (default: sector {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+#~ msgid "End (default: {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+#~ msgid "Disk configuration type"
+#~ msgstr "Καμία διαμόρφωση"
+
+#, fuzzy
+#~ msgid "Write additional packages to install (space separated, leave blank to skip)"
+#~ msgstr "Γράψτε περαιτέρω πακέτα προς εγκατάσταση (χωρισμένα με κενό, αφήστε άδειο για να παραληφθεί): "
+
+#, fuzzy
+#~ msgid "Main profile"
+#~ msgstr "Επεξεργασία προφίλ"
+
+#, fuzzy
+#~ msgid "Enter a directory for the configuration(s) to be saved (tab completion enabled)"
+#~ msgstr "Εισάγετε έναν φάκελο για την αποθήκευση της/ων διαμόρφωση/ων: "
+
+#, fuzzy
+#~ msgid "Mirror name"
+#~ msgstr "Περιοχή mirror"
+
+#, fuzzy
+#~ msgid "Select execution mode"
+#~ msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+#~ msgid "Press ? for help"
+#~ msgstr "Πατήστε ? για βοήθεια"
+
+#, fuzzy
+#~ msgid "Choose an option to give Hyprland access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy, python-brace-format
+#~ msgid "Size (default: {}): "
+#~ msgstr "Εισάγετε τον start sector (ποσοστό ή αριθμό block, προκαθορισμένο {}): "
+
+#, fuzzy
+#~ msgid "Repository name"
+#~ msgstr "Περιοχή mirror"
+
+#~ msgid "Show help"
+#~ msgstr "Εμφάνιση βοήθειας"
+
+#~ msgid "Exit help"
+#~ msgstr "Έξοδος από τη βοήθεια"
+
+#~ msgid "Preview scroll up"
+#~ msgstr "Κύλιση προεπισκόπησης πάνω"
+
+#~ msgid "Preview scroll down"
+#~ msgstr "Κύλιση προεπισκόπησης κάτω"
+
+#~ msgid "Move up"
+#~ msgstr "Μετακίνηση πάνω"
+
+#~ msgid "Move down"
+#~ msgstr "Μετακίνηση κάτω"
+
+#~ msgid "Move right"
+#~ msgstr "Μετακίνηση δεξιά"
+
+#~ msgid "Move left"
+#~ msgstr "Μετακίνηση αριστερά"
+
+#~ msgid "Jump to entry"
+#~ msgstr "Μετάβαση σε καταχώρηση"
+
+#, fuzzy
+#~ msgid "Select on single select"
+#~ msgstr "Επιλέξτε διεπαφή προς προσθήκη"
+
+#, fuzzy
+#~ msgid "Select on multi select"
+#~ msgstr "Επιλέξτε μία ζώνη ώρας"
+
+#, fuzzy
+#~ msgid "Skip selection menu"
+#~ msgstr "Επιλέξτε μία ενέργεια για '{}'"
+
+#~ msgid "Start search mode"
+#~ msgstr "Έναρξη λειτουργίας αναζήτησης"
+
+#~ msgid "Exit search mode"
+#~ msgstr "Έξοδος από τη λειτουργία αναζήτησης"
+
+#~ msgid "General"
+#~ msgstr "Γενικά"
+
+#, fuzzy
+#~ msgid "Navigation"
+#~ msgstr "Αποθήκευση διαμόρφωσης"
+
+#, fuzzy
+#~ msgid "Choose an option to give labwc access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy
+#~ msgid "Choose an option to give niri access to your hardware"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Διαλέξτε μία επιλογή για να δώσετε πρόσβαση του Hyprland στο υλισμικό σας"
+
+#, fuzzy
+#~ msgid "Credentials file decryption password"
+#~ msgstr "Κωδικός κρυπτογράφησης"
+
+#, fuzzy
+#~ msgid "Enter the number of parallel downloads to be enabled"
+#~ msgstr ""
+#~ "Εισάγετε τον αριθμό των παράλληλων λήψεων προς ενεργοποίηση.\n"
+#~ " (Εισάγετε μία τιμή από 1 μέχρι {})\n"
+#~ "Σημείωση:"
